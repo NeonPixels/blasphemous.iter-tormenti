@@ -1,7 +1,10 @@
 <p align="center">  
-  <!-- <img src="logo.png"> -->
-  <h1 align="center">Iter Tormenti</h1>
+  <h1 align="center">Iter Tormenti</h1><!-- <img src="logo.png"> -->
   <h2 align="center">-Path of Torment-</h2>
+
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/master/README.md)
+[![es](https://img.shields.io/badge/lang-es-yellow.svg)](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/master/README.es.md)
+
 </p>
 
 ---
@@ -17,64 +20,72 @@
 ## Table of Contents
 
 - [Links](https://github.com/NeonPixels/blasphemous.iter-tormenti#links)
-- [Installation](https://github.com/NeonPixels/blasphemous.iter-tormenti#installation)
-- [Available commands](https://github.com/NeonPixels/blasphemous.iter-tormenti#available-commands)
+- [Installation](https://github.com/NeonPixels/blasphemous.iter-tormenti#installation)<!-- - [Available commands](https://github.com/NeonPixels/blasphemous.iter-tormenti#available-commands) -->
 - [Mod info](https://github.com/NeonPixels/blasphemous.iter-tormenti#mod-info)
+  - [Current features](https://github.com/NeonPixels/blasphemous.iter-tormenti#current-features)
+  - [Planned features](https://github.com/NeonPixels/blasphemous.iter-tormenti#planned-features)
   - [Important notes](https://github.com/NeonPixels/blasphemous.iter-tormenti#important-notes)
-  - [Questline changes](https://github.com/NeonPixels/blasphemous.iter-tormenti#questline-changes)
+- [Building from source](https://github.com/NeonPixels/blasphemous.iter-tormenti#building-from-source)
 - [Credits](https://github.com/NeonPixels/blasphemous.iter-tormenti#credits)
 
 ---
 
 ## Links
 
-- Progress board: [Trello](https://trello.com/b/FJ42w6X1/blasphemous-randomizer)
 - Discord: [Blasphemous General Server](https://discord.gg/Blasphemous)
 
+<!-- [![how-to](https://img.shields.io/badge/how--to-use-blue.svg)](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/master/HOW-TO.md) -->
 ---
 
 ## Installation
 
-Automatic installation
-- This mod can be automatically installed using the [Blasphemous Mod Installer](https://github.com/BrandenEK/Blasphemous-Mod-Installer)<br>
-- **Note:** Make sure to also enable the Modding API<br>
-<br>
-
 Manual installation
-1. Download the latest release of the Modding API from https://github.com/BrandenEK/Blasphemous-Modding-API/releases
-2. Follow the instructions there on how to install the api
+1. Download the latest release of the [Modding API](https://github.com/BrandenEK/Blasphemous-Modding-API/releases)
+2. Follow the instructions there on how to install the API
 3. Download the latest release of the mod from the [Releases](https://github.com/NeonPixels/blasphemous.iter-tormenti/releases) page
-4. Extract the contents of the BlasphemousRandomizer.zip file into the "Modding" folder
+4. Extract the contents of the IterTormenti.zip file into the "Modding" folder
 
 ---
 
+<!--
 ## Available commands
 - Press the 'backslash' key to open the debug console
 - Type the desired command followed by the parameters all separated by a single space
 
 | Command | Parameters | Description |
 | ------- | ----------- | ------- |
-| `randomizer help` | none | List all available commands |
-| `randomizer autotracker` | on/off | Enables or disables the autotracker |
-| `randomizer respawn` | none | Respawns the player from the chosen starting location |
+| `itertormenti help` | none | List all available commands |
 
 ---
-
+-->
 ## Mod info
+
+Iter Tormenti (Path of Torment) is a mod for those who want to experience all that the game has to offer in a single playthrough, without needing ascend and restart in True Torment mode.
+
+### Current features
+
+- Empty Save Slots can be ascended, thus beginning the game directly in True Torment mode, granting access to the Amanecidas questline, as well as the Penitence altar. Beware, as this mode presents a considerable challenge.
+
+### Planned features
+
+- Ability to fight Esdras, even when in possesion of the Incomplete Scapular.
+- A way to obtain the Petrified Bell in a normal (not ascended) playthrough, thus enabling the Amanecidas questline.
+- A way to obtain all the penitence reward beads, so they can all be found in a single playthrough.
+- Ability to select multiple options in the Penitence altar, to combine effects and complete several penitences in a single playthrough.
 
 ### Important notes
 
 - Only works on the most current game version (4.0.67)
-- Do not load a vanilla game in the randomizer or vice versa
-- Do not load an outdated randomized game in a newer version of the randomizer - seed generation is different
+- Requires ModdingAPI version 1.5.0
 
-### Questline changes
+## Building from source
 
-- Esdras
-  - If you have the Scapular, you can choose wether to skip Esdras' boss fight or not. If you fight him, the conversation where he repents will play afterwards.
+### ModdingAPI requirements
 
----
+1. Download the release and source code of the [Modding API](https://github.com/BrandenEK/Blasphemous-Modding-API/releases)
+2. Copy the ModdingAPI.dll file from the release into the lib folder
+3. Copy the ModdingAPI.xml file from the source code into the lib folder
 
 ## Credits
 
-- Coding help - BrandenEK
+- Coding help & inspiration - BrandenEK
