@@ -43,13 +43,13 @@ Manual installation
 1. Download the latest release of the [Modding API](https://github.com/BrandenEK/Blasphemous-Modding-API/releases)
 2. Follow the instructions there on how to install the API
 3. Download the latest release of the mod from the [Releases](https://github.com/NeonPixels/blasphemous.iter-tormenti/releases) page
-4. Extract the contents of the IterTormenti.zip file into the "Modding" folder
+4. Extract the contents of the `IterTormenti.zip` file into the `Modding` folder
 
 ---
 
 <!--
 ## Available commands
-- Press the 'backslash' key to open the debug console
+- Press the `backslash` key to open the debug console
 - Type the desired command followed by the parameters all separated by a single space
 
 | Command | Parameters | Description |
@@ -60,7 +60,7 @@ Manual installation
 -->
 ## Mod info
 
-Iter Tormenti (Path of Torment) is a mod for those who want to experience all that the game has to offer in a single playthrough, without needing ascend and restart in True Torment mode.
+Iter Tormenti (Path of Torment) is a modification (mod) for [Blasphemous](https://thegamekitchen.com/blasphemous/), meant for those who want to experience all that the game has to offer in a single playthrough, without needing to ascend and restart in True Torment mode.
 
 ### Current features
 
@@ -75,17 +75,17 @@ Iter Tormenti (Path of Torment) is a mod for those who want to experience all th
 
 ### Important notes
 
-- Only works on the most current game version (4.0.67)
-- Requires ModdingAPI version 1.5.0
+- Only works on the most current game version: `4.0.67`
+- Requires ModdingAPI version `1.5.0`
 
 ## Building from source
 
 ### ModdingAPI requirements
 
 1. Download the release and source code of the [Modding API](https://github.com/BrandenEK/Blasphemous-Modding-API/releases)
-2. Copy the ModdingAPI.dll file from the release into the lib folder
-3. Copy the ModdingAPI.xml file from the source code into the lib folder
+2. Copy the `ModdingAPI.dll` file from the release into the `lib` folder
+3. Copy the `ModdingAPI.xml` file from the source code into the `lib` folder
 
 ## Credits
 
-- Coding help & inspiration - BrandenEK
+- Coding help & inspiration - [BrandenEK](https://github.com/BrandenEK)
