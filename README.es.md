@@ -59,7 +59,7 @@ Instalación manual:
 -->
 ## Informacion del mod
 
-Iter Tormenti (Senda del Tormento) es una modificación (mod) de Blasphemous pensada para quienes quieran experimentar todo lo que el juego tiene que ofrecer en una sola partida, sin que sea necesario ascender y reiniciar en modo Verdadero Calvario.
+Iter Tormenti (Senda del Tormento) es una modificación (mod) de [Blasphemous](https://thegamekitchen.com/blasphemous/) pensada para quienes quieran experimentar todo lo que el juego tiene que ofrecer en una sola partida, sin que sea necesario ascender y reiniciar en modo Verdadero Calvario.
 
 ### Caracteristicas actuales
 
