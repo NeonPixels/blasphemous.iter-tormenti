@@ -2,8 +2,8 @@
   <h1 align="center">Iter Tormenti</h1><!-- <img src="logo.png"> -->
   <h2 align="center">-Path of Torment-</h2>
 
-[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/master/README.md)
-[![es](https://img.shields.io/badge/lang-es-yellow.svg)](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/master/README.es.md)
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.md)
+[![es](https://img.shields.io/badge/lang-es-yellow.svg)](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md)
 
 </p>
 
