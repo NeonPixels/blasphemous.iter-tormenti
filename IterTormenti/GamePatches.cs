@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using Rewired;
 using UnityEngine;
 using UnityEngine.UI;
-
 using I2.Loc;
+using ModdingAPI;
 
 // --- Ascend Empty Save Slot ---
 //
@@ -110,9 +110,7 @@ namespace IterTormenti
                 return;
             }
 
-            Player player = ReInput.players.GetPlayer(0);
-
-            if ( player.GetButtonDown((int)ModdingAPI.InputHandler.ButtonCode.UIOptions)
+            if ( Main.IterTormenti.Input.GetButtonDown(InputHandler.ButtonCode.UIOptions)
                  && ___slots[__instance.SelectedSlot].IsEmpty
                  && ___slots[__instance.SelectedSlot].CanConvertToNewGamePlus )
             {
