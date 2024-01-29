@@ -25,7 +25,6 @@
   - [Características actuales](https://github.com/NeonPixels/blasphemous.iter-tormenti#caracteristicas-actuales)
   - [Características planificadas](https://github.com/NeonPixels/blasphemous.iter-tormenti#caracteristicas-planificadas)
   - [Notas importantes](https://github.com/NeonPixels/blasphemous.iter-tormenti#notas-importantes)
-- [Compilando las fuentes](https://github.com/NeonPixels/blasphemous.iter-tormenti#compilando-las-fuentes)
 - [Créditos](https://github.com/NeonPixels/blasphemous.iter-tormenti#creditos)
 
 ---
@@ -75,15 +74,7 @@ Iter Tormenti (Senda del Tormento) es una modificación (mod) de [Blasphemous](h
 ### Notas importantes
 
 - Solo funciona con la versión más reciente del juego: `4.0.67`
-- Requiere la versiín `1.5.0` de la ModdingAPI
-
-## Compilando las fuentes
-
-### Requerimientos de la ModdingAPI
-
-1. Descarga la entrega y código fuente de la [Modding API](https://github.com/BrandenEK/Blasphemous-Modding-API/releases)
-2. Copia el archivo `ModdingAPI.dll` de la entrega a la carpeta `lib`
-3. Copia el archivo `ModdingAPI.xml` de el código fuente a la carpeta `lib`
+- Requiere la versión `2.0.1` de la ModdingAPI
 
 ## Creditos
 

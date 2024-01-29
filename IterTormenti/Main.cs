@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace IterTormenti
 {
-    [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-    [BepInDependency("com.damocles.blasphemous.modding-api", "1.5.0")]
+    [BepInPlugin(ModInfo.MOD_ID, ModInfo.MOD_NAME, ModInfo.MOD_VERSION)]
+    [BepInDependency("Blasphemous.ModdingAPI", "2.0.1")]
     public class Main : BaseUnityPlugin
     {
         public static IterTormenti IterTormenti { get; private set; }
@@ -42,6 +42,6 @@ namespace IterTormenti
             }
 
             return result;
-        }        
+        }
     }
 }

@@ -25,7 +25,6 @@
   - [Current features](https://github.com/NeonPixels/blasphemous.iter-tormenti#current-features)
   - [Planned features](https://github.com/NeonPixels/blasphemous.iter-tormenti#planned-features)
   - [Important notes](https://github.com/NeonPixels/blasphemous.iter-tormenti#important-notes)
-- [Building from source](https://github.com/NeonPixels/blasphemous.iter-tormenti#building-from-source)
 - [Credits](https://github.com/NeonPixels/blasphemous.iter-tormenti#credits)
 
 ---
@@ -76,15 +75,7 @@ Iter Tormenti (Path of Torment) is a modification (mod) for [Blasphemous](https:
 ### Important notes
 
 - Only works on the most current game version: `4.0.67`
-- Requires ModdingAPI version `1.5.0`
-
-## Building from source
-
-### ModdingAPI requirements
-
-1. Download the release and source code of the [Modding API](https://github.com/BrandenEK/Blasphemous-Modding-API/releases)
-2. Copy the `ModdingAPI.dll` file from the release into the `lib` folder
-3. Copy the `ModdingAPI.xml` file from the source code into the `lib` folder
+- Requires ModdingAPI version `2.0.1`
 
 ## Credits
 

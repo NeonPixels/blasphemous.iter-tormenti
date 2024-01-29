@@ -6,7 +6,7 @@ using Rewired;
 using UnityEngine;
 using UnityEngine.UI;
 using I2.Loc;
-using ModdingAPI;
+using Blasphemous.ModdingAPI.Input;
 
 // --- Ascend Empty Save Slot ---
 //
@@ -110,7 +110,7 @@ namespace IterTormenti
                 return;
             }
 
-            if ( Main.IterTormenti.Input.GetButtonDown(InputHandler.ButtonCode.UIOptions)
+            if ( Main.IterTormenti.InputHandler.GetButtonDown(ButtonCode.UIOptions)
                  && ___slots[__instance.SelectedSlot].IsEmpty
                  && ___slots[__instance.SelectedSlot].CanConvertToNewGamePlus )
             {
@@ -120,7 +120,7 @@ namespace IterTormenti
                
                 // ...but we also update the dialog text to the Empty Slot Ascend version
                 Text descriptionText = ___ConfirmationUpgradeRoot.transform.GetChild(3).GetComponent<Text>();
-                descriptionText.text = Main.IterTormenti.Localize("UI_Slot/LABEL_NEW_GAME_DESCRIPTION");                
+                descriptionText.text = Main.IterTormenti.LocalizationHandler.Localize("UI_Slot/LABEL_NEW_GAME_DESCRIPTION");                
 
                 //Main.IterTormenti.Log( "SelectSaveSlots.Update Postfix: Displaying Empty Slot Ascension confirmation" );
             }

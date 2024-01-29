@@ -13,20 +13,8 @@ UI_Slot/LABEL_NEW_GAME_DESCRIPTION: Beginne Eure Reise im Modus Wahre Qual.\n\nI
 lang: it
 UI_Slot/LABEL_NEW_GAME_DESCRIPTION: Inizia il tuo viaggio in modalità Vero Calvario.\n\nIn questa modalità, il pellegrinaggio del Penitente è molto più pericoloso e l'accesso all'Altare della Penitenza è sbloccato.\n\nCvstodia nasconde segreti che saranno rivelati solo a chi percorrerà questo cammino.
 
-lang: zh
-UI_Slot/LABEL_NEW_GAME_DESCRIPTION: TODO 将你保存的游戏提升至真笃之痛模式，你的旅途将会从重新开启，但是你的装备和升级都会保留下来。\n\n在该模式下，忏悔者的朝圣之旅将会危机四伏，而且也会解锁忏悔祭坛。\n\n只有经过这些道路，才有机会发现古斯托迪亚隐藏的秘密。
-
-lang: ru
-UI_Slot/LABEL_NEW_GAME_DESCRIPTION: TODO Перейди в режим Истинных Мук. Ты начнешь свой путь сначала, но сохранишь всё свое снаряжение и улучшения, открытые по пути.\n\nВ этом режиме путь Кающегося будет куда опаснее, зато он получит доступ к Алтарям Покаяния.\n\nКастодия скрывает тайны, раскрыть которые смогут лишь те, кто пройдет этим путем.
-
-lang: ja
-UI_Slot/LABEL_NEW_GAME_DESCRIPTION: TODO 真なる苦悶へと昇天すると、巡礼の旅が初めからやり直しになるが、今までに手に入れた装備や剣の強化をすべて引き継ぐことができる。\n\nこのモードにおける悔悟者の巡礼は、以前と比べ物にならないほど危険なものへと変化し、贖罪の祭壇も解禁される。\n\nまたクヴストディアには、この道を歩みし者のみが知りえる秘密が隠されている。
-
 lang: pt-BR
 UI_Slot/LABEL_NEW_GAME_DESCRIPTION: Comece sua jornada no modo Puro Suplício.\n\nNesse modo, a peregrinação do Penitente é muito mais perigosa e o acesso ao Altar da Mea Culpa está liberado.\n\nCvstodia esconde segredos que só serão revelados àqueles que trilharem esse caminho.
-
-lang: ko
-UI_Slot/LABEL_NEW_GAME_DESCRIPTION: TODO 저장된 게임을 진정한 고행 모드로 승급하십시오. 여정을 처음부터 시작하지만, 잠금 해제한 장비와 업그레이드는 계속 유지합니다.\n\n이 모드에서 참회자의 순례는 더 어려워지며 참회자의 제단을 이용할 수 있게 됩니다.\n\n이 길을 걷는 자만이 알 수 있는 비밀이 쿠스토디아에 숨어 있습니다.
 
 lang: an
 UI_Slot/LABEL_NEW_GAME_DESCRIPTION: Comiença tu biahe en er modo Berdadero Carbario.\n\nEn êtte modo la peregrinaçión de er Penitente êh conçiderablemente mâh peligroça, y çe dêbbloquea el âççeço al Artâh de Penitençiâ.\n\nCûttodia ocurta çecretô que çolo çe rebelan a quienê andan êtta çenda.

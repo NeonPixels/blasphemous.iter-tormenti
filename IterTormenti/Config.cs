@@ -11,7 +11,7 @@ namespace IterTormenti
         // Create Config with default options
         public Config()
         {
-            VersionCreated = Main.IterTormenti.ModVersion;
+            VersionCreated = ModInfo.MOD_VERSION;
         }
     }
 }

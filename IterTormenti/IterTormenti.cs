@@ -1,47 +1,44 @@
-﻿using ModdingAPI;
+﻿using Blasphemous.ModdingAPI;
+using Blasphemous.ModdingAPI.Persistence;
 
 namespace IterTormenti
 {
-    public class IterTormenti : PersistentMod
+    public class IterTormenti : BlasMod, IPersistentMod
     {
-        public override string PersistentID => "ID_ITER_TORMENTI";
+        public string PersistentID => "ID_ITER_TORMENTI";
 
         // Save file info
         public Config GameSettings { get; private set; }
 
-        public IterTormenti() : base(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)
+        public IterTormenti() : base(ModInfo.MOD_ID, ModInfo.MOD_NAME, ModInfo.MOD_AUTHOR, ModInfo.MOD_VERSION)
         { }
 
-        protected override void Initialize()
+        protected override void OnInitialize()
         {
-            Log($"{PluginInfo.PLUGIN_NAME} has been initialized");
+            LocalizationHandler.RegisterDefaultLanguage("es");
+            Log($"{ModInfo.MOD_NAME} has been initialized");
         }
 
-        public override ModPersistentData SaveGame()
+        public SaveData SaveGame()
         {
             Log("SaveGame");
 
-            return new IterTormentiPersistenceData
+            return new IterTormentiSaveData
             {
                 config = GameSettings
             };
         }
 
-        public override void LoadGame(ModPersistentData data)
+        public void LoadGame(SaveData  data)
         {
             Log("LoadGame");
 
-            IterTormentiPersistenceData persistenceData = data as IterTormentiPersistenceData;
+            IterTormentiSaveData saveGameData = data as IterTormentiSaveData;
 
-            GameSettings = persistenceData.config;                       
+            GameSettings = saveGameData.config;                       
         }
 
-        public override void NewGame(bool NGPlus)
-        {
-            Log("NewGame { NGPlus: " + NGPlus + " }");
-        }
-
-        public override void ResetGame()
+        public void ResetGame()
         {
             Log("ResetGame");
 
