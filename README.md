@@ -75,7 +75,7 @@ Iter Tormenti (Path of Torment) is a modification (mod) for [Blasphemous](https:
 ### Important notes
 
 - Only works on the most current game version: `4.0.67`
-- Requires ModdingAPI version `2.0.1`
+- Requires ModdingAPI version `2.1.0`
 
 ## Credits
 

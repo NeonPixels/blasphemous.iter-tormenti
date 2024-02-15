@@ -74,7 +74,7 @@ Iter Tormenti (Senda del Tormento) es una modificación (mod) de [Blasphemous](h
 ### Notas importantes
 
 - Solo funciona con la versión más reciente del juego: `4.0.67`
-- Requiere la versión `2.0.1` de la ModdingAPI
+- Requiere la versión `2.1.0` de la ModdingAPI
 
 ## Creditos
 
