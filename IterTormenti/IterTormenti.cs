@@ -1,5 +1,7 @@
 ﻿using Blasphemous.ModdingAPI;
 using Blasphemous.ModdingAPI.Persistence;
+using Blasphemous.Framework.Penitence;
+using System.Collections.Generic;
 
 namespace IterTormenti
 {
@@ -43,6 +45,21 @@ namespace IterTormenti
             Log("ResetGame");
 
             GameSettings = new Config();
-        }       
+        }
+
+        public List<ComboPenitence> ComboPenitenceList { get; private set; } = new();
+
+        protected override void OnRegisterServices(ModServiceProvider provider)
+        {
+            ComboPenitenceList.Add(new PenitenceAB());
+            ComboPenitenceList.Add(new PenitenceBC());
+            ComboPenitenceList.Add(new PenitenceCA());
+            ComboPenitenceList.Add(new PenitenceABC());
+
+            foreach (ComboPenitence penitence in ComboPenitenceList)
+            {
+                provider.RegisterPenitence(penitence);
+            }
+        }
     }
 }

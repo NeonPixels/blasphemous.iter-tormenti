@@ -39,8 +39,6 @@ namespace IterTormenti
             {
                 // If the slot is empty, we force the 'canConvert' flag so the Ascend button prompt is shown
                 canConvert = true;
-
-                //Main.IterTormenti.Log("SaveSlot.SetData Prefix: Empty Slot updated to be ascendable");
             }
             
             return true;
@@ -73,8 +71,6 @@ namespace IterTormenti
 
                 // Note: We could add a way to detect if the text needs to be updated, but it would be more
                 // convoluted and/or costly than just updating the text.
-
-                //Main.IterTormenti.Log("SelectSaveSlots.SetConfirming Postfix: Displaying standard Slot Ascension confirmation");
             }
 
             // Note: This patch will only affect calls to the original 'SetConfirming' method.
@@ -120,9 +116,7 @@ namespace IterTormenti
                
                 // ...but we also update the dialog text to the Empty Slot Ascend version
                 Text descriptionText = ___ConfirmationUpgradeRoot.transform.GetChild(3).GetComponent<Text>();
-                descriptionText.text = Main.IterTormenti.LocalizationHandler.Localize("UI_Slot/LABEL_NEW_GAME_DESCRIPTION");                
-
-                //Main.IterTormenti.Log( "SelectSaveSlots.Update Postfix: Displaying Empty Slot Ascension confirmation" );
+                descriptionText.text = Main.IterTormenti.LocalizationHandler.Localize("UI_Slot/LABEL_NEW_GAME_DESCRIPTION");
             }
         }
     }
