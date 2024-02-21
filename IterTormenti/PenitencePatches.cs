@@ -1,49 +1,60 @@
 using HarmonyLib;
-
 using Framework.Managers;
 using Framework.Penitences;
 using Gameplay.UI.Widgets;
 using Gameplay.UI.Others.MenuLogic;
 using Gameplay.UI.Others.UIGameLogic;
 using Tools.Items;
-
 using System.Collections.Generic;
-using System.Linq;
-
 using UnityEngine;
 using UnityEngine.UI;
 
 
 namespace IterTormenti
 {
-
-    // Prevent displaying completion medal for combo penitences
-    [HarmonyPatch(typeof(PenitenceSlot), "CreateElement")]
-    class PenitenceSlotCreateElement_Patch
+    // Disable penitence completion medals for for combo penitences
+    [HarmonyPatch(typeof(PenitenceSlot), "UpdateFromSavegameData")]
+    class PenitenceSlotUpdateFromSavegameData_Patch
     {
-        public static bool Prefix(string name)
-        {             
-            // Check if it is one of our combo penitences
-            if(null != Main.IterTormenti.ComboPenitenceList.Find((ComboPenitence x) => x.id == name))
+        public static void Postfix( PenitenceManager.PenitencePersistenceData data,
+                                    ref GameObject ___childElement )
+        {
+            // Retrieve all combo penitence medals
+            List<GameObject> penitenceMedalsList = new List<GameObject>();
+            foreach (Transform item in ___childElement.transform.parent)
             {
-                IPenitence penitence = Core.PenitenceManager.GetAllPenitences().Find((IPenitence x) => x.Id == name);
-
-                // If the penitence is completed, we want to
-                // skip creation of the medal icon
-                if(penitence.Completed)
+                // Is the item a Penitence medal?
+                if( item.gameObject.name.StartsWith("Penitence_") )
                 {
-                    // Skip original method
-                    return false;
+                    // Is it a Combo Penitence medal?
+                    if(null != Main.IterTormenti.ComboPenitenceList.Find((ComboPenitence x) => item.gameObject.name == "Penitence_" + x.id ))
+                    {
+                        penitenceMedalsList.Add(item.gameObject);
+                    }
                 }
             }
 
-            // Go back to original method
-            return true;
+            // Now let's check the persistence data and see what the penitence status is
+            foreach (GameObject medal in penitenceMedalsList)
+            {
+                IPenitence current = data.allPenitences.Find( (IPenitence x) => medal.name == "Penitence_" + x.Id );
+                
+                if(null == current)
+                {
+                    continue;
+                }
+
+                // If the penitence is completed, disable the game object
+                if(current.Completed)
+                {
+                    medal.SetActive(value: false);
+                }
+            }
         }
     }
 
 
-    // --- Enable PE02 Health ---
+    // --- Enable PE02 Health Fix ---
     //
     // Sadly, the behaviour enabling the PE02 health management is 
     // part of the GameplayWidget code, which means it can't be normally
@@ -55,7 +66,8 @@ namespace IterTormenti
     [HarmonyPatch(typeof(GameplayWidget), "OnPenitenceChanged")]
     public class GameplayWidgetOnPenitenceChanged_Patch
     {
-        public static bool Prefix( IPenitence current, List<IPenitence> completed,
+        public static bool Prefix(  IPenitence current,
+                                    List<IPenitence> completed,
                                     ref List<GameObject> ___normalHealthGameObjects,
                                     ref List<GameObject> ___pe02HealthGameObjects,
                                     ref PlayerHealth ___normalPlayerHealth,
@@ -123,12 +135,11 @@ namespace IterTormenti
                 return;
             }
 
-            // TODO: The UseFervourFlasks feature should be managed in a more flexible manner
+            // TODO: The UseFervourFlasks feature could be managed in a more flexible manner
 
             bool containsPE03 = null != penitence.Penitences.Find((IPenitence x) => x is PenitencePE03 );
 
             Core.PenitenceManager.UseFervourFlasks = containsPE03;
         }
     }
-
 }

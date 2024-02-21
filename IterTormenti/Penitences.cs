@@ -1,10 +1,9 @@
 using Blasphemous.Framework.Penitence;
 using Framework.Managers;
-using UnityEngine;
-
 using Framework.Penitences;
 using Framework.Inventory;
 using System.Collections.Generic;
+using UnityEngine;
 using Tools.Playmaker2.Action;
 using Gameplay.UI;
 using Gameplay.UI.Others.MenuLogic;
@@ -13,7 +12,6 @@ using Gameplay.UI.Others.MenuLogic;
 namespace IterTormenti
 {
     // TODO: Long penitence descriptions overflow the textbox when rejecting the penitence. Add scrollbar to that textbox?    
-    // TODO: Using one of the beads to reset fervour flasks back to health is a custom penitence bug
 
     /// <summary>
     /// Custom penitences that combine the effects of several other penitences
@@ -140,17 +138,6 @@ namespace IterTormenti
                 // If we have item popups left to display, set the callback to cue another popup
                 // If we're on the last item, set the callback to save and finish
                 PopUpWidget.OnDialogClose += addedItems.Count > 0 ? AwardPopUp : SaveAndFinish;
-
-                // if(addedItems.Count > 0)
-                // {
-                //     Main.IterTormenti.Log("ComboPenitence::" + Id +"::GiveRewards: AwardPopUp -> " + addedItems.Count + " items left!");
-                //     PopUpWidget.OnDialogClose += AwardPopUp;
-                // }
-                // else
-                // {
-                //     Main.IterTormenti.Log("ComboPenitence::" + Id +"::GiveRewards: AwardPopUp -> Last Item!");
-                //     PopUpWidget.OnDialogClose += SaveAndFinish;
-                // }
 
                 // Display item popup
                 UIController.instance.ShowObjectPopUp( UIController.PopupItemAction.GetObejct,

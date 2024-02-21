@@ -47,15 +47,15 @@ namespace IterTormenti
             GameSettings = new Config();
         }
 
-        public List<ComboPenitence> ComboPenitenceList { get; private set; } = new();
+        public List<ComboPenitence> ComboPenitenceList { get; } = new(){
+            new PenitenceAB(),
+            new PenitenceBC(),
+            new PenitenceCA(),
+            new PenitenceABC()
+        };
 
         protected override void OnRegisterServices(ModServiceProvider provider)
         {
-            ComboPenitenceList.Add(new PenitenceAB());
-            ComboPenitenceList.Add(new PenitenceBC());
-            ComboPenitenceList.Add(new PenitenceCA());
-            ComboPenitenceList.Add(new PenitenceABC());
-
             foreach (ComboPenitence penitence in ComboPenitenceList)
             {
                 provider.RegisterPenitence(penitence);
