@@ -19,13 +19,13 @@
 
 ## Tabla de Contenidos
 
-- [Enlaces](https://github.com/NeonPixels/blasphemous.iter-tormenti#enlaces)
-- [Instalación](https://github.com/NeonPixels/blasphemous.iter-tormenti#instalación)<!-- - [Comandos disponibles](https://github.com/NeonPixels/blasphemous.iter-tormenti#comandos-disponibles) -->
-- [Información del mod](https://github.com/NeonPixels/blasphemous.iter-tormenti#informacion-del-mod)
-  - [Características actuales](https://github.com/NeonPixels/blasphemous.iter-tormenti#caracteristicas-actuales)
-  - [Características planificadas](https://github.com/NeonPixels/blasphemous.iter-tormenti#caracteristicas-planificadas)
-  - [Notas importantes](https://github.com/NeonPixels/blasphemous.iter-tormenti#notas-importantes)
-- [Créditos](https://github.com/NeonPixels/blasphemous.iter-tormenti#creditos)
+- [Enlaces](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#enlaces)
+- [Instalación](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#instalacion)<!-- - [Comandos disponibles](https://github.com/NeonPixels/blasphemous.iter-tormenti#comandos-disponibles) -->
+- [Información del mod](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#informacion-del-mod)
+  - [Características actuales](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#caracteristicas-actuales)
+  - [Características planificadas](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#caracteristicas-planificadas)
+  - [Notas importantes](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#notas-importantes)
+- [Créditos](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#creditos)
 
 ---
 
@@ -35,7 +35,7 @@
 
 ---
 
-## Instalación
+## Instalacion
 
 Instalador de Mods:
 - El mod puede ser instalado usando [Blasphemous Modding Installer](https://github.com/BrandenEK/Blasphemous.Modding.Installer)
