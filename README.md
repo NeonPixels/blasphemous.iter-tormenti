@@ -64,13 +64,14 @@ Iter Tormenti (Path of Torment) is a modification (mod) for [Blasphemous](https:
 ### Current features
 
 - Empty Save Slots can be ascended, thus beginning the game directly in True Torment mode, granting access to the Amanecidas questline, as well as the Penitence altar. Beware, as this mode presents a considerable challenge.
+- At the Penitece Altar, one of three new penitences can be selected, each combining the effects and rewards of two of the main penitences.
+- A fourth new penitence can instead be selected, which combines the effects and rewards of all three main penitences.
+- Completing the game with a combined penitence active will award completion of the penitences involved.
 
 ### Planned features
 
 - Ability to fight Esdras, even when in possesion of the Incomplete Scapular.
 - A way to obtain the Petrified Bell in a normal (not ascended) playthrough, thus enabling the Amanecidas questline.
-- A way to obtain all the penitence reward beads, so they can all be found in a single playthrough.
-- Ability to select multiple options in the Penitence altar, to combine effects and complete several penitences in a single playthrough.
 
 ### Important notes
 

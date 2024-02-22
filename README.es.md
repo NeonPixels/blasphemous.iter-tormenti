@@ -63,13 +63,14 @@ Iter Tormenti (Senda del Tormento) es una modificación (mod) de [Blasphemous](h
 ### Caracteristicas actuales
 
 - Las Ranuras de Partida Vacías pueden ser ascendidas, permitiendo comenzar el juego directamente en modo Verdadero Calvario, otorgando acceso a las misiones de las Amanecidas, así como al altar de Penitencias. Ten cuidado, pues este modo presenta un desafío considerable.
+- En el Altar de Penitencias, se puede escoger una de tres nuevas penitencias, cada una combinando los efectos y recompensas de dos de las penitencias principales.
+- Una cuarta penitencia puede tambien ser seleccionada, la cual combina los efectos y recompensas de las tres penitencias principales.
+- Completar el juego con una penitencia combinada activa marcará como completadas las penitencias asociadas.
 
 ### Caracteristicas planeadas
 
 - Posibilidad de luchar contra Esdras, aun estando en posesión del Escapulario Incompleto.
 - Una forma de obtener la Campanilla Petrificada en una partida normal (sin ascender), para así activar las misiones de las Amanecidas.
-- Una forma de obtener todas las cuentas de rosario que normalmente son recompensa de penitencia, para que puedan ser encontradas en una sola partida.
-- Posibilidad de elegir múltiples opciones en el altar de Penitencias, para combinar los efectos de varias penitencias, y poder completarlas en una sola partida.
 
 ### Notas importantes
 
