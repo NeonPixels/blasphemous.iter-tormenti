@@ -8,8 +8,8 @@
     <Product>Iter Tormenti</Product>
     <Authors>NeonPixels</Authors>
     <Company>NeonPixels</Company>
-    <Description>Allows for a NG+ first playthrough</Description>
-    <Version>0.1.1</Version>
+    <Description>Do everything in a single playthrough</Description>
+    <Version>0.2.0</Version>
 
     <TargetName>IterTormenti</TargetName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="Blasphemous.ModdingAPI" Version="2.1.0" />
+    <PackageReference Include="Blasphemous.Framework.Penitence" Version="0.2.0" />
     <PackageReference Include="Blasphemous.ModdingReferences" Version="4.0.67" />
   </ItemGroup>
 
@@ -44,7 +45,7 @@
     <Copy SourceFiles="@(DataFiles)" DestinationFolder="$(DevFolder)data\$(Product)" />
     <Copy SourceFiles="@(Levels)" DestinationFolder="$(DevFolder)levels\$(Product)" />
     <Copy SourceFiles="@(Localization)" DestinationFolder="$(DevFolder)localization" />
-
+    
     <!-- Export & zip all mod files -->
     <PropertyGroup>
       <ExportFolder>$(SolutionDir)publish\$(TargetName)\</ExportFolder>

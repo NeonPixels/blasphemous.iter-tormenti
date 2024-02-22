@@ -2,33 +2,26 @@ using Blasphemous.Framework.Penitence;
 using Framework.Managers;
 using Framework.Penitences;
 using Framework.Inventory;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Tools.Playmaker2.Action;
 using Gameplay.UI;
-using Gameplay.UI.Others.MenuLogic;
 
 
 namespace IterTormenti
 {
-    // TODO: Long penitence descriptions overflow the textbox when rejecting the penitence. Add scrollbar to that textbox?    
-
     /// <summary>
     /// Custom penitences that combine the effects of several other penitences
     /// </summary>
     public abstract class ComboPenitence : ModPenitence
     {
-
         protected override string Name => Main.IterTormenti.LocalizationHandler.Localize(Id + ".name");
 
         protected override string Description => Main.IterTormenti.LocalizationHandler.Localize(Id + ".desc");
-
-        protected override string ItemIdToGive => null; // Will be handled by GiveReward method
-
-        protected override InventoryManager.ItemType ItemTypeToGive => InventoryManager.ItemType.Bead; // Will be handled by GiveReward method
+        // TODO: Long descriptions overflow the "Abandon Penitence" text box.
 
         public List<IPenitence> Penitences = new();
-
+        public List<RewardItem> Rewards = new();
 
         public string id { get { return Id; } } // TODO: Temporary fix until base class gets public Id method
 
@@ -60,6 +53,24 @@ namespace IterTormenti
             }
         }
 
+
+        /// <summary>
+        /// Structure with the definition of reward items.
+        /// Needed because we don't have access to the items themselves
+        /// at initialization.
+        /// </summary>
+        public struct RewardItem
+        {
+            public RewardItem(string itemId, InventoryManager.ItemType itemType)
+            {
+                Id       = itemId;
+                ItemType = itemType;
+            }
+
+            public string Id {get;}
+            public InventoryManager.ItemType ItemType {get;}
+        }
+
         /// <summary>
         /// Mark the base penitences as completed
         /// </summary>
@@ -81,21 +92,16 @@ namespace IterTormenti
             }
         }
 
-        /// <summary>
-        /// Attempt to add the provided item collection to the player inventory.
-        /// For items that succeed, cue a popup notification.
-        /// Save game and exist FSM afterwards.
-        /// </summary>
-        /// <param name="fsmStateAction">FSM Action to complete</param>
-        /// <param name="rewards">Collection of items to add</param>
-        protected void GiveRewards( PenitenceCheckCurrent fsmStateAction,
-                                   List<BaseInventoryObject> rewards )
-        {
-            // Queue of items sucessfully added to inventory
-            Queue<BaseInventoryObject> addedItems = new();
+        public override IEnumerator Complete()
+        {            
+            yield return base.Complete();
 
-            foreach(BaseInventoryObject reward in rewards)
+            CompletePenitences();
+
+            foreach(RewardItem rewardDef in Rewards)
             {
+                BaseInventoryObject reward = Core.InventoryManager.GetBaseObject( rewardDef.Id, rewardDef.ItemType );
+
                 if(null == reward)
                 {
                     Main.IterTormenti.LogError("ComboPenitence::" + Id +"::GiveRewards: Invalid reward object found!");
@@ -107,93 +113,65 @@ namespace IterTormenti
                 {
                     continue;
                 }
-                
-                addedItems.Enqueue(reward);
-            }
 
-            // Reduce popup duration time based on total number of items, so the
-            // popups dissapear before returning to the main menu
-            float timePerPopUp = addedItems.Count > 0? 3f / addedItems.Count : 3f;
-                      
-            AwardPopUp();
-            
-            return;
-            
-            // --- Callback functions ---
-
-            void AwardPopUp()
-            {
-                PopUpWidget.OnDialogClose -= AwardPopUp;
-
-                if(addedItems.Count == 0)
-                {
-                    // No items have been added, so nothing left to do
-                    SaveAndFinish();
-                    return;
-                }
-
-                // Get next item we need to show a popup for
-                BaseInventoryObject award = addedItems.Dequeue();
-
-                // If we have item popups left to display, set the callback to cue another popup
-                // If we're on the last item, set the callback to save and finish
-                PopUpWidget.OnDialogClose += addedItems.Count > 0 ? AwardPopUp : SaveAndFinish;
+                yield return new WaitForEndOfFrame();
 
                 // Display item popup
                 UIController.instance.ShowObjectPopUp( UIController.PopupItemAction.GetObejct,
-                                                       award.caption,
-                                                       award.picture,
-                                                       award.GetItemType(),
-                                                       timePerPopUp,
+                                                       reward.caption,
+                                                       reward.picture,
+                                                       reward.GetItemType(),
+                                                       3f,
                                                        true );
-            }
 
-            // Save game and finish FSM Action
-            void SaveAndFinish()
-            {
-                PopUpWidget.OnDialogClose -= SaveAndFinish;
+                while (UIController.instance.IsShowingPopUp())
+                {
+                    yield return new WaitForEndOfFrame();
+                }
 
-                Core.Persistence.SaveGame(true);
-                fsmStateAction.Fsm.Event(fsmStateAction.noPenitenceActive);
-                fsmStateAction.Finish();    
+                // TODO: Next item briefly visible before current PopUp vanishes
+                //       Maybe a longer delay is needed between popups?
             }
         }
 
         protected abstract string Spritesheet { get; }
 
-        /// <summary>
-        /// Penitence sprite areas
-        /// </summary>
-        protected Rect[] penitenceSpriteAreas = { new Rect(  0,  0, 94, 110),
-                                                  new Rect( 95,  1, 92, 108),
-                                                  new Rect(190, 94, 16, 16),
-                                                  new Rect(190, 78, 16, 16),
-                                                  new Rect(190, 62, 16, 16),
-                                                  new Rect(188,  0, 18, 18) };
+        protected static Rect[] penitenceSpriteAreas = { new Rect(  0,  0, 94, 110),
+                                                         new Rect( 95,  1, 92, 108),
+                                                         new Rect(190, 94, 16, 16),
+                                                         new Rect(190, 78, 16, 16),
+                                                         new Rect(190, 62, 16, 16),
+                                                         new Rect(188,  0, 18, 18) };
 
-        protected override void LoadImages(out Sprite inProgress, out Sprite completed, out Sprite abandoned, out Sprite gameplay, out Sprite chooseSelected, out Sprite chooseUnselected)
+        protected PenitenceImageCollection LoadImages()
         {
+            PenitenceImageCollection imageCollection = new();
+
             if( Main.IterTormenti.FileHandler.LoadDataAsVariableSpritesheet(Spritesheet, penitenceSpriteAreas, out Sprite[] images) )
             {
-                chooseSelected   = images[0];
-                chooseUnselected = images[1];
-                inProgress       = images[2];
-                completed        = images[3];
-                abandoned        = images[4];
-                gameplay         = images[5];
+                imageCollection.ChooseSelected   = images[0];
+                imageCollection.ChooseUnselected = images[1];
+                imageCollection.InProgress       = images[2];
+                imageCollection.Completed        = images[3];
+                imageCollection.Abandoned        = images[4];
+                imageCollection.Gameplay         = images[5];
             }
             else
             {
-                chooseSelected   =
-                chooseUnselected =
-                inProgress       =
-                completed        =
-                abandoned        =
-                gameplay         = null;
+                imageCollection.ChooseSelected   =
+                imageCollection.ChooseUnselected =
+                imageCollection.InProgress       =
+                imageCollection.Completed        =
+                imageCollection.Abandoned        =
+                imageCollection.Gameplay         = null;
 
                 Main.IterTormenti.Log("Failed to load sprites for " + Id);
             }
+
+            return imageCollection;
         }
+
+        protected override PenitenceImageCollection Images => LoadImages();
     }
 
     /// <summary>
@@ -205,30 +183,20 @@ namespace IterTormenti
     {
         public PenitenceAB()
         {
-            Penitences = new List<IPenitence>{ new PenitencePE01(),
-                                               new PenitencePE02() };
+            Penitences = new(){
+                new PenitencePE01(),
+                new PenitencePE02()
+            };
+
+            Rewards = new(){
+                new RewardItem( "RB101", InventoryManager.ItemType.Bead ), // PE01 Reward
+                new RewardItem( "RB102", InventoryManager.ItemType.Bead )  // PE02 Reward
+            };
         }
 
         protected override string Id => "PE_IT_AB";
 
         protected override string Spritesheet => "PenitenceAB.png";
-
-        public override bool Complete(PenitenceCheckCurrent fsmStateAction)
-        {
-            CompletePenitences();
-
-            Core.PenitenceManager.MarkCurrentPenitenceAsCompleted();
-
-            List<BaseInventoryObject> rewards = new List<BaseInventoryObject>
-            {
-                Core.InventoryManager.GetBaseObject( "RB101", InventoryManager.ItemType.Bead ), // PE01 Reward
-                Core.InventoryManager.GetBaseObject( "RB102", InventoryManager.ItemType.Bead )  // PE02 Reward
-            };
-
-            GiveRewards(fsmStateAction, rewards);
-
-            return true;
-        }
     }
 
     /// <summary>
@@ -240,30 +208,20 @@ namespace IterTormenti
     {
         public PenitenceBC()
         {
-            Penitences = new List<IPenitence>{ new PenitencePE02(),
-                                               new PenitencePE03() };
+            Penitences = new List<IPenitence>{
+                new PenitencePE02(),
+                new PenitencePE03()
+            };
+
+            Rewards = new(){
+                new RewardItem( "RB102", InventoryManager.ItemType.Bead ), // PE02 Reward
+                new RewardItem( "RB103", InventoryManager.ItemType.Bead )  // PE03 Reward
+            };
         }
 
         protected override string Id => "PE_IT_BC";
 
         protected override string Spritesheet => "PenitenceBC.png";
-
-        public override bool Complete(PenitenceCheckCurrent fsmStateAction)
-        {
-            CompletePenitences();
-
-            Core.PenitenceManager.MarkCurrentPenitenceAsCompleted();
-
-            List<BaseInventoryObject> rewards = new List<BaseInventoryObject>
-            {
-                Core.InventoryManager.GetBaseObject( "RB102", InventoryManager.ItemType.Bead ), // PE02 Reward
-                Core.InventoryManager.GetBaseObject( "RB103", InventoryManager.ItemType.Bead )  // PE03 Reward
-            };
-
-            GiveRewards(fsmStateAction, rewards);
-
-            return true;
-        }
     }
 
     /// <summary>
@@ -275,30 +233,20 @@ namespace IterTormenti
     {
         public PenitenceCA()
         {
-            Penitences = new List<IPenitence>{ new PenitencePE03(),
-                                               new PenitencePE01() };
+            Penitences = new List<IPenitence>{
+                new PenitencePE03(),
+                new PenitencePE01()
+            };
+
+            Rewards = new(){
+                new RewardItem( "RB103", InventoryManager.ItemType.Bead ), // PE03 Reward
+                new RewardItem( "RB101", InventoryManager.ItemType.Bead )  // PE01 Reward
+            };
         }
 
         protected override string Id => "PE_IT_CA";
 
         protected override string Spritesheet => "PenitenceCA.png";
-
-        public override bool Complete(PenitenceCheckCurrent fsmStateAction)
-        {
-            CompletePenitences();
-
-            Core.PenitenceManager.MarkCurrentPenitenceAsCompleted();
-
-            List<BaseInventoryObject> rewards = new List<BaseInventoryObject>
-            {
-                Core.InventoryManager.GetBaseObject( "RB103", InventoryManager.ItemType.Bead ), // PE03 Reward
-                Core.InventoryManager.GetBaseObject( "RB101", InventoryManager.ItemType.Bead )  // PE01 Reward
-            };
-
-            GiveRewards(fsmStateAction, rewards);
-
-            return true;
-        }
     }
 
     /// <summary>
@@ -314,28 +262,17 @@ namespace IterTormenti
             Penitences = new List<IPenitence>{ new PenitencePE01(),
                                                new PenitencePE02(),
                                                new PenitencePE03() };
+
+            Rewards = new(){
+                new RewardItem( "RB101", InventoryManager.ItemType.Bead ), // PE01 Reward
+                new RewardItem( "RB102", InventoryManager.ItemType.Bead ), // PE02 Reward
+                new RewardItem( "RB103", InventoryManager.ItemType.Bead )  // PE03 Reward
+            };
         }
 
         protected override string Id => "PE_IT_ABC";
 
         protected override string Spritesheet => "PenitenceABC.png";
-        
-        public override bool Complete(PenitenceCheckCurrent fsmStateAction)
-        {
-            CompletePenitences();
-
-            Core.PenitenceManager.MarkCurrentPenitenceAsCompleted();
-            
-            List<BaseInventoryObject> rewards = new List<BaseInventoryObject>
-            {
-                Core.InventoryManager.GetBaseObject( "RB101", InventoryManager.ItemType.Bead ), // PE01 Reward
-                Core.InventoryManager.GetBaseObject( "RB102", InventoryManager.ItemType.Bead ), // PE02 Reward
-                Core.InventoryManager.GetBaseObject( "RB103", InventoryManager.ItemType.Bead )  // PE02 Reward
-            };
-
-            GiveRewards(fsmStateAction, rewards);
-
-            return true;
-        }
     }
+
 }
