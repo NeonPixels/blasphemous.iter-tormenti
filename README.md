@@ -38,11 +38,16 @@
 
 ## Installation
 
-Manual installation
-1. Download the latest release of the [Modding API](https://github.com/BrandenEK/Blasphemous-Modding-API/releases)
-2. Follow the instructions there on how to install the API
-3. Download the latest release of the mod from the [Releases](https://github.com/NeonPixels/blasphemous.iter-tormenti/releases) page
-4. Extract the contents of the `IterTormenti.zip` file into the `Modding` folder
+Mod Installer:
+- The mod can be installed via the [Blasphemous Modding Installer](https://github.com/BrandenEK/Blasphemous.Modding.Installer)
+
+Manual installation:
+1. Download the required release of the [Modding API](https://github.com/BrandenEK/Blasphemous-Modding-API/releases)
+2. Follow the instructions there on how to install the API, take note of the location of the `Modding` folder
+3. Download the required release of the [Penitence Framework](https://github.com/BrandenEK/Blasphemous.Framework.Penitence/releases)
+4. Extract the contents of the `PenitenceFramework.zip` file into the `Modding` folder
+5. Download the latest release of the mod from the [Releases](https://github.com/NeonPixels/blasphemous.iter-tormenti/releases) page
+6. Extract the contents of the `IterTormenti.zip` file into the `Modding` folder
 
 ---
 
@@ -76,7 +81,6 @@ Iter Tormenti (Path of Torment) is a modification (mod) for [Blasphemous](https:
 ### Important notes
 
 - Only works on the most current game version: `4.0.67`
-- Requires ModdingAPI version `2.1.0`
 
 ## Credits
 

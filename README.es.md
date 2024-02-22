@@ -20,7 +20,7 @@
 ## Tabla de Contenidos
 
 - [Enlaces](https://github.com/NeonPixels/blasphemous.iter-tormenti#enlaces)
-- [Instalación](https://github.com/NeonPixels/blasphemous.iter-tormenti#instalacion)<!-- - [Comandos disponibles](https://github.com/NeonPixels/blasphemous.iter-tormenti#comandos-disponibles) -->
+- [Instalación](https://github.com/NeonPixels/blasphemous.iter-tormenti#instalación)<!-- - [Comandos disponibles](https://github.com/NeonPixels/blasphemous.iter-tormenti#comandos-disponibles) -->
 - [Información del mod](https://github.com/NeonPixels/blasphemous.iter-tormenti#informacion-del-mod)
   - [Características actuales](https://github.com/NeonPixels/blasphemous.iter-tormenti#caracteristicas-actuales)
   - [Características planificadas](https://github.com/NeonPixels/blasphemous.iter-tormenti#caracteristicas-planificadas)
@@ -35,13 +35,18 @@
 
 ---
 
-## Instalacion
+## Instalación
+
+Instalador de Mods:
+- El mod puede ser instalado usando [Blasphemous Modding Installer](https://github.com/BrandenEK/Blasphemous.Modding.Installer)
 
 Instalación manual:
-1. Descarga la última entrega de la [Modding API](https://github.com/BrandenEK/Blasphemous-Modding-API/releases)
-2. Sigue las instrucciones allí sobre como instalar la API
-3. Descarga la ultima entrega del mod de la página de [Entregas](https://github.com/NeonPixels/blasphemous.iter-tormenti/releases)
-4. Descomprime los contenidos de el archivo `IterTormenti.zip` dentro de la carpeta `Modding`
+1. Descarga la versión requerida de la [Modding API](https://github.com/BrandenEK/Blasphemous-Modding-API/releases)
+2. Sigue las instrucciones allí sobre como instalar la API, toma nota de la ubicación de la carpeta `Modding`
+3. Descarga la versión requerida de la [Penitence Framework](https://github.com/BrandenEK/Blasphemous.Framework.Penitence/releases)
+4. Descomprime los contenidos de el archivo `PenitenceFramework.zip` dentro de la carpeta `Modding`
+5. Descarga la ultima entrega del mod de la página de [Entregas](https://github.com/NeonPixels/blasphemous.iter-tormenti/releases)
+6. Descomprime los contenidos de el archivo `IterTormenti.zip` dentro de la carpeta `Modding`
 
 ---
 
@@ -75,7 +80,6 @@ Iter Tormenti (Senda del Tormento) es una modificación (mod) de [Blasphemous](h
 ### Notas importantes
 
 - Solo funciona con la versión más reciente del juego: `4.0.67`
-- Requiere la versión `2.1.0` de la ModdingAPI
 
 ## Creditos
 
