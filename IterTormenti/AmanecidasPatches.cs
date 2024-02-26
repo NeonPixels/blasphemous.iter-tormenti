@@ -1,44 +1,10 @@
 using HarmonyLib;
-using Blasphemous.Framework.Levels;
 using Framework.Managers;
-using System;
 using Tools.Playmaker2.Action;
 using Gameplay.UI;
 
 namespace IterTormenti
 {
-    [HarmonyPatch(typeof(LevelFramework), "CheckCondition")]
-    public class LevelFrameworkCheckCondition_Patch
-    {
-        public static bool Postfix(bool originalResult, string condition)
-        {
-            if (string.IsNullOrEmpty(condition))
-                return originalResult;
-
-            int colon = condition.IndexOf(':');
-            string conditionType = condition.Substring(0, colon);
-            string conditionValue = condition.Substring(colon + 1);
-
-            if (conditionType == "gamemode")
-            {
-                GameModeManager.GAME_MODES gameMode;
-                try
-                {
-                    gameMode = (GameModeManager.GAME_MODES)Enum.Parse(typeof(GameModeManager.GAME_MODES), conditionValue);
-                }
-                catch(Exception)
-                {
-                    Main.IterTormenti.LogError("LevelFrameworkCheckCondition_Patch: Invalid game mode value: " + conditionValue);
-                    return originalResult;
-                }
-                
-                return Core.GameModeManager.IsCurrentMode(gameMode);
-            }
-            
-            return originalResult;
-        }
-    }
-
     [HarmonyPatch(typeof(CheckGameModeActive), nameof(CheckGameModeActive.OnEnter))]
     class CheckGameModeActiveOnEnter_Patch
     {
@@ -67,6 +33,7 @@ namespace IterTormenti
                 return true;
             }
 
+            // TODO: Using this to detect all FSMs doing the check during testing, remove when done
             UIController.instance.ShowPopUp( __instance.Owner.name + " is checking for NG+",
                                              "", 3f, false);
 
@@ -104,16 +71,20 @@ namespace IterTormenti
                 case "Deosgracias":
                 case "DeograciasControl":
                 {
-                    // There might be other Deosgracias controllers around, and this only applies to
-                    // this specific scene (Holy Line, over the Petrous entrance), so skip if we are 
-                    // somewhere else
-                    if( "D01Z01S01" != Core.LevelManager.currentLevel.LevelName ) return true;
+                    // TODO: Deogracias might only check NG+ give Amanecidas lore, so we might not need to
+                    //       add special conditions... investigating
+
+                    // // There might be other Deosgracias controllers around, and this only applies to
+                    // // this specific scene (Holy Line, over the Petrous entrance), so skip if we are 
+                    // // somewhere else
+                    // if(    "D01Z01S01" != Core.LevelManager.currentLevel.LevelName
+                    //     && "D08Z01S01" != Core.LevelManager.currentLevel.LevelName ) return true; // TODO: Allow check on bridge until we know what it does
 
                     // Until we've spoken with Jibrael, Deogracias won't show up anyway, so skip
                     if( !Core.Events.GetFlag("SANTOS_FIRSTCONVERSATION_DONE") ) return true;
                     
-                    // Once we're done with Deogracias and his bewilderment, we can skip
-                    if( Core.Events.GetFlag("DEOSGRACIAS_SANTOS_DONE") ) return true;
+                    // // Once we're done with Deogracias and his bewilderment, we can skip
+                    // if( Core.Events.GetFlag("DEOSGRACIAS_SANTOS_DONE") ) return true;
                     
                     break;
                 }
