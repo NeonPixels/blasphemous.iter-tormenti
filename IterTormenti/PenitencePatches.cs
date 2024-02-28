@@ -12,7 +12,7 @@ using UnityEngine.UI;
 
 namespace IterTormenti
 {
-    // Disable penitence completion medals for for combo penitences
+    // Disable penitence completion medals for combo penitences
     [HarmonyPatch(typeof(PenitenceSlot), "UpdateFromSavegameData")]
     class PenitenceSlotUpdateFromSavegameData_Patch
     {
