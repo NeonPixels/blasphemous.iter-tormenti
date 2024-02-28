@@ -1,7 +1,6 @@
 using HarmonyLib;
 using Framework.Managers;
 using Tools.Playmaker2.Action;
-using Gameplay.UI;
 
 namespace IterTormenti
 {
@@ -24,31 +23,18 @@ namespace IterTormenti
         /// <returns>'true' to return to the original method, 'false' to skip it</returns>
         public static bool Prefix(CheckGameModeActive __instance)
         {           
-            Main.IterTormenti.Log(LOG_HEADER + __instance.Owner.name + " is checking for game mode: " + __instance.mode.Value);
-            
             // Only care if the FSM is asking for NEW_GAME_PLUS
             if ( __instance.mode.Value != "NEW_GAME_PLUS" )
-            {                
-                Main.IterTormenti.Log(LOG_HEADER + "Only care if the FSM is asking for NEW_GAME_PLUS");
                 return true;
-            }
-
-            // TODO: Using this to detect all FSMs doing the check during testing, remove when done
-            UIController.instance.ShowPopUp( __instance.Owner.name + " is checking for NG+",
-                                             "", 3f, false);
-
 
             // Only perform these operations when playing in NEW_GAME
             if( Core.GameModeManager.GetCurrentGameMode() != GameModeManager.GAME_MODES.NEW_GAME )
-            {                
-                Main.IterTormenti.Log(LOG_HEADER + "Only perform these operations when playing in NEW_GAME");
                 return true;
-            }
 
             // Check the identity of the FSM asking for the gamemode, and act accordingly
             switch( __instance.Owner.name )
             {
-                case "LaudesTomb": // Manages the tomb breaking, should be enabled just like Jibrael
+                case "LaudesTomb": // Manages the glass tomb breaking, should be enabled just like Jibrael
                 case "Santos": // FSM that manages Jibrael encounters (Apparently, he was originally named Santos)
                 {
                     // If Petrous is closed, we don't want to bother Jibrael
@@ -71,34 +57,21 @@ namespace IterTormenti
                 case "Deosgracias":
                 case "DeograciasControl":
                 {
-                    // TODO: Deogracias might only check NG+ give Amanecidas lore, so we might not need to
-                    //       add special conditions... investigating
-
-                    // // There might be other Deosgracias controllers around, and this only applies to
-                    // // this specific scene (Holy Line, over the Petrous entrance), so skip if we are 
-                    // // somewhere else
-                    // if(    "D01Z01S01" != Core.LevelManager.currentLevel.LevelName
-                    //     && "D08Z01S01" != Core.LevelManager.currentLevel.LevelName ) return true; // TODO: Allow check on bridge until we know what it does
-
-                    // Until we've spoken with Jibrael, Deogracias won't show up anyway, so skip
+                    // Deogracias only checks NG+ to give Amanecidas lore, so once Jibrael has been spoken
+                    // to for the first time, we keep checking for his actions
                     if( !Core.Events.GetFlag("SANTOS_FIRSTCONVERSATION_DONE") ) return true;
-                    
-                    // // Once we're done with Deogracias and his bewilderment, we can skip
-                    // if( Core.Events.GetFlag("DEOSGRACIAS_SANTOS_DONE") ) return true;
-                    
+
+                    // TODO: Minor optimization, stop checking for Deogracias requests once his last conversation is done
+
                     break;
                 }
                 default:
                 {
-                    Main.IterTormenti.Log(LOG_HEADER + " '" + __instance.Owner.name + "'? Who art thou? Begone! To the default implementation with you!");
                     return true; // Who art thou? Begone! To the default implementation with you!
                 }
             }
 
-            // TODO: Amanecidas boss fights <- "AmanecidaBossLogic" does not call this method, nothing to do?
-            // TODO: Laudes combat <- Laudes doesn't care, combat starts if you enter her room, nothing to do?           
-
-            Main.IterTormenti.Log(LOG_HEADER + "DECEIVING");           
+            // The Amanecidas & Laudes boss fights don't care if we're on NG+ or not
 
             __instance.Fsm.Event(__instance.modeIsActive); // Tell falsehoods to the FSM
             __instance.Finish();

@@ -1,0 +1,13 @@
+{
+    "additions": [
+        {
+            "type": "item-ground",
+            "id": "QI106",
+            "position": {
+                "x": -1003.65,
+                "y": 14
+            },
+            "condition": "gamemode:NEW_GAME"
+        }
+    ]
+}
