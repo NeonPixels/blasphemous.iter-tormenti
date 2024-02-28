@@ -9,7 +9,7 @@
     <Authors>NeonPixels</Authors>
     <Company>NeonPixels</Company>
     <Description>Do everything in a single playthrough</Description>
-    <Version>0.3.0</Version>
+    <Version>0.3.1</Version>
 
     <TargetName>IterTormenti</TargetName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -39,7 +39,7 @@
 
     <!-- Copy plugin & resources to development folder -->
     <PropertyGroup>
-      <DevFolder>YOUR_MODDED_BLASPHEMOUS_PATH</DevFolder>
+      <DevFolder>YOUR_MODDED_BLASPHEMOUS_PATH\</DevFolder>
     </PropertyGroup>
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DevFolder)plugins" />
     <Copy SourceFiles="@(DataDlls)" DestinationFolder="$(DevFolder)data" />
