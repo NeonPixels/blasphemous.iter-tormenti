@@ -42,12 +42,24 @@ Mod Installer:
 - The mod can be installed via the [Blasphemous Modding Installer](https://github.com/BrandenEK/Blasphemous.Modding.Installer)
 
 Manual installation:
-1. Download the required release of the [Modding API](https://github.com/BrandenEK/Blasphemous-Modding-API/releases)
-2. Follow the instructions there on how to install the API, take note of the location of the `Modding` folder
-3. Download the required release of the [Penitence Framework](https://github.com/BrandenEK/Blasphemous.Framework.Penitence/releases)
-4. Extract the contents of the `PenitenceFramework.zip` file into the `Modding` folder
-5. Download the latest release of the mod from the [Releases](https://github.com/NeonPixels/blasphemous.iter-tormenti/releases) page
-6. Extract the contents of the `IterTormenti.zip` file into the `Modding` folder
+1. Check the requirements for the latest release of the mod from the [Releases](https://github.com/NeonPixels/blasphemous.iter-tormenti/releases) page
+2. Download the required release of the [Modding API](https://github.com/BrandenEK/Blasphemous-Modding-API/releases)
+3. Follow the instructions there on how to install the API, take note of the location of the `Modding` folder
+4. Download the required release of the [Penitence Framework](https://github.com/BrandenEK/Blasphemous.Framework.Penitence/releases)
+5. Extract the contents of the `PenitenceFramework.zip` file into the `Modding` folder
+6. Download the required release of the [Level Framework](https://github.com/BrandenEK/Blasphemous.Framework.Levels/releases)
+7. Extract the contents of the `LevelFramework.zip` file into the `Modding` folder
+8. Download the latest release of the mod from the [Releases](https://github.com/NeonPixels/blasphemous.iter-tormenti/releases) page
+9. Extract the contents of the `IterTormenti.zip` file into the `Modding` folder
+
+Manual removal:
+Remove the following files and folders from the `Modding` folder:
+- `plugins\IterTormenti.dll`
+- `data\Iter Tormenti\`
+- `levels\Iter Tormenti\`
+- `localitazion\Iter Tomenti.txt`
+
+<b>Note:</b> When manually updating the mod to a new version, it is recommended to manually remove the previous mod files first, as files that might have been removed from the mod release won't be removed automatically.
 
 ---
 
@@ -69,14 +81,19 @@ Iter Tormenti (Path of Torment) is a modification (mod) for [Blasphemous](https:
 ### Current features
 
 - Empty Save Slots can be ascended, thus beginning the game directly in True Torment mode, granting access to the Amanecidas questline, as well as the Penitence altar. Beware, as this mode presents a considerable challenge.
-- At the Penitece Altar, one of three new penitences can be selected, each combining the effects and rewards of two of the main penitences.
-- A fourth new penitence can instead be selected, which combines the effects and rewards of all three main penitences.
-- Completing the game with a combined penitence active will award completion of the penitences involved.
+- At the Penitece Altar, one of the following new penitences can be selected:
+  - `Penitence of the Bleeding Faith`: Combines the effects and rewards of the Bleeding Heart and the Unwavering Faith penitences.
+  - `Penitence of the Guilty Heart`: Combines the effects and rewards of the Bleeding Heart and the True Guilt penitences.
+  - `Penitence of the Unwavering Guilt`: Combines the effects and rewards of the Unwavering Faith and the True Guilt penitences.
+  - `Penitence of the Path of Torment`: Combines the effects and rewards of all three of the basic penitences.
+- Completing a combined penitence will also award completion of the penitences involved.
+- The Petrified Bell can now be obtained in a non-ascended playthrough, thus enabling the Amanecidas questline. Beware, as the Amanecidas are balanced for True Torment mode, and will pose a significant challenge in a non-Ascended game.
+
+<b>Note:</b> The current location of the Petrified Bell is a placeholder. It will be moved to a different location upon final mod release.
 
 ### Planned features
 
-- Ability to fight Esdras, even when in possesion of the Incomplete Scapular.
-- A way to obtain the Petrified Bell in a normal (not ascended) playthrough, thus enabling the Amanecidas questline.
+- Ability to, when in possesion of the Incomplete Scapular, choose to fight Esdras.
 
 ### Important notes
 
