@@ -4,8 +4,8 @@
             "type": "item-ground",
             "id": "QI106",
             "position": {
-                "x": -1003.65,
-                "y": 14
+                "x": -882.65,
+                "y": -3
             },
             "condition": "gamemode:NEW_GAME"
         }
