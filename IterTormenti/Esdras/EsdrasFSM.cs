@@ -11,6 +11,8 @@ using System;
 using Epic.OnlineServices.P2P;
 using System.Collections.Generic;
 
+using System.Diagnostics;
+
 namespace IterTormenti.Esdras
 {
     public abstract class FSMChanges
@@ -44,7 +46,7 @@ namespace IterTormenti.Esdras
                 return;
             }
 
-            // Have the three wounds been adquired?
+            // Have the three wounds been acquired?
             if(    !Core.Events.GetFlag("D01Z06S01_BOSSDEAD")
                 || !Core.Events.GetFlag("D02Z05S01_BOSSDEAD")
                 || !Core.Events.GetFlag("D03Z04S01_BOSSDEAD") )
@@ -105,8 +107,17 @@ namespace IterTormenti.Esdras
             // TODO: If there's an error, crash to the main menu or something? If any of these fail, and the others don't, we might get unstable behaviour
         }
 
+        /// <summary>
+        /// Update the EsdrasFightActivator FSM to perform the following actions:
+        ///     - Make sure that both the Bossfight and EsdrasNPC game objects are activated immediately.
+        /// </summary>
+        /// <returns>'true' if no errors happen, 'false' otherwise</returns>
         private static bool UpdateEsdrasFightActivator()
         {
+
+        #region Find Required Objects
+
+
             GameObject gameObject = GameObject.Find("EsdrasFightActivator");
             if(null == gameObject)
             {
@@ -135,10 +146,12 @@ namespace IterTormenti.Esdras
                 return false;
             }
 
-                
+
+        #endregion Find Required Objects
+        #region Build FSM States
+
+
             Main.IterTormenti.Log("Patching '" + gameObject.name + ":" + fsm.name + "' FSM...");
-
-
             
             FsmState activateEverything = new FsmState(fsm.Fsm);
             {
@@ -187,16 +200,56 @@ namespace IterTormenti.Esdras
             }
 
 
+        #endregion Build FSM States
+        #region Add States to FSM
+
+
             fsm.AddState(activateEverything);
+
+
+        #endregion Add States to FSM
+        #region Update FSM Workflow
+
 
             // Activate everything so they can operate in parallel
             fsm.ChangeGlobalTransition("ON LEVEL READY", activateEverything.Name);
-            
+
+
+        #endregion Update FSM Workflow
+
             return true;
         }
 
+        /// <summary>
+        /// Update the BossFight FSM to perform the following actions:
+        ///     - Wait for player collision as normal.
+        ///     - Set up bossfight as normal, EXCEPT the camera setup.
+        ///     - Ask EsdrasNPC FSM to set the camera. This is done because, if the camera is managed
+        ///       by BossFight FSM, once the GameObject is disabled, the camera resets, so camera management is
+        ///       deferred to EsdrasNPC's FSM.
+        ///     - Play the introduction to the fight normally, until Esdras performs his taunt
+        ///       (slams weapon on ground)
+        ///     - Initiate a dialog, allowing players to choose wether to fight Esdras or skip the fight.
+        ///     - If players choose to skip the fight, immediately replace the boss with the NPC, do any cleanup
+        ///       and switch over to the EsdrasNPC FSM.
+        ///     - If players choose to fight, continue normally until the deathblow.
+        ///     - Upon the boss dying, do the following:
+        ///         - Instantly replace it with the NPC version, on the same position and with an appropriate animation
+        ///           Note: The boss animations have to be overriden to avoid the death animation that makes Esdras explode.
+        ///         - Display the 'Requiem Aeternam' message.
+        ///     - Afterwards, do any cleanup and switch over to the EsdrasNPC FSM.        
+        ///     - Cleanup involves removing any input blocks that might've been enabled. EsdrasNPC FSM will manage its
+        ///       own input blockers.
+        ///     - Switching involves disabling the BossFight related GameObjects (BOSS_FIGHT_STUFF container), and asking
+        ///       EsdrasNPC FSM to start its workflow.
+        /// </summary>
+        /// <returns>'true' if no errors happen, 'false' otherwise</returns>
         private static bool UpdateBossFight()
         {
+
+        #region Find Required Objects
+
+
             GameObject gameObject = GameObject.Find("BossFight");
             if(null == gameObject)
             {
@@ -240,74 +293,63 @@ namespace IterTormenti.Esdras
             }
 
 
-            // Objects found! Start patching...
+        #endregion Find Required Objects
+        #region Build FSM States
+
             Main.IterTormenti.Log("Patching '" + gameObject.name + ":" + fsm.name + "' FSM...");
             
-            // Send Boss Triggered event
-            // FsmState bossTriggeredEvent = new FsmState(fsm.Fsm);
-            // {
-            //     bossTriggeredEvent.Name = "BOSS TRIGGERED";
 
-            //     SendEvent sendEventAction = new SendEvent();
-            //     {
-            //         FsmEvent bossStartEvent = new FsmEvent("ON ESDRAS BOSSFIGHT START");
-            //         bossStartEvent.IsGlobal = true;
+        #if DISABLED_CODE // TODO: This should work but doesn't, leaving as reference
+            // Send Bossfight Start event
+            FsmState bossTriggeredEvent = new FsmState(fsm.Fsm);
+            {
+                bossTriggeredEvent.Name = "BOSS TRIGGERED";
 
-            //         FsmEventTarget eventTarget = new FsmEventTarget();
-            //         {
-            //             FsmOwnerDefault target = new FsmOwnerDefault();
-            //             {                        
-            //                 FsmGameObject fsmGameObject = new FsmGameObject()
-            //                 {
-            //                     Value = esdrasNPC
-            //                 };
+                SendEvent sendEventAction = new SendEvent();
+                {
+                    FsmEvent bossStartEvent = new FsmEvent("ON ESDRAS BOSSFIGHT START");
+                    bossStartEvent.IsGlobal = true;
 
-            //                 target.OwnerOption = OwnerDefaultOption.SpecifyGameObject;
-            //                 target.GameObject = fsmGameObject;
-            //             }
+                    FsmEventTarget eventTarget = new FsmEventTarget();
+                    {
+                        FsmOwnerDefault target = new FsmOwnerDefault();
+                        {                        
+                            FsmGameObject fsmGameObject = new FsmGameObject()
+                            {
+                                Value = esdrasNPC
+                            };
 
-            //             eventTarget.target = FsmEventTarget.EventTarget.GameObjectFSM;
-            //             eventTarget.gameObject = target;
-            //         }
+                            target.OwnerOption = OwnerDefaultOption.SpecifyGameObject;
+                            target.GameObject = fsmGameObject;
+                        }
 
-            //         sendEventAction.sendEvent = bossStartEvent;
-            //         sendEventAction.eventTarget = eventTarget;
-            //     }
+                        eventTarget.target = FsmEventTarget.EventTarget.GameObjectFSM;
+                        eventTarget.gameObject = target;
+                    }
+
+                    sendEventAction.sendEvent = bossStartEvent;
+                    sendEventAction.eventTarget = eventTarget;
+                }
                 
-            //     bossTriggeredEvent.AddAction(sendEventAction);
-            // }
+                bossTriggeredEvent.AddAction(sendEventAction);
+            }
+        #endif //DISABLED_CODE
 
-            // Tell NPC to set camera boundaries
+            // Tell EsdrasNPC FSM to set camera boundaries
             FsmState deferSetCamera = new FsmState(fsm.Fsm);
             {
                 deferSetCamera.Name = "DeferSetCamera";
 
-                // SendEvent sendEventAction = new SendEvent();
-                // {
-                //     FsmEvent bossStartEvent = new FsmEvent("ON ESDRAS BOSSFIGHT START");
-                //     bossStartEvent.IsGlobal = true;
+                // NOTE: Since using events to trigger state changes in
+                //       other FSMs doesn't seem to work via code, we
+                //       are resorting to directly telling the FSM to
+                //       swith to an specific state.
+                //       If a way to make it work is found, it would
+                //       be preferable to issue an event signal and
+                //       have the remote FSM process it independently
+                //       instead of doing this.
+                //       See disabled code above
 
-                //     FsmEventTarget eventTarget = new FsmEventTarget();
-                //     {
-                //         FsmOwnerDefault target = new FsmOwnerDefault();
-                //         {                        
-                //             FsmGameObject fsmGameObject = new FsmGameObject()
-                //             {
-                //                 Value = esdrasNPC
-                //             };
-
-                //             target.OwnerOption = OwnerDefaultOption.SpecifyGameObject;
-                //             target.GameObject = fsmGameObject;
-                //         }
-
-                //         eventTarget.target = FsmEventTarget.EventTarget.GameObjectFSM;
-                //         eventTarget.gameObject = target;
-                //     }
-
-                //     sendEventAction.sendEvent = bossStartEvent;
-                //     sendEventAction.eventTarget = eventTarget;
-                // }
-                
                 CallMethod callMethod = new CallMethod();
                 {
                     var methodParams = new List<FsmVar>();
@@ -393,10 +435,13 @@ namespace IterTormenti.Esdras
                 cleanUp.AddAction(removeIntroInputBlock);                
             }
 
-            // Move EsdrasNPC to position of Boss
-            FsmState moveEsdrasNPC = new FsmState(fsm.Fsm); // PLACEHOLDER
+            // Move the different characters to their expected positions
+            //  - EsdrasNPC: Move to last position of Esdras boss, face TPO
+            //  - Perpetvua Apparition: Move to TPO position, face Esdras
+            //  - TPO: Face Esdras
+            FsmState moveCharacters = new FsmState(fsm.Fsm); // PLACEHOLDER
             {
-                moveEsdrasNPC.Name = "Move Esdras NPC";
+                moveCharacters.Name = "Move Characters";
                 // SetPosition setPosition = new SetPosition();
                 // {
                 //     FsmOwnerDefault target = new FsmOwnerDefault();
@@ -408,31 +453,24 @@ namespace IterTormenti.Esdras
                 //     setPosition.vector = null; // TODO
                 // }
 
-                // moveEsdrasNPC.AddAction(setPosition);
+                // moveCharacters.AddAction(setPosition);
             }
 
-            // Move Scapular Shine to position of Penitent (Needed?)
-            FsmState moveScapularShine = new FsmState(fsm.Fsm); // PLACEHOLDER
-            {
-                moveScapularShine.Name = "Move Scapular Shine";
-                // SetPosition setPosition = new SetPosition();
-                // {
-                //     FsmOwnerDefault target = new FsmOwnerDefault();
-                //     target.GameObject = new FsmGameObject(scapularShine);
-                //     target.OwnerOption = OwnerDefaultOption.SpecifyGameObject;
-
-                //     setPosition.gameObject = target;
-                //     setPosition.everyFrame = false;
-                //     setPosition.vector = null; // TODO
-                // }
-
-                // moveScapularShine.AddAction(setPosition);
-            }
 
             // Start NPC workflow
             FsmState startNPC = new FsmState(fsm.Fsm);
             {
                 startNPC.Name = "START NPC";
+
+
+                // NOTE: Since using events to trigger state changes in
+                //       other FSMs doesn't seem to work via code, we
+                //       are resorting to directly telling the FSM to
+                //       swith to an specific state.
+                //       If a way to make it work is found, it would
+                //       be preferable to issue an event signal and
+                //       have the remote FSM process it independently
+                //       instead of doing this.                
 
                 CallMethod callMethod = new CallMethod();
                 {
@@ -463,24 +501,6 @@ namespace IterTormenti.Esdras
             {
                 switchToNPC.Name = "SWITCH TO NPC";
                 
-                // SendEvent sendBossDoneEvent = new SendEvent();
-                // {
-                //     FsmEvent bossDoneEvent = new FsmEvent("ON ESDRAS BOSSFIGHT DONE")
-                //     {
-                //         IsGlobal = true
-                //     };
-
-                //     FsmEventTarget eventTarget = new FsmEventTarget()
-                //     {
-                //         target = FsmEventTarget.EventTarget.BroadcastAll
-                //     };
-
-                //     sendBossDoneEvent.sendEvent = bossDoneEvent;
-                //     sendBossDoneEvent.eventTarget = eventTarget;
-                // }
-
-                
-
                 ActivateGameObject deactivateBossStuff = new ActivateGameObject();
                 {
                     FsmOwnerDefault target = new FsmOwnerDefault();
@@ -500,12 +520,12 @@ namespace IterTormenti.Esdras
                     deactivateBossStuff.resetOnExit = false;
                 }
                 
-                //switchToNPC.AddAction(sendBossDoneEvent);                
                 switchToNPC.AddAction(deactivateBossStuff);
             }
 
 
-            // --- Add FSM States ---
+        #endregion Build FSM States
+        #region Add States to FSM
 
 
             //fsm.AddState(bossTriggeredEvent);
@@ -514,11 +534,11 @@ namespace IterTormenti.Esdras
             fsm.AddState(startNPC);
             fsm.AddState(switchToNPC);            
             fsm.AddState(cleanUp);
-            fsm.AddState(moveEsdrasNPC);
-            fsm.AddState(moveScapularShine);
+            fsm.AddState(moveCharacters);            
 
             
-            // --- UPDATE FSM FLOW ---
+        #endregion Add States to FSM
+        #region Update FSM Workflow
 
 
             // // Insert Boss Triggered Event
@@ -577,19 +597,14 @@ namespace IterTormenti.Esdras
                 guiltReset.ChangeTransition(FsmEvent.Finished.Name, cleanUp.Name);
             }
 
-            // Insert moveEsdrasNPC into flow
+            // Insert moveCharacters into flow
             {
-                cleanUp.AddTransition(FsmEvent.Finished.Name, moveEsdrasNPC.Name);
+                cleanUp.AddTransition(FsmEvent.Finished.Name, moveCharacters.Name);
             }
-
-            // // Insert moveScapularShine into flow
-            // {
-            //     moveEsdrasNPC.AddTransition(FsmEvent.Finished.Name, moveScapularShine.Name);
-            // }
 
             // Insert startNPC into flow
             {
-                moveEsdrasNPC.AddTransition(FsmEvent.Finished.Name, startNPC.Name);
+                moveCharacters.AddTransition(FsmEvent.Finished.Name, startNPC.Name);
             }  
 
             // Insert switchToNPC into flow
@@ -597,12 +612,31 @@ namespace IterTormenti.Esdras
                 startNPC.AddTransition(FsmEvent.Finished.Name, switchToNPC.Name);
             }           
 
+
+        #endregion Update FSM Workflow
+
             return true;
         }
 
+        /// <summary>
+        /// Update the EsdrasNPC FSM to perform the following actions:
+        ///     - On level load, just wait.
+        ///     - When requested, do the camera setup, and then wait.
+        ///     - When requested, start the Bridge workflow, with the following changes:
+        ///         - Apply input blockers.
+        ///         - Skip camera setup.
+        ///         - Make TPO face Esdras.
+        ///         - Move Perpetva's apparition to the position of the TPO, and make her face Esdras.
+        ///         - Make Esdras face TPO.
+        ///         - Skip directly to the point where Perpetva reveals herself.
+        ///     - Play the whole animation normally, including the item rewards and flag updates.
+        /// </summary>
+        /// <returns>'true' if no errors happen, 'false' otherwise</returns>
         private static bool UpdateEsdrasNPC()
         {
-            // Find required objects first
+
+        #region Find Required Objects
+
 
             GameObject gameObject = GameObject.Find("EsdrasNPC");
             if(null == gameObject)
@@ -619,6 +653,10 @@ namespace IterTormenti.Esdras
             }
 
 
+        #endregion Find Required Objects
+        #region Build FSM States
+
+
             Main.IterTormenti.Log("Patching '" + gameObject.name + ":" + fsm.name + "' FSM...");
 
 
@@ -627,37 +665,42 @@ namespace IterTormenti.Esdras
                 waitForBossfightStart.Name = "Wait for Bossfight trigger";
             }
 
-
             FsmState waitForBossfightEnd = new FsmState(fsm.Fsm);
             {
                 waitForBossfightEnd.Name = "Wait for Bossfight end";
             }
 
 
-            // --- Add States to FSM ---
+        #endregion Build FSM States
+        #region Add States to FSM
 
 
             fsm.AddState(waitForBossfightStart);
             fsm.AddState(waitForBossfightEnd);
 
 
-            // --- UPDATE FSM FLOW ---
+        #endregion Add States to FSM
+        #region Update FSM Workflow
 
-            
-            fsm.ChangeGlobalTransition("ON LEVEL READY", waitForBossfightStart.Name);
 
-            // Setup camera, it will be handled by this FSM, then wait for bossfight to end
+            // Initial state, the FSM will wait until activated
+            {                
+                fsm.ChangeGlobalTransition("ON LEVEL READY", waitForBossfightStart.Name);
+             
+                // TODO: This doesn't seem to work. Why?
+                // waitForBossfightStart.AddTransition("ON ESDRAS BOSSFIGHT START", "SetCamera");
+            }
+
+            // Move camera to position used for bossfight, then wait again until activated
             {
                 FsmState setCamera = fsm.GetState("SetCamera");
-
-                // waitForBossfightStart.AddTransition("ON ESDRAS BOSSFIGHT START", setCamera.Name);
-
-                setCamera.ChangeTransition(FsmEvent.Finished.Name, waitForBossfightEnd.Name);
+                setCamera.ChangeTransition(FsmEvent.Finished.Name, waitForBossfightEnd.Name);                
             }
 
             // We need to block input here to avoid having to manage input blocks across different FSMs, each
             // one should clear their own input blockers before ending.
             {
+                // TODO: This doesn't seem to work. Why?
                 // waitForBossfightEnd.AddTransition("ON ESDRAS BOSSFIGHT DONE", "BlockPlayerInput");
             }
 
@@ -674,9 +717,13 @@ namespace IterTormenti.Esdras
             }
 
 
+        #endregion Update FSM Workflow
+
             return true;
         }
 
+
+        [Conditional("DEBUG")]
         private static void DEVSTUFF()
         {
 
@@ -788,8 +835,6 @@ namespace IterTormenti.Esdras
             //     fsm.AddState(checkForScapular);
             // }
         }
-
-
         private static void PrintGameObjects(GameObject gameObject, string ident)
         {
             Main.IterTormenti.Log(ident + gameObject.name);
