@@ -9,6 +9,7 @@ using Framework.Managers;
 using Tools.PlayMaker.Action;
 using System;
 using Epic.OnlineServices.P2P;
+using System.Collections.Generic;
 
 namespace IterTormenti.Esdras
 {
@@ -120,63 +121,76 @@ namespace IterTormenti.Esdras
                 return false;
             }
 
-            // GameObject esdrasNPC = GameObject.Find("EsdrasNPC");
-            // if(null == esdrasNPC)
-            // {
-            //     Main.IterTormenti.LogError("Failed to patch 'EsdrasFightActivator': 'EsdrasNPC' object not found!");
-            //     return false;
-            // }
+            GameObject esdrasNPC = GameObject.Find("EsdrasNPC");
+            if(null == esdrasNPC)
+            {
+                Main.IterTormenti.LogError("Failed to patch 'EsdrasFightActivator': 'EsdrasNPC' object not found!");
+                return false;
+            }
 
-            // GameObject bossFightStuff = GameObject.Find("BOSS_FIGHT_STUFF");
-            // if(null == bossFightStuff)
-            // {
-            //     Main.IterTormenti.LogError("Failed to patch 'EsdrasFightActivator': 'BOSS_FIGHT_STUFF' object not found!");
-            //     return false;
-            // }
+            GameObject bossFightStuff = GameObject.Find("BOSS_FIGHT_STUFF");
+            if(null == bossFightStuff)
+            {
+                Main.IterTormenti.LogError("Failed to patch 'EsdrasFightActivator': 'BOSS_FIGHT_STUFF' object not found!");
+                return false;
+            }
 
                 
             Main.IterTormenti.Log("Patching '" + gameObject.name + ":" + fsm.name + "' FSM...");
 
 
             
-            // FsmState activateALL = new FsmState(fsm.Fsm);
-            // {
-            //     activateALL.Name = "TEST ACTIVATE ALL";
+            FsmState activateEverything = new FsmState(fsm.Fsm);
+            {
+                activateEverything.Name = "ActivateEverything";
                 
-            //     ActivateGameObject activateNPC = new ActivateGameObject();
-            //     {
-            //         FsmOwnerDefault target = new FsmOwnerDefault()
-            //         {
-            //             GameObject = new FsmGameObject(esdrasNPC),
-            //             OwnerOption = OwnerDefaultOption.SpecifyGameObject
-            //         };
+                ActivateGameObject activateNPC = new ActivateGameObject();
+                {
+                    FsmOwnerDefault target = new FsmOwnerDefault();
+                    {                        
+                        FsmGameObject fsmGameObject = new FsmGameObject()
+                        {
+                            Value = esdrasNPC
+                        };
 
-            //         activateNPC.gameObject = target;
-            //         activateNPC.activate = true;
-            //     }
+                        target.OwnerOption = OwnerDefaultOption.SpecifyGameObject;
+                        target.GameObject = fsmGameObject;
+                    }
 
-            //     ActivateGameObject activateBossStuff = new ActivateGameObject();
-            //     {
-            //         FsmOwnerDefault ownerDef = new FsmOwnerDefault()
-            //         {
-            //             GameObject = new FsmGameObject(bossFightStuff),
-            //             OwnerOption = OwnerDefaultOption.SpecifyGameObject
-            //         };
-                    
-            //         activateBossStuff.gameObject = ownerDef;
-            //         activateBossStuff.activate = true;
-            //     }
+                    activateNPC.gameObject = target;
+                    activateNPC.activate = true;
+                    activateNPC.recursive = false;
+                    activateNPC.resetOnExit = false;
+                }
+
+                ActivateGameObject activateBossStuff = new ActivateGameObject();
+                {
+                    FsmOwnerDefault target = new FsmOwnerDefault();
+                    {                        
+                        FsmGameObject fsmGameObject = new FsmGameObject()
+                        {
+                            Value = bossFightStuff
+                        };
+
+                        target.OwnerOption = OwnerDefaultOption.SpecifyGameObject;
+                        target.GameObject = fsmGameObject;
+                    }
+
+                    activateBossStuff.gameObject = target;
+                    activateBossStuff.activate = true;
+                    activateBossStuff.recursive = false;
+                    activateBossStuff.resetOnExit = false;
+                }
                 
-            //     activateALL.AddAction(activateNPC);
-            //     activateALL.AddAction(activateBossStuff);
-            // }
+                activateEverything.AddAction(activateNPC);
+                activateEverything.AddAction(activateBossStuff);
+            }
 
 
-            // fsm.AddState(activateALL);
+            fsm.AddState(activateEverything);
 
-            // Activate the bossfight directly
-            fsm.ChangeGlobalTransition("ON LEVEL READY", "ActivateEsdrasFight");
-            //activateALL.AddTransition("FINISHED", "");
+            // Activate everything so they can operate in parallel
+            fsm.ChangeGlobalTransition("ON LEVEL READY", activateEverything.Name);
             
             return true;
         }
@@ -230,25 +244,92 @@ namespace IterTormenti.Esdras
             Main.IterTormenti.Log("Patching '" + gameObject.name + ":" + fsm.name + "' FSM...");
             
             // Send Boss Triggered event
-            FsmState bossTriggeredEvent = new FsmState(fsm.Fsm);
+            // FsmState bossTriggeredEvent = new FsmState(fsm.Fsm);
+            // {
+            //     bossTriggeredEvent.Name = "BOSS TRIGGERED";
+
+            //     SendEvent sendEventAction = new SendEvent();
+            //     {
+            //         FsmEvent bossStartEvent = new FsmEvent("ON ESDRAS BOSSFIGHT START");
+            //         bossStartEvent.IsGlobal = true;
+
+            //         FsmEventTarget eventTarget = new FsmEventTarget();
+            //         {
+            //             FsmOwnerDefault target = new FsmOwnerDefault();
+            //             {                        
+            //                 FsmGameObject fsmGameObject = new FsmGameObject()
+            //                 {
+            //                     Value = esdrasNPC
+            //                 };
+
+            //                 target.OwnerOption = OwnerDefaultOption.SpecifyGameObject;
+            //                 target.GameObject = fsmGameObject;
+            //             }
+
+            //             eventTarget.target = FsmEventTarget.EventTarget.GameObjectFSM;
+            //             eventTarget.gameObject = target;
+            //         }
+
+            //         sendEventAction.sendEvent = bossStartEvent;
+            //         sendEventAction.eventTarget = eventTarget;
+            //     }
+                
+            //     bossTriggeredEvent.AddAction(sendEventAction);
+            // }
+
+            // Tell NPC to set camera boundaries
+            FsmState deferSetCamera = new FsmState(fsm.Fsm);
             {
-                bossTriggeredEvent.Name = "BOSS TRIGGERED";
-                
-                FsmEvent bossStartEvent = new FsmEvent("ON ESDRAS BOSSFIGHT START");
-                bossStartEvent.IsGlobal = true;
+                deferSetCamera.Name = "DeferSetCamera";
 
-                FsmEventTarget eventTarget = new FsmEventTarget()
-                {
-                    target = FsmEventTarget.EventTarget.BroadcastAll
-                };
+                // SendEvent sendEventAction = new SendEvent();
+                // {
+                //     FsmEvent bossStartEvent = new FsmEvent("ON ESDRAS BOSSFIGHT START");
+                //     bossStartEvent.IsGlobal = true;
 
-                SendEvent sendEvent = new SendEvent()
-                {
-                    sendEvent = bossStartEvent,
-                    eventTarget = eventTarget
-                };
+                //     FsmEventTarget eventTarget = new FsmEventTarget();
+                //     {
+                //         FsmOwnerDefault target = new FsmOwnerDefault();
+                //         {                        
+                //             FsmGameObject fsmGameObject = new FsmGameObject()
+                //             {
+                //                 Value = esdrasNPC
+                //             };
+
+                //             target.OwnerOption = OwnerDefaultOption.SpecifyGameObject;
+                //             target.GameObject = fsmGameObject;
+                //         }
+
+                //         eventTarget.target = FsmEventTarget.EventTarget.GameObjectFSM;
+                //         eventTarget.gameObject = target;
+                //     }
+
+                //     sendEventAction.sendEvent = bossStartEvent;
+                //     sendEventAction.eventTarget = eventTarget;
+                // }
                 
-                bossTriggeredEvent.AddAction(sendEvent);
+                CallMethod callMethod = new CallMethod();
+                {
+                    var methodParams = new List<FsmVar>();
+                    {
+                        FsmString value = "SetCamera";
+                        FsmVar param = new FsmVar(value);
+
+                        methodParams.Add(param);
+                    }
+                    
+                    FsmObject target = new FsmObject()
+                    {
+                        Value = esdrasNpcFSM,
+                        ObjectType = esdrasNpcFSM.GetType()
+                    };
+                    
+                    callMethod.behaviour = target;
+                    callMethod.methodName = "SetState";
+                    callMethod.parameters = methodParams.ToArray();
+                }
+
+                deferSetCamera.AddAction(callMethod);
             }
 
             
@@ -272,12 +353,12 @@ namespace IterTormenti.Esdras
             // Cleanup removes bosss stuff, but doesn't change camera, as the NPC portion will do that
             // It also disables the INTRO input blocker, in case the player chose to show the scapular,
             // and the blocker wasn't removed before the fight            
-            FsmState cleanUp = new FsmState(fsm.GetState("Give control back")); // Duplicate existing state
+            FsmState cleanUp = new FsmState(fsm.Fsm);//fsm.GetState("Give control back")); // Duplicate existing state
             {
                 cleanUp.Name = "Clean up";
                 
                 // Remove camera repositioning action, which is of type 'CallMethod'
-                cleanUp.RemoveAction( cleanUp.GetIndexOfFirstActionOfType<CallMethod>() );
+                // cleanUp.RemoveAction( cleanUp.GetIndexOfFirstActionOfType<CallMethod>() );
 
                 InputBlock removeBossDiedInputBlock = new InputBlock()
                 {
@@ -290,6 +371,23 @@ namespace IterTormenti.Esdras
                     inputBlockName = "INTRO",
                     active = false
                 };
+
+                // SetProperty disableBoss = new SetProperty();
+                // {
+                //     FsmProperty target = new FsmProperty();
+                //     {
+                //         FsmObject targetObject = new FsmObject()
+                //         {
+                //             Value = bossFightStuff,
+                //             ObjectType = bossFightStuff.GetType()
+                //         };
+
+                //         target.TargetObject = targetObject;
+                //         target.TargetType   = targetObject.GetType();
+                //         target.PropertyName = "active";
+                //         target.PropertyName = "System.Boolean";
+                //     }
+                // }
 
                 cleanUp.AddAction(removeBossDiedInputBlock);
                 cleanUp.AddAction(removeIntroInputBlock);                
@@ -331,62 +429,78 @@ namespace IterTormenti.Esdras
                 // moveScapularShine.AddAction(setPosition);
             }
 
+            // Start NPC workflow
+            FsmState startNPC = new FsmState(fsm.Fsm);
+            {
+                startNPC.Name = "START NPC";
+
+                CallMethod callMethod = new CallMethod();
+                {
+                    var methodParams = new List<FsmVar>();
+                    {
+                        FsmString value = "BlockPlayerInput";
+                        FsmVar param = new FsmVar(value);
+
+                        methodParams.Add(param);
+                    }
+                    
+                    FsmObject target = new FsmObject()
+                    {
+                        Value = esdrasNpcFSM,
+                        ObjectType = esdrasNpcFSM.GetType()
+                    };
+                    
+                    callMethod.behaviour = target;
+                    callMethod.methodName = "SetState";
+                    callMethod.parameters = methodParams.ToArray();
+                }
+
+                startNPC.AddAction(callMethod);
+            }
+
             // Switch to NPC
             FsmState switchToNPC = new FsmState(fsm.Fsm);
             {
                 switchToNPC.Name = "SWITCH TO NPC";
                 
-                ActivateGameObject activateNPC = new ActivateGameObject();
-                {
-                    activateNPC.activate = true;
-                    FsmOwnerDefault target = new FsmOwnerDefault();
-                    target.GameObject = new FsmGameObject(esdrasNPC);
-                    target.OwnerOption = OwnerDefaultOption.SpecifyGameObject;
-
-                    activateNPC.gameObject = target;
-                }
-
-                // CallMethod callMethod = new CallMethod();
+                // SendEvent sendBossDoneEvent = new SendEvent();
                 // {
-                //     FsmString value = "BlockPlayerInput";
-                //     FsmVar param = new FsmVar(value);
+                //     FsmEvent bossDoneEvent = new FsmEvent("ON ESDRAS BOSSFIGHT DONE")
+                //     {
+                //         IsGlobal = true
+                //     };
 
-                //     callMethod.behaviour = new FsmObject(esdrasNPC);
-                //     callMethod.methodName = "SetState";
-                //     callMethod.parameters = new FsmVar[] { param };
+                //     FsmEventTarget eventTarget = new FsmEventTarget()
+                //     {
+                //         target = FsmEventTarget.EventTarget.BroadcastAll
+                //     };
+
+                //     sendBossDoneEvent.sendEvent = bossDoneEvent;
+                //     sendBossDoneEvent.eventTarget = eventTarget;
                 // }
 
-                SendEvent sendBossDoneEvent = new SendEvent();
-                {
-                    FsmEvent bossDoneEvent = new FsmEvent("ON ESDRAS BOSSFIGHT DONE")
-                    {
-                        IsGlobal = true
-                    };
-
-                    FsmEventTarget eventTarget = new FsmEventTarget()
-                    {
-                        target = FsmEventTarget.EventTarget.BroadcastAll
-                    };
-
-                    sendBossDoneEvent.sendEvent = bossDoneEvent;
-                    sendBossDoneEvent.eventTarget = eventTarget;
-                }
+                
 
                 ActivateGameObject deactivateBossStuff = new ActivateGameObject();
                 {
-                    FsmOwnerDefault ownerDef = new FsmOwnerDefault()
-                    {
-                        GameObject = new FsmGameObject(bossFightStuff),
-                        OwnerOption = OwnerDefaultOption.SpecifyGameObject
-                    };
-                    
-                    deactivateBossStuff.gameObject = ownerDef;
+                    FsmOwnerDefault target = new FsmOwnerDefault();
+                    {                        
+                        FsmGameObject fsmGameObject = new FsmGameObject()
+                        {
+                            Value = bossFightStuff
+                        };
+
+                        target.OwnerOption = OwnerDefaultOption.SpecifyGameObject;
+                        target.GameObject = fsmGameObject;
+                    }
+
+                    deactivateBossStuff.gameObject = target;
                     deactivateBossStuff.activate = false;
+                    deactivateBossStuff.recursive = true;
+                    deactivateBossStuff.resetOnExit = false;
                 }
                 
-                switchToNPC.AddAction(activateNPC);
-                // switchToNPC.AddAction(callMethod);
-                switchToNPC.AddAction(sendBossDoneEvent);
+                //switchToNPC.AddAction(sendBossDoneEvent);                
                 switchToNPC.AddAction(deactivateBossStuff);
             }
 
@@ -394,9 +508,11 @@ namespace IterTormenti.Esdras
             // --- Add FSM States ---
 
 
-            fsm.AddState(bossTriggeredEvent);
+            //fsm.AddState(bossTriggeredEvent);
+            fsm.AddState(deferSetCamera);
             fsm.AddState(choiceDialog);
-            fsm.AddState(switchToNPC);
+            fsm.AddState(startNPC);
+            fsm.AddState(switchToNPC);            
             fsm.AddState(cleanUp);
             fsm.AddState(moveEsdrasNPC);
             fsm.AddState(moveScapularShine);
@@ -405,20 +521,28 @@ namespace IterTormenti.Esdras
             // --- UPDATE FSM FLOW ---
 
 
-            // Insert Boss Triggered Event
+            // // Insert Boss Triggered Event
+            // {
+            //     FsmState blockPlayerInput = fsm.GetState("BlockPlayerInput");
+            //     blockPlayerInput.ChangeTransition(FsmEvent.Finished.Name, bossTriggeredEvent.Name);
+
+            //     bossTriggeredEvent.AddTransition(FsmEvent.Finished.Name, "Wait 3");
+            // }
+
+            // Insert Defer Set Camera
             {
                 FsmState blockPlayerInput = fsm.GetState("BlockPlayerInput");
-                blockPlayerInput.ChangeTransition(FsmEvent.Finished.Name, bossTriggeredEvent.Name);
+                blockPlayerInput.ChangeTransition(FsmEvent.Finished.Name, deferSetCamera.Name);
 
-                bossTriggeredEvent.AddTransition(FsmEvent.Finished.Name, "Wait 3");
+                deferSetCamera.AddTransition(FsmEvent.Finished.Name, "Wait 3");
             }
 
             // Insert dialog into flow
             {
                 FsmState introWait = fsm.GetState("IntroWait");
-                introWait.ChangeTransition(FsmEvent.Finished.Name, cleanUp.Name);//choiceDialog.Name);
+                introWait.ChangeTransition(FsmEvent.Finished.Name, choiceDialog.Name);
                 
-                //choiceDialog.AddTransition(FsmEvent.Finished.Name, cleanUp.Name); // PLACEHOLDER
+                choiceDialog.AddTransition(FsmEvent.Finished.Name, "StartBossfight");//cleanUp.Name); // PLACEHOLDER
                 // choiceDialog.AddTransition("Assent", "Clean up");
                 // choiceDialog.AddTransition("Dissent", "StartBossfight");
             }
@@ -441,6 +565,12 @@ namespace IterTormenti.Esdras
                 showMessage.ChangeTransition(FsmEvent.Finished.Name, "Is guilt >0?");
             }
 
+            // Update guitl check 'No' transition
+            {
+                FsmState guiltCheck = fsm.GetState("Is guilt >0?");
+                guiltCheck.ChangeTransition("No", cleanUp.Name);
+            }
+
             // Insert cleanup into flow
             {
                 FsmState guiltReset = fsm.GetState("Guilt reset");
@@ -452,14 +582,19 @@ namespace IterTormenti.Esdras
                 cleanUp.AddTransition(FsmEvent.Finished.Name, moveEsdrasNPC.Name);
             }
 
-            // Insert moveScapularShine into flow
+            // // Insert moveScapularShine into flow
+            // {
+            //     moveEsdrasNPC.AddTransition(FsmEvent.Finished.Name, moveScapularShine.Name);
+            // }
+
+            // Insert startNPC into flow
             {
-                moveEsdrasNPC.AddTransition(FsmEvent.Finished.Name, moveScapularShine.Name);
-            }
+                moveEsdrasNPC.AddTransition(FsmEvent.Finished.Name, startNPC.Name);
+            }  
 
             // Insert switchToNPC into flow
             {
-                moveEsdrasNPC.AddTransition(FsmEvent.Finished.Name, switchToNPC.Name);
+                startNPC.AddTransition(FsmEvent.Finished.Name, switchToNPC.Name);
             }           
 
             return true;
@@ -515,7 +650,7 @@ namespace IterTormenti.Esdras
             {
                 FsmState setCamera = fsm.GetState("SetCamera");
 
-                waitForBossfightStart.AddTransition("ON ESDRAS BOSSFIGHT START", setCamera.Name);
+                // waitForBossfightStart.AddTransition("ON ESDRAS BOSSFIGHT START", setCamera.Name);
 
                 setCamera.ChangeTransition(FsmEvent.Finished.Name, waitForBossfightEnd.Name);
             }
@@ -523,7 +658,7 @@ namespace IterTormenti.Esdras
             // We need to block input here to avoid having to manage input blocks across different FSMs, each
             // one should clear their own input blockers before ending.
             {
-                waitForBossfightEnd.AddTransition("ON ESDRAS BOSSFIGHT DONE", "BlockPlayerInput");
+                // waitForBossfightEnd.AddTransition("ON ESDRAS BOSSFIGHT DONE", "BlockPlayerInput");
             }
 
             // Skip camera setup, it has already been done

@@ -407,6 +407,40 @@ namespace IterTormenti.Playmaker
             // }
         }
     }
+
+    namespace FSM
+    {
+        using HutongGames.PlayMaker;
+
+        [HarmonyPatch]
+        public class SwitchState_Patch
+        {
+            [HarmonyPatch(typeof(HutongGames.PlayMaker.Fsm), "SwitchState")]
+            public static bool Prefix(  ref Fsm __instance )
+            {
+                if(    __instance.GameObjectName.Equals("EsdrasFightActivator")
+                    || __instance.GameObjectName.Equals("BossFight")
+                    || __instance.GameObjectName.Equals("EsdrasNPC") )
+                {
+                    Main.IterTormenti.Log($"{__instance.GameObjectName}::{__instance.Name} SwitchState Prefix: ActiveState: {__instance.ActiveStateName} ==>");
+                }
+                
+                return true;
+            }
+
+            [HarmonyPatch(typeof(HutongGames.PlayMaker.Fsm), "SwitchState")]
+            public static void Postfix(ref Fsm __instance )
+            {
+                if(    __instance.GameObjectName.Equals("EsdrasFightActivator")
+                    || __instance.GameObjectName.Equals("BossFight")
+                    || __instance.GameObjectName.Equals("EsdrasNPC") )
+                {
+                    Main.IterTormenti.Log($"{__instance.GameObjectName}::{__instance.Name} SwitchState Postfix: ActiveState: {__instance.ActiveStateName} <==");
+                }
+            }
+        }
+
+    }
 	
 }
 
