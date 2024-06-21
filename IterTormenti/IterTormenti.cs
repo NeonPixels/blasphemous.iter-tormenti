@@ -78,7 +78,10 @@ namespace IterTormenti
             if(newLevel == "D08Z01S01") // Bridge
             {
                 Esdras.FSMChanges.Apply();
+
+                Test.Load();//out spriteTestGO);
             }
         }
+
     }
 }

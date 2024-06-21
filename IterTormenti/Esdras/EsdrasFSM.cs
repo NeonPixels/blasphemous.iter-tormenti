@@ -12,6 +12,8 @@ using Epic.OnlineServices.P2P;
 using System.Collections.Generic;
 
 using System.Diagnostics;
+using UnityEngine.SceneManagement;
+using IterTormenti.FSMUtils;
 
 namespace IterTormenti.Esdras
 {
@@ -25,6 +27,7 @@ namespace IterTormenti.Esdras
             // We need to override FSM behaviour ONLY when the Esdras fight is to be skipped by the Incomplete Scapular,
             // as such, check first if the conditions match, and exit if not:
 
+#if DISABLED_FOR_TESTING // TODO: Re-enable
             // Esdras already down?
             if( Core.Events.GetFlag("D08Z01S01_BOSSDEAD") )
             {
@@ -54,6 +57,7 @@ namespace IterTormenti.Esdras
                 Main.IterTormenti.Log("IterTormenti.Esdras.FSMChanges.Apply: Esdras can't be fought yet! Ending execution");
                 return;
             }
+#endif // DISABLED_FOR_TESTING
 
             // At this point, we are ready to start the modified encounter, so we modify the FSMs to directly go to the state we need.
             // We can skip any decision states that do not apply.
@@ -66,13 +70,16 @@ namespace IterTormenti.Esdras
             // Afterwards, regardless of choice, the animation where Esdras reacts to Perpetva plays normally, and items are awarded.
 
             // GameObjects:
-            // These are the GameObjects that we need to modify:
-            //  -EsdrasFightActivator:  Active when entering the scene, its FSM will decide whether to enable/disable the other two GameObjects depending on conditions.
-            //  -EsdrasNPC: This manages all Esdras NPC interactions across the entire game. The FSM determines which animations/actions to perform based on active scene
-            //              and conditions.
-            //              This contains the animation frames used for Esdras reacting to Perpetvua (dropping his weapon, kneeling), so we can't just use the BossFight
-            //              below, and need to use this.
-            //  -BossFight: This manages the BossFight itself, playing the intro animations, activating the fight, and doing cleanup aftwerwards.
+            // These are the GameObjects containing the FSMs that we need to modify, all of them contained in the 'D08Z01S01_LOGIC' scene:
+            //  -LOGIC/SCRIPTS/EsdrasFightActivator:
+            //      Active when entering the scene, its FSM will decide whether to enable/disable the other two GameObjects depending on conditions.
+            //  -CHARACTERS/NPCs/EsdrasNPC:
+            //      This manages all Esdras NPC interactions across the entire game. The FSM determines which animations/actions to perform based on active scene
+            //      and conditions.
+            //      This contains the animation frames used for Esdras reacting to Perpetvua (dropping his weapon, kneeling), so we can't just use the BossFight
+            //      below, and need to use this.
+            //  -CHARACTERS/BOSS_FIGHT_STUFF/BossFight:
+            //      This manages the BossFight itself, playing the intro animations, activating the fight, and doing cleanup aftwerwards.
 
 
             // Modifications:
@@ -234,7 +241,7 @@ namespace IterTormenti.Esdras
         ///       and switch over to the EsdrasNPC FSM.
         ///     - If players choose to fight, continue normally until the deathblow.
         ///     - Upon the boss dying, do the following:
-        ///         - Instantly replace it with the NPC version, on the same position and with an appropriate animation
+        ///         - Instantly replace it with the NPC version, on the same position and with an appropriate animation // TODO
         ///           Note: The boss animations have to be overriden to avoid the death animation that makes Esdras explode.
         ///         - Display the 'Requiem Aeternam' message.
         ///     - Afterwards, do any cleanup and switch over to the EsdrasNPC FSM.        
@@ -275,13 +282,6 @@ namespace IterTormenti.Esdras
             if(null == esdrasNpcFSM)
             {
                 Main.IterTormenti.LogError("Failed to patch 'BossFight': EsdrasNPC FSM object not found!");
-                return false;
-            }
-
-            GameObject scapularShine = GameObject.Find("Scapular Shine");
-            if(null == scapularShine)
-            {
-                Main.IterTormenti.LogError("Failed to patch 'BossFight': 'Scapular Shine' object not found!");
                 return false;
             }
 
@@ -620,14 +620,18 @@ namespace IterTormenti.Esdras
 
         /// <summary>
         /// Update the EsdrasNPC FSM to perform the following actions:
-        ///     - On level load, just wait.
+        ///     - On level load:
+        ///         - Make the Esdras sprite invisible. // TODO
+        ///         - Attach the position of the PerpetvaAppears sprite to the Penitent. // TODO
+        ///         - Attach the position of the Esdras NPC sprite to the Boss position. // TODO
+        ///         - just wait.
         ///     - When requested, do the camera setup, and then wait.
+        ///     - When requested, make Esdras sprite visible at a given position, with an appropriate animation. // TODO: Attach NPC sprite to boss?
         ///     - When requested, start the Bridge workflow, with the following changes:
         ///         - Apply input blockers.
         ///         - Skip camera setup.
-        ///         - Make TPO face Esdras.
-        ///         - Move Perpetva's apparition to the position of the TPO, and make her face Esdras.
-        ///         - Make Esdras face TPO.
+        ///         - Make TPO face Esdras.  // TODO
+        ///         - Make Esdras face TPO. // TODO
         ///         - Skip directly to the point where Perpetva reveals herself.
         ///     - Play the whole animation normally, including the item rewards and flag updates.
         /// </summary>
@@ -652,6 +656,22 @@ namespace IterTormenti.Esdras
                 return false;
             }
 
+            GameObject perpetvaAppears = null;
+            foreach ( var go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) )
+            {
+                if(null == go) continue;
+                if(typeof(GameObject) != go.GetType()) continue;
+                if(!go.name.Equals("PerpetvaAppears_SimpleVFX")) continue;
+
+                perpetvaAppears = go as GameObject;
+                break;
+            }
+            if(null == perpetvaAppears)
+            {
+                Main.IterTormenti.LogError("Failed to patch 'BossFight': 'PerpetvaAppears_SimpleVFX' object not found!");
+                return false;
+            }
+
 
         #endregion Find Required Objects
         #region Build FSM States
@@ -660,14 +680,59 @@ namespace IterTormenti.Esdras
             Main.IterTormenti.Log("Patching '" + gameObject.name + ":" + fsm.name + "' FSM...");
 
 
+            // Wait until the Penitent object is in the scene
+            FsmState waitForPenitent = new FsmState(fsm.Fsm);
+            {
+                waitForPenitent.Name = "Wait for Penitent";
+
+                fsm.AddVariable<FsmGameObject>("Penitent");
+
+                WaitForGameObject waitForObject = new WaitForGameObject()
+                {
+                    withTag = "Penitent",
+                    store = fsm.GetVariable<FsmGameObject>("Penitent")
+                };
+
+                waitForPenitent.AddAction(waitForObject);
+            }
+
+            // Attach Perpetva position to Penitent position
+            FsmState attachPerpetvaToPenitent = new FsmState(fsm.Fsm);
+            {
+                attachPerpetvaToPenitent.Name = "Attach Perpetva to Penitent";
+                //TODO
+            }
+
+            // Attach NPC to Boss
+            FsmState attachNpcToBoss = new FsmState(fsm.Fsm);
+            {
+                attachNpcToBoss.Name = "Attach NPC to Boss";
+                //TODO
+            }
+
+            // Dettach NPC from Boss
+            FsmState dettachNpcFromBoss = new FsmState(fsm.Fsm);
+            {
+                attachNpcToBoss.Name = "Dettach NPC from Boss";
+                //TODO
+            }
+
             FsmState waitForBossfightStart = new FsmState(fsm.Fsm);
             {
-                waitForBossfightStart.Name = "Wait for Bossfight trigger";
+                waitForBossfightStart.Name = "Wait for Bossfight start";
             }
 
             FsmState waitForBossfightEnd = new FsmState(fsm.Fsm);
             {
                 waitForBossfightEnd.Name = "Wait for Bossfight end";
+            }
+
+            // Updates the facing of Esdras and the Penitent
+            // Note: Perpetva is already facing the same direction as the Penitent
+            FsmState updateFacing = new FsmState(fsm.Fsm);
+            {
+                updateFacing.Name = "Update Facing";
+                //TODO
             }
 
 
@@ -733,6 +798,12 @@ namespace IterTormenti.Esdras
             Main.IterTormenti.Log("Flag 'D08Z01S01_BOSSDEAD': " + (Core.Events.GetFlag("D01Z06S01_BOSSDEAD")?"TRUE":"FALSE"));
             Main.IterTormenti.Log("Flag 'D08Z01S01_BOSSDEAD': " + (Core.Events.GetFlag("D02Z05S01_BOSSDEAD")?"TRUE":"FALSE"));
             Main.IterTormenti.Log("Flag 'D08Z01S01_BOSSDEAD': " + (Core.Events.GetFlag("D03Z04S01_BOSSDEAD")?"TRUE":"FALSE"));
+
+
+
+            //ExportFsm( GameObject.Find("Scapular Shine") );
+            
+
 
             // Log all FSMs
             // Scene loadedScene = SceneManager.GetSceneByName(newLevel + "_LOGIC");
@@ -843,13 +914,30 @@ namespace IterTormenti.Esdras
             foreach(PlayMakerFSM playMakerFSM in components)
             {
                 Main.IterTormenti.Log(ident + " FSM: " + playMakerFSM.FsmName);
-
-                
             }
 
             for (int idx = 0; idx < gameObject.transform.childCount; idx++)
             {
                 PrintGameObjects(gameObject.transform.GetChild(idx).gameObject, ident + " ");
+            }
+        }
+
+        private static void ExportFsm(GameObject gameObject)
+        {
+            if(null == gameObject) return;
+            
+            foreach (PlayMakerFSM fsm in PlayMakerFSM.FsmList)
+            {
+                if (fsm == null || fsm.gameObject != gameObject)
+                {
+                    continue;
+                }
+
+                Main.IterTormenti.Log($"Exporting {gameObject.name}::{fsm.FsmName} as '{fsm.gameObject.name}-{fsm.FsmName}.json'");
+
+
+                Main.Instance.StartCoroutine( fsm.SerializeIntoJsonFileCoroutine() );
+                // fsm.SerializeIntoJsonFile();
             }
         }
     }
