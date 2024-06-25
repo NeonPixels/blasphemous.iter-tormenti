@@ -79,7 +79,7 @@ namespace IterTormenti
             {
                 Esdras.FSMChanges.Apply();
 
-                Test.Load();//out spriteTestGO);
+                //Test.Load();//out spriteTestGO);
             }
         }
 

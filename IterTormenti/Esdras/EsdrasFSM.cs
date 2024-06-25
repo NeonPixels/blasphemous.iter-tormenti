@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine.SceneManagement;
 using IterTormenti.FSMUtils;
+using Blasphemous.ModdingAPI.Files;
+using IterTormenti.utils.sprite;
 
 namespace IterTormenti.Esdras
 {
@@ -110,6 +112,8 @@ namespace IterTormenti.Esdras
             {
                 return;
             }
+
+            CreateDefeatAnimation();
 
             // TODO: If there's an error, crash to the main menu or something? If any of these fail, and the others don't, we might get unstable behaviour
         }
@@ -783,6 +787,207 @@ namespace IterTormenti.Esdras
 
 
         #endregion Update FSM Workflow
+
+            return true;
+        }
+
+
+        private static bool CreateDefeatAnimation()
+        {
+            GameObject esdrasDefeatAnimations = new GameObject("EsdrasDefeatAnimations");
+            {
+                SpriteRenderer renderer = esdrasDefeatAnimations.AddComponent<SpriteRenderer>();
+                renderer.enabled = true;
+                renderer.drawMode = SpriteDrawMode.Simple;
+                renderer.sortingLayerName = "Player";
+
+                SpriteImportOptions importOptions = new SpriteImportOptions()
+                {
+                    Pivot = new Vector2(0.5f, 0.0f)
+                };
+
+                Vector2 frameSize = new Vector2(256.0f,128.0f);
+                const float animationDelay = 0.1f; // 100fps?
+
+                AnimatedSprite defeat = esdrasDefeatAnimations.AddComponent<AnimatedSprite>();
+                {
+                    defeat.Renderer = renderer;
+                    defeat.Delay = animationDelay;
+                    defeat.Loop = true;//false;
+
+                    Sprite[] sprites;
+                    Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasNonLethalDefeat.png", frameSize, out sprites, importOptions);
+
+                    
+                    if(sprites.Length < 26)
+                    {
+                        Main.IterTormenti.LogError($"Failed loading 'EsdrasNonLethalDefeat.png', received {sprites.Length} frames!");
+                        return false;
+                    }
+
+                    // Spritesheet only has 26 frames, ignore extra frames
+                    Array.Copy( sprites, defeat.frames = new Sprite[26], defeat.frames.Length);
+
+                    defeat.enabled = true;
+                    defeat.Play();
+
+                    Main.IterTormenti.Log("Defeat AnimatedSprite: " + defeat.ToString());
+                }
+
+                AnimatedSprite hunchedOver = esdrasDefeatAnimations.AddComponent<AnimatedSprite>();
+                {
+                    hunchedOver.Renderer = renderer;
+                    hunchedOver.Delay = animationDelay;
+                    hunchedOver.Loop = true;
+
+                    Sprite[] sprites;
+                    Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasDefeated.png", frameSize, out sprites, importOptions);
+
+                    
+                    if(sprites.Length < 3)
+                    {
+                        Main.IterTormenti.LogError($"Failed loading 'EsdrasDefeated.png', received {sprites.Length} frames!");
+                        return false;
+                    }
+
+                    // Spritesheet only has 3 frames, ignore extra frames
+                    Array.Copy( sprites, hunchedOver.frames = new Sprite[3], hunchedOver.frames.Length);
+
+                    hunchedOver.enabled = false;
+                    //hunchedOver.Play();
+
+                    Main.IterTormenti.Log("HunchedOver AnimatedSprite: " + hunchedOver.ToString());
+                }
+
+                AnimatedSprite pickUpWeapon = esdrasDefeatAnimations.AddComponent<AnimatedSprite>();
+                {
+                    pickUpWeapon.Renderer = renderer;
+                    pickUpWeapon.Delay = animationDelay;
+                    pickUpWeapon.Loop = true;//false;
+
+                    Sprite[] sprites;
+                    Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasPickupWeapon.png", frameSize, out sprites, importOptions);
+
+                    
+                    if(sprites.Length < 15)
+                    {
+                        Main.IterTormenti.LogError($"Failed loading 'EsdrasPickupWeapon.png', received {sprites.Length} frames!");
+                        return false;
+                    }
+
+                    // Spritesheet only has 15 frames, ignore extra frames
+                    Array.Copy( sprites, pickUpWeapon.frames = new Sprite[15], pickUpWeapon.frames.Length);
+
+                    pickUpWeapon.enabled = false;
+                    //hunchedOver.Play();
+
+                    Main.IterTormenti.Log("PickUpWeapon AnimatedSprite: " + pickUpWeapon.ToString());
+                }
+            }
+
+            esdrasDefeatAnimations.transform.position = new Vector3(-90.0f,8.0f,0.0f);
+            esdrasDefeatAnimations.SetActive(true);
+
+
+#region TEST
+
+            GameObject animTest2 = new GameObject("AnimTest2");
+            {
+                SpriteRenderer renderer = animTest2.AddComponent<SpriteRenderer>();
+                renderer.enabled = true;
+                renderer.drawMode = SpriteDrawMode.Simple;
+                renderer.sortingLayerName = "Player";
+
+                SpriteImportOptions importOptions = new SpriteImportOptions()
+                {
+                    Pivot = new Vector2(0.5f, 0.0f)
+                };
+
+                Vector2 frameSize = new Vector2(256.0f,128.0f);
+                const float animationDelay = 0.1f; // 100fps?
+
+                AnimatedSprite hunchedOver = animTest2.AddComponent<AnimatedSprite>();
+                {
+                    hunchedOver.Renderer = renderer;
+                    hunchedOver.Delay = animationDelay;
+                    hunchedOver.Loop = true;
+
+                    Sprite[] sprites;
+                    Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasDefeated.png", frameSize, out sprites, importOptions);
+
+                    
+                    if(sprites.Length < 3)
+                    {
+                        Main.IterTormenti.LogError($"Failed loading 'EsdrasDefeated.png', received {sprites.Length} frames!");
+                        return false;
+                    }
+
+                    // Spritesheet only has 3 frames, ignore extra frames
+                    //Array.Copy( sprites, hunchedOver.frames = new Sprite[3], hunchedOver.frames.Length);
+
+                    // Assign frames
+                    hunchedOver.frames = new Sprite[6];
+                    hunchedOver.frames[0] = sprites[0];
+                    hunchedOver.frames[1] = sprites[0];
+                    hunchedOver.frames[2] = sprites[1];
+                    hunchedOver.frames[3] = sprites[2];
+                    hunchedOver.frames[4] = sprites[2];
+                    hunchedOver.frames[5] = sprites[1];
+
+
+                    hunchedOver.enabled = true;
+                    hunchedOver.Play();
+                }
+            }
+
+            animTest2.transform.position = new Vector3(-88.0f,8.0f,0.0f);
+            animTest2.SetActive(true);
+
+            GameObject animTest3 = new GameObject("AnimTest3");
+            {
+                SpriteRenderer renderer = animTest3.AddComponent<SpriteRenderer>();
+                renderer.enabled = true;
+                renderer.drawMode = SpriteDrawMode.Simple;
+                renderer.sortingLayerName = "Player";
+
+                SpriteImportOptions importOptions = new SpriteImportOptions()
+                {
+                    Pivot = new Vector2(0.5f, 0.0f)
+                };
+
+                Vector2 frameSize = new Vector2(256.0f,128.0f);
+                const float animationDelay = 0.1f; // 100fps?
+
+                AnimatedSprite pickUpWeapon = animTest3.AddComponent<AnimatedSprite>();
+                {
+                    pickUpWeapon.Renderer = renderer;
+                    pickUpWeapon.Delay = animationDelay;
+                    pickUpWeapon.Loop = true;//false;
+
+                    Sprite[] sprites;
+                    Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasPickupWeapon.png", frameSize, out sprites, importOptions);
+
+                    
+                    if(sprites.Length < 15)
+                    {
+                        Main.IterTormenti.LogError($"Failed loading 'EsdrasPickupWeapon.png', received {sprites.Length} frames!");
+                        return false;
+                    }
+
+                    // Spritesheet only has 15 frames, ignore extra frames
+                    Array.Copy( sprites, pickUpWeapon.frames = new Sprite[15], pickUpWeapon.frames.Length);
+
+                    pickUpWeapon.enabled = true;
+                    pickUpWeapon.Play();
+                }
+            }
+
+            animTest3.transform.position = new Vector3(-86.0f,8.0f,0.0f);
+            animTest3.SetActive(true);
+
+#endregion
+
+
 
             return true;
         }
