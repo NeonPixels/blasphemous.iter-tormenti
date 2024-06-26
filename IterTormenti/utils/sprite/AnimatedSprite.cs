@@ -22,13 +22,25 @@ namespace IterTormenti.utils.sprite
             Clone(source);
         }
         
+        /// <summary>
+        /// Creates a deep copy of the AnimatedSprite.
+        /// In an attempt to keep names unique, the name of the copy will be 
+        /// modified.
+        /// </summary>
+        /// <param name="source">SpriteAnimator to clone</param>
         public void Clone(AnimatedSprite source)
         {
+            this.Name = source.Name + "_copy";
             frames = new Sprite[source.frames.Length];
             Array.Copy( source.frames, frames, source.frames.Length );
         }
 
         // -- Properties and Attribtues --
+
+        /// <summary>
+        /// Sprite name
+        /// </summary>
+        public string Name {get; set;}
 
         /// <summary>
         /// Colection of sprites to use as animation frames.
@@ -42,6 +54,7 @@ namespace IterTormenti.utils.sprite
 
         /// <summary>
         /// Delay, in seconds, between every frame.
+        /// Minimum value is 0.0
         /// </summary>
         public float Delay
         {

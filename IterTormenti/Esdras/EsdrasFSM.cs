@@ -985,6 +985,143 @@ namespace IterTormenti.Esdras
             animTest3.transform.position = new Vector3(-86.0f,8.0f,0.0f);
             animTest3.SetActive(true);
 
+
+            GameObject animatorTest = new GameObject("AnimatorTest");
+            {
+                SpriteRenderer renderer = animatorTest.AddComponent<SpriteRenderer>();
+                renderer.enabled = true;
+                renderer.drawMode = SpriteDrawMode.Simple;
+                renderer.sortingLayerName = "Player";
+
+                SpriteImportOptions importOptions = new SpriteImportOptions()
+                {
+                    Pivot = new Vector2(0.5f, 0.0f)
+                };
+
+                Vector2 frameSize = new Vector2(256.0f,128.0f);
+                const float animationDelay = 0.1f; // 100fps?
+
+                SpriteAnimator animator = animatorTest.AddComponent<SpriteAnimator>();
+                {
+                    animator.Renderer = renderer;
+                    
+
+                    // Load sprites into SpriteAnimator
+                    {
+                        Sprite[] spritesA;
+                        Sprite[] spritesB;
+                        Sprite[] spritesC;
+                        Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasNonLethalDefeat.png", frameSize, out spritesA, importOptions);
+                        Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasDefeated.png", frameSize, out spritesB, importOptions);
+                        Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasPickupWeapon.png", frameSize, out spritesC, importOptions);
+
+                        if(spritesA.Length < 26)
+                        {
+                            Main.IterTormenti.LogError($"Failed loading 'EsdrasNonLethalDefeat.png', received {spritesA.Length} frames!");
+                            return false;
+                        }
+                        
+                        if(spritesB.Length < 3)
+                        {
+                            Main.IterTormenti.LogError($"Failed loading 'EsdrasDefeated.png', received {spritesB.Length} frames!");
+                            return false;
+                        }
+
+                        if(spritesC.Length < 15)
+                        {
+                            Main.IterTormenti.LogError($"Failed loading 'EsdrasPickupWeapon.png', received {spritesC.Length} frames!");
+                            return false;
+                        }
+
+                        animator.sprites = new Sprite[26 + 3 + 15];
+
+                        
+                        Array.Copy( spritesA, 0, animator.sprites, 0, 26 );
+                        Array.Copy( spritesB, 0, animator.sprites, 26, 3 );
+                        Array.Copy( spritesC, 0, animator.sprites, 29, 15 );
+                    }
+
+                    // Build animations
+                    {
+                        utils.sprite.Animation esdrasNonLethalDefeat = new utils.sprite.Animation("EsdrasNonLethalDefeat");
+                        utils.sprite.Animation esdrasDefeated        = new utils.sprite.Animation("EsdrasDefeated");
+                        utils.sprite.Animation esdrasPickUpWeapon    = new utils.sprite.Animation("EsdrasPickUpWeapon");
+                        utils.sprite.Animation demo                  = new utils.sprite.Animation("Demo");
+
+
+                        esdrasNonLethalDefeat.DefaultDelay = animationDelay;
+                        esdrasNonLethalDefeat.frames = new utils.sprite.Animation.Frame[]
+                        {
+                            new utils.sprite.Animation.Frame(0), new utils.sprite.Animation.Frame(1), new utils.sprite.Animation.Frame(2), new utils.sprite.Animation.Frame(3),
+                            new utils.sprite.Animation.Frame(4), new utils.sprite.Animation.Frame(5), new utils.sprite.Animation.Frame(6), new utils.sprite.Animation.Frame(7),
+                            new utils.sprite.Animation.Frame(8), new utils.sprite.Animation.Frame(9), new utils.sprite.Animation.Frame(10), new utils.sprite.Animation.Frame(11),
+                            new utils.sprite.Animation.Frame(12), new utils.sprite.Animation.Frame(13), new utils.sprite.Animation.Frame(14), new utils.sprite.Animation.Frame(15),
+                            new utils.sprite.Animation.Frame(16), new utils.sprite.Animation.Frame(17), new utils.sprite.Animation.Frame(18), new utils.sprite.Animation.Frame(19),
+                            new utils.sprite.Animation.Frame(20), new utils.sprite.Animation.Frame(21), new utils.sprite.Animation.Frame(22), new utils.sprite.Animation.Frame(23),
+                            new utils.sprite.Animation.Frame(24), new utils.sprite.Animation.Frame(25)
+                        };
+
+                        esdrasDefeated.DefaultDelay = animationDelay;
+                        esdrasDefeated.frames = new utils.sprite.Animation.Frame[]
+                        {
+                            new utils.sprite.Animation.Frame(26, animationDelay*2),
+                            new utils.sprite.Animation.Frame(27),
+                            new utils.sprite.Animation.Frame(28, animationDelay*2),
+                            new utils.sprite.Animation.Frame(27)
+                        };
+
+                        esdrasPickUpWeapon.DefaultDelay = animationDelay;
+                        esdrasPickUpWeapon.frames = new utils.sprite.Animation.Frame[]
+                        {
+                            new utils.sprite.Animation.Frame(29), new utils.sprite.Animation.Frame(30), new utils.sprite.Animation.Frame(31),
+                            new utils.sprite.Animation.Frame(32), new utils.sprite.Animation.Frame(33), new utils.sprite.Animation.Frame(34),
+                            new utils.sprite.Animation.Frame(35), new utils.sprite.Animation.Frame(36), new utils.sprite.Animation.Frame(37),
+                            new utils.sprite.Animation.Frame(38), new utils.sprite.Animation.Frame(39), new utils.sprite.Animation.Frame(40),
+                            new utils.sprite.Animation.Frame(41), new utils.sprite.Animation.Frame(42), new utils.sprite.Animation.Frame(43)
+                        };
+
+                        demo.DefaultDelay = animationDelay;
+                        demo.frames = new utils.sprite.Animation.Frame[]
+                        {
+                            new utils.sprite.Animation.Frame(0), new utils.sprite.Animation.Frame(1), new utils.sprite.Animation.Frame(2), new utils.sprite.Animation.Frame(3),
+                            new utils.sprite.Animation.Frame(4), new utils.sprite.Animation.Frame(5), new utils.sprite.Animation.Frame(6), new utils.sprite.Animation.Frame(7),
+                            new utils.sprite.Animation.Frame(8), new utils.sprite.Animation.Frame(9), new utils.sprite.Animation.Frame(10), new utils.sprite.Animation.Frame(11),
+                            new utils.sprite.Animation.Frame(12), new utils.sprite.Animation.Frame(13), new utils.sprite.Animation.Frame(14), new utils.sprite.Animation.Frame(15),
+                            new utils.sprite.Animation.Frame(16), new utils.sprite.Animation.Frame(17), new utils.sprite.Animation.Frame(18), new utils.sprite.Animation.Frame(19),
+                            new utils.sprite.Animation.Frame(20), new utils.sprite.Animation.Frame(21), new utils.sprite.Animation.Frame(22), new utils.sprite.Animation.Frame(23),
+                            new utils.sprite.Animation.Frame(24), new utils.sprite.Animation.Frame(25),
+                            new utils.sprite.Animation.Frame(26, animationDelay*2),
+                            new utils.sprite.Animation.Frame(27),
+                            new utils.sprite.Animation.Frame(28, animationDelay*2),
+                            new utils.sprite.Animation.Frame(27),
+                            new utils.sprite.Animation.Frame(29), new utils.sprite.Animation.Frame(30), new utils.sprite.Animation.Frame(31),
+                            new utils.sprite.Animation.Frame(32), new utils.sprite.Animation.Frame(33), new utils.sprite.Animation.Frame(34),
+                            new utils.sprite.Animation.Frame(35), new utils.sprite.Animation.Frame(36), new utils.sprite.Animation.Frame(37),
+                            new utils.sprite.Animation.Frame(38), new utils.sprite.Animation.Frame(39), new utils.sprite.Animation.Frame(40),
+                            new utils.sprite.Animation.Frame(41), new utils.sprite.Animation.Frame(42), new utils.sprite.Animation.Frame(43)
+                        };
+
+
+                        animator.animations = new utils.sprite.Animation[]
+                        {
+                            esdrasNonLethalDefeat,
+                            esdrasDefeated,
+                            esdrasPickUpWeapon,
+                            demo
+                        };
+                    }
+
+                    Main.IterTormenti.Log("Animator: " + animator.ToString());
+
+                    animator.enabled = true;
+                    animator.AnimationName = "Demo";
+                    animator.Play();
+                }
+            }
+
+            animatorTest.transform.position = new Vector3(-93.0f,8.0f,0.0f);
+            animatorTest.SetActive(true);
+
 #endregion
 
 
