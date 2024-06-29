@@ -8,15 +8,25 @@ namespace IterTormenti.Utils.Sprites.Animations
     [Serializable]
     public class SpriteAnimation
     {
+        private SpriteAnimation()
+        {
+            Name = "SpriteAnimation";
+            frames = new Frame[0];
+            _delay = 0.0f;
+            _index = 0;
+        }
+
         public SpriteAnimation(string name)
         {
             Name = name;
             frames = new Frame[0];
+            _delay = 0.0f;
+            _index = 0;
         }
 
-        public SpriteAnimation(SpriteAnimation source)
+        public SpriteAnimation(ref SpriteAnimation source)
         {
-            Clone(source);
+            Clone(ref source);
         }
         
         /// <summary>
@@ -25,11 +35,16 @@ namespace IterTormenti.Utils.Sprites.Animations
         /// modified.
         /// </summary>
         /// <param name="source">Animation to clone</param>
-        public void Clone(SpriteAnimation source)
+        public void Clone(ref SpriteAnimation source)
         {
-            this.Name = source.Name + "_copy";
+            this.Name = source.Name;
             frames = new Frame[source.frames.Length];
-            Array.Copy( source.frames, frames, source.frames.Length );
+            for(int idx = 0; idx < frames.Length; idx++)
+            {
+                frames[idx] = new Frame(ref source.frames[idx]);
+            }
+            _delay = source._delay;
+            _index = source._index;
         }
 
         // -- Properties and Attribtues --
@@ -78,12 +93,12 @@ namespace IterTormenti.Utils.Sprites.Animations
         /// <summary>
         /// Default delay, in seconds, between every frame.
         /// Will be used on frames that do not define their own delay.
-        /// Minimum value is 0.0
+        /// Values under 0.0 will be ignored.
         /// </summary>
         public float DefaultDelay
         {
             get { return _delay; }
-            set { _delay = value < 0.0f ? 0.0f : value; }
+            set { if(value >= 0.0f) _delay = value; }
         }
 
         public int Index 
@@ -170,11 +185,11 @@ namespace IterTormenti.Utils.Sprites.Animations
         /// <summary>
         /// Index of the current frame
         /// </summary>
-        private int _index = 0;
+        private int _index;
 
         /// <summary>
         /// Contains the delay, in seconds, between frames
         /// </summary>
-        private float _delay = 1.0f;
+        private float _delay;
     }
 }

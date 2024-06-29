@@ -1098,20 +1098,16 @@ namespace IterTormenti.Esdras
                             new(41), new(42), new(43)
                         };
 
-
-                        animator.animations = new SpriteAnimation[]
-                        {
-                            esdrasNonLethalDefeat,
-                            esdrasDefeated,
-                            esdrasPickUpWeapon,
-                            demo
-                        };
+                        animator.AddAnimation(ref esdrasNonLethalDefeat);
+                        animator.AddAnimation(ref esdrasDefeated);
+                        animator.AddAnimation(ref esdrasPickUpWeapon);
+                        animator.AddAnimation(ref demo);
                     }
 
                     Main.IterTormenti.Log("Animator: " + animator.ToString());
 
                     animator.enabled = true;
-                    animator.AnimationName = "Demo";
+                    animator.ActiveAnimation = "Demo";
                     animator.Play();
                 }
             }

@@ -174,7 +174,7 @@ namespace IterTormenti.Utils.Sprites.Animations.Fsm
                 return;
             }
 
-            FsmEvent?.Invoke(this, new FsmEventArgs(EVENT.STATE_CHANGED){ AnimationIndex = newState.AnimationIndex} );
+            FsmEvent?.Invoke(this, new FsmEventArgs(EVENT.STATE_CHANGED){ AnimationName = newState.AnimationName } );
         }
 
         // -- Event Handling --

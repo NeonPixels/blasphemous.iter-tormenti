@@ -3,12 +3,14 @@ using System.Collections;
 using UnityEngine;
 using IterTormenti.Utils.Sprites.Animations;
 using IterTormenti.Utils.Sprites.Animations.Fsm;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace IterTormenti.Utils.Sprites
 {
     public abstract class ANIMATION
     {
-        public const int INVALID_INDEX = -1;
+        public const string NO_ANIMATION = "";
     }
 
     /// <summary>
@@ -23,19 +25,37 @@ namespace IterTormenti.Utils.Sprites
     [Serializable]
     class SpriteAnimator : MonoBehaviour
     {
+        private SpriteAnimator()
+        {
+            Name = "SpriteAnimator";
+            sprites = new Sprite[0];
+            _animations = new Dictionary<string, SpriteAnimation>(0);
+            Fsm = new AnimationFsm(Name + "Fsm");
+            Fsm.FsmEvent += OnFsmEvent;
+
+            _playing = false;
+            _timeSinceLastUpdate = 0.0f;
+            _waitingForAnimationChange = false;
+            _activeAnimation = "";
+        }
+
         public SpriteAnimator(string name = "SpriteAnimator")
         {
             Name = name;
             sprites = new Sprite[0];
-            animations = new SpriteAnimation[0];
+            _animations = new Dictionary<string, SpriteAnimation>(0);
             Fsm = new AnimationFsm(Name + "Fsm");
             Fsm.FsmEvent += OnFsmEvent;
 
+            _playing = false;
+            _timeSinceLastUpdate = 0.0f;
+            _waitingForAnimationChange = false;
+            _activeAnimation = "";
         }
 
-        public SpriteAnimator(SpriteAnimator source)
+        public SpriteAnimator(ref SpriteAnimator source)
         {
-            Clone(source);
+            Clone(ref source);
         }
         
         /// <summary>
@@ -44,21 +64,27 @@ namespace IterTormenti.Utils.Sprites
         /// modified.
         /// </summary>
         /// <param name="source">SpriteAnimator to clone</param>
-        public void Clone(SpriteAnimator source)
+        public void Clone(ref SpriteAnimator source)
         {
             this.Name = source.Name + "_copy";
             
             sprites = new Sprite[source.sprites.Length];
             Array.Copy( source.sprites, sprites, source.sprites.Length );
             
-            animations = new SpriteAnimation[source.animations.Length];
-            for(int idx = 0; idx < animations.Length; idx++)
+            _animations = new Dictionary<string, SpriteAnimation>(0);
+            foreach(KeyValuePair<string, SpriteAnimation> kvp in source._animations)
             {
-                animations[idx] = new SpriteAnimation(source.animations[idx]);
+                SpriteAnimation anim = kvp.Value;
+                _animations.Add(kvp.Key, new SpriteAnimation(ref anim));
             }
 
             Fsm = new AnimationFsm(source.Fsm);
             Fsm.FsmEvent += OnFsmEvent;
+
+            _playing = false;
+            _timeSinceLastUpdate = 0.0f;
+            _waitingForAnimationChange = false;
+            _activeAnimation = "";
         }
 
         // -- Properties and Attribtues --
@@ -79,17 +105,39 @@ namespace IterTormenti.Utils.Sprites
         /// </summary>
         public SpriteRenderer Renderer {get; set;}
 
+        public SpriteAnimation[] Animations
+        { 
+            get{ return _animations.Values.ToArray(); }            
+        }
 
-        public SpriteAnimation[] animations;
-        // TODO: Change this into a Dictionary
+        public SpriteAnimation AddAnimation(ref SpriteAnimation value)
+        {
+            if(null == value)
+            {
+                Main.IterTormenti.LogError("SpriteAnimator::AddAnimation: ERROR: Invalid animation!");
+                return null;
+            }
+
+            if(_animations.ContainsKey(value.Name))
+            {
+                Main.IterTormenti.LogError($"SpriteAnimator::AddAnimation: ERROR: Animation with name '{value.Name}' already exists");
+                return null;
+            }
+
+            _animations.Add(value.Name, new SpriteAnimation(ref value));
+
+            SpriteAnimation retVal = null;                
+            _animations.TryGetValue(value.Name, out retVal);
+            return retVal;
+        }
        
         public SpriteAnimation CurrentAnimation
         {
             get
-            {
-                if(animations.Length == 0) return null;
-                if(_index < 0 || _index >= animations.Length) return null;
-                return animations[_index];
+            {               
+                SpriteAnimation retVal = null;                
+                _animations.TryGetValue(_activeAnimation, out retVal);
+                return retVal;
             }
         }
 
@@ -102,31 +150,15 @@ namespace IterTormenti.Utils.Sprites
             }
         }
 
-        public int AnimationIndex
+        public string ActiveAnimation
         {
-            get { return _index; }
+            get { return _activeAnimation; }
             set
             {
-                if(animations.Length == 0) _index = -1;
-                else if(value < 0) _index = 0;
-                else if(value >= animations.Length) _index = animations.Length - 1;
-                else _index = value;
-            }
-        }
-
-        public string AnimationName
-        {
-            get { return null == CurrentAnimation ? "" : CurrentAnimation.Name; }
-            set
-            {
-                for(int idx = 0; idx < animations.Length; idx++)
+                if(_animations.ContainsKey(value))
                 {
-                    if(animations[idx].Name.Equals(value))
-                    {
-                        AnimationIndex = idx;
-                        return;
-                    }
-                }
+                    _activeAnimation = value;
+                }                
             }            
         }
 
@@ -140,7 +172,7 @@ namespace IterTormenti.Utils.Sprites
         {
             CurrentAnimation.AnimationCompleted -= Fsm.OnAnimationEvent;
             
-            AnimationIndex = Fsm.ActiveState.AnimationIndex;
+            ActiveAnimation = Fsm.ActiveState.AnimationName;
             CurrentAnimation.Index = 0;
 
             CurrentAnimation.AnimationCompleted += Fsm.OnAnimationEvent;
@@ -183,8 +215,7 @@ namespace IterTormenti.Utils.Sprites
             CurrentAnimation.AnimationCompleted -= Fsm.OnAnimationEvent;
             AnimatorEvent -= Fsm.OnAnimationEvent;
 
-            _playing = false;
-            _index = 0;
+            _playing = false;            
         }
 
         /// <summary>
@@ -197,9 +228,10 @@ namespace IterTormenti.Utils.Sprites
 
         override public string ToString()
         {
-            string text = $"{{ Sprites: {sprites.Length}, Animations: {animations.Length} [ ";
-            foreach(SpriteAnimation anim in animations)
+            string text = $"{{ Sprites: {sprites.Length}, Animations: {_animations.Count} [ ";
+            foreach(SpriteAnimation anim in _animations.Values)
             {
+                if(null == anim) continue;
                 text += anim.ToString() + ", ";
             }
             text += " ] }";
@@ -227,7 +259,7 @@ namespace IterTormenti.Utils.Sprites
 
         protected void OnFsmEvent(object source, FsmEventArgs eventArgs) //TODO: Register to events
         {
-            Main.IterTormenti.Log($"FSM event: '{eventArgs.Name}'");
+            Main.IterTormenti.Log($"SpriteAnimator:OnFsmEvent: '{eventArgs.Name}'");
 
             if(eventArgs.Name.Equals(AnimationFsm.EVENT.STATE_CHANGED))
             {
@@ -311,26 +343,27 @@ namespace IterTormenti.Utils.Sprites
 
         // -- Internal attributes --
 
-
-        /// <summary>
-        /// Index of the currently active animation
-        /// </summary>
-        private int _index = 0;
-
         /// <summary>
         /// Indicates if the animation is playing
         /// </summary>
-        private bool _playing = false;
+        private bool _playing;
 
         /// <summary>
         /// Time, in seconds, ellapsed since the last frame was updated
         /// </summary>          
-        private float _timeSinceLastUpdate = 0.0f;
+        private float _timeSinceLastUpdate;
 
         /// <summary>
         /// Indicates if a state change happened and we need to change
         /// the active animation in the next frame.
         /// </summary>
-        private bool _waitingForAnimationChange = false;
+        private bool _waitingForAnimationChange;
+
+        private Dictionary<string, SpriteAnimation> _animations;
+
+        /// <summary>
+        /// Name of the currently active animation
+        /// </summary>
+        private string _activeAnimation;
     }
 }

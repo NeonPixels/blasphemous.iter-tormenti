@@ -9,7 +9,12 @@ namespace IterTormenti.Utils.Sprites.Animations
             Delay = delay;
         }
 
-        public Frame(Frame source)
+        public Frame(ref Frame source)
+        {
+            Clone(ref source);
+        }
+
+        public void Clone(ref Frame source)
         {
             Index = source.Index;
             Delay = source.Delay;

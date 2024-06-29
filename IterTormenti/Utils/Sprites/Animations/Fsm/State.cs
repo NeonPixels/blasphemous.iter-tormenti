@@ -6,10 +6,10 @@ namespace IterTormenti.Utils.Sprites.Animations.Fsm
     // TODO: Documentation
     public class State
     {
-        public State(string name, int animationIndex = -1)
+        public State(string name, string animationName = "")
         {
             Name = name;            
-            AnimationIndex = animationIndex;
+            AnimationName = animationName;
             _transitions = new Dictionary<string, Transition>();
         }
 
@@ -21,7 +21,7 @@ namespace IterTormenti.Utils.Sprites.Animations.Fsm
         public void Clone(State source)
         {
             Name = source.Name;
-            AnimationIndex = source.AnimationIndex;
+            AnimationName = source.AnimationName;
             _transitions = new Dictionary<string, Transition>();
             
             foreach(KeyValuePair<string, Transition> kv in source._transitions)
@@ -32,7 +32,7 @@ namespace IterTormenti.Utils.Sprites.Animations.Fsm
 
         public string Name { get; private set;}
         
-        public int AnimationIndex { get; private set; }
+        public string AnimationName { get; set; }
 
 
         private Dictionary<string, Transition> _transitions; 

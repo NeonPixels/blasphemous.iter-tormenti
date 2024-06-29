@@ -7,11 +7,11 @@ namespace IterTormenti.Utils.Sprites.Animations.Fsm
         public FsmEventArgs(string name)
         {
             Name = name;
-            AnimationIndex = ANIMATION.INVALID_INDEX;
+            AnimationName = ANIMATION.NO_ANIMATION;
             Synched = true;
         }
         public string Name { get; private set;}
-        public int AnimationIndex { get; set;}
+        public string AnimationName { get; set;}
 
         public bool Synched { get; set; }
     }
