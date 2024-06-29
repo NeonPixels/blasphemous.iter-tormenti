@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 
 
-namespace IterTormenti.utils.sprite
+namespace IterTormenti.Utils.Sprites
 {
     /// <summary>
     /// Simple animated sprite. It will update the sprite displayed by the assigned SpriteRenderer

@@ -1,46 +1,20 @@
 using System;
-using System.Collections;
-using UnityEngine;
 
-
-namespace IterTormenti.utils.sprite
+namespace IterTormenti.Utils.Sprites.Animations
 {
     /// <summary>
     /// Structure that defines animations to be used by the SpriteAnimator.
     /// </summary>
     [Serializable]
-    class Animation
+    public class SpriteAnimation
     {
-        public class Frame
-        {
-            public Frame(int index, float delay = -1.0f)
-            {
-                Index = index;
-                Delay = delay;
-            }
-
-            public Frame(ref Frame source)
-            {
-                Index = source.Index;
-                Delay = source.Delay;
-            }
-
-            public int Index {get; private set;}
-            public float Delay {get; private set;}
-
-            public override string ToString()
-            {
-                return $"{{Index: {Index}, Delay: {Delay}}}";
-            }
-        }
-
-        public Animation(string name)
+        public SpriteAnimation(string name)
         {
             Name = name;
             frames = new Frame[0];
         }
 
-        public Animation(Animation source)
+        public SpriteAnimation(SpriteAnimation source)
         {
             Clone(source);
         }
@@ -51,7 +25,7 @@ namespace IterTormenti.utils.sprite
         /// modified.
         /// </summary>
         /// <param name="source">Animation to clone</param>
-        public void Clone(Animation source)
+        public void Clone(SpriteAnimation source)
         {
             this.Name = source.Name + "_copy";
             frames = new Frame[source.frames.Length];
@@ -126,15 +100,6 @@ namespace IterTormenti.utils.sprite
 
 
         // -- Event Notification --
-
-        public class AnimationEventArgs : EventArgs
-        {
-            public AnimationEventArgs(string name)
-            {
-                Name = name;
-            }
-            public string Name { get; private set;}
-        }
 
         public event EventHandler<AnimationEventArgs> AnimationCompleted;
 

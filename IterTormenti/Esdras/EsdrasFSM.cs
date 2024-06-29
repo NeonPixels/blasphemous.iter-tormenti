@@ -2,20 +2,17 @@
 using UnityEngine;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
-using Tools.Playmaker2.Condition;
-using Tools.Playmaker2.Action;
 
 using Framework.Managers;
 using Tools.PlayMaker.Action;
 using System;
-using Epic.OnlineServices.P2P;
 using System.Collections.Generic;
 
 using System.Diagnostics;
-using UnityEngine.SceneManagement;
 using IterTormenti.FSMUtils;
 using Blasphemous.ModdingAPI.Files;
-using IterTormenti.utils.sprite;
+using IterTormenti.Utils.Sprites;
+using IterTormenti.Utils.Sprites.Animations;
 
 namespace IterTormenti.Esdras
 {
@@ -164,15 +161,15 @@ namespace IterTormenti.Esdras
 
             Main.IterTormenti.Log("Patching '" + gameObject.name + ":" + fsm.name + "' FSM...");
             
-            FsmState activateEverything = new FsmState(fsm.Fsm);
+            FsmState activateEverything = new(fsm.Fsm);
             {
                 activateEverything.Name = "ActivateEverything";
                 
-                ActivateGameObject activateNPC = new ActivateGameObject();
+                ActivateGameObject activateNPC = new();
                 {
-                    FsmOwnerDefault target = new FsmOwnerDefault();
+                    FsmOwnerDefault target = new();
                     {                        
-                        FsmGameObject fsmGameObject = new FsmGameObject()
+                        FsmGameObject fsmGameObject = new()
                         {
                             Value = esdrasNPC
                         };
@@ -187,11 +184,11 @@ namespace IterTormenti.Esdras
                     activateNPC.resetOnExit = false;
                 }
 
-                ActivateGameObject activateBossStuff = new ActivateGameObject();
+                ActivateGameObject activateBossStuff = new();
                 {
-                    FsmOwnerDefault target = new FsmOwnerDefault();
+                    FsmOwnerDefault target = new();
                     {                        
-                        FsmGameObject fsmGameObject = new FsmGameObject()
+                        FsmGameObject fsmGameObject = new()
                         {
                             Value = bossFightStuff
                         };
@@ -340,7 +337,7 @@ namespace IterTormenti.Esdras
         #endif //DISABLED_CODE
 
             // Tell EsdrasNPC FSM to set camera boundaries
-            FsmState deferSetCamera = new FsmState(fsm.Fsm);
+            FsmState deferSetCamera = new(fsm.Fsm);
             {
                 deferSetCamera.Name = "DeferSetCamera";
 
@@ -354,17 +351,17 @@ namespace IterTormenti.Esdras
                 //       instead of doing this.
                 //       See disabled code above
 
-                CallMethod callMethod = new CallMethod();
+                CallMethod callMethod = new();
                 {
                     var methodParams = new List<FsmVar>();
                     {
                         FsmString value = "SetCamera";
-                        FsmVar param = new FsmVar(value);
+                        FsmVar param = new(value);
 
                         methodParams.Add(param);
                     }
                     
-                    FsmObject target = new FsmObject()
+                    FsmObject target = new()
                     {
                         Value = esdrasNpcFSM,
                         ObjectType = esdrasNpcFSM.GetType()
@@ -379,7 +376,7 @@ namespace IterTormenti.Esdras
             }
 
             
-            FsmState choiceDialog = new FsmState(fsm.Fsm); // PLACEHOLDER
+            FsmState choiceDialog = new(fsm.Fsm); // PLACEHOLDER
             {
                 choiceDialog.Name = "Choice Dialog";
 
@@ -399,20 +396,20 @@ namespace IterTormenti.Esdras
             // Cleanup removes bosss stuff, but doesn't change camera, as the NPC portion will do that
             // It also disables the INTRO input blocker, in case the player chose to show the scapular,
             // and the blocker wasn't removed before the fight            
-            FsmState cleanUp = new FsmState(fsm.Fsm);//fsm.GetState("Give control back")); // Duplicate existing state
+            FsmState cleanUp = new(fsm.Fsm);//fsm.GetState("Give control back")); // Duplicate existing state
             {
                 cleanUp.Name = "Clean up";
                 
                 // Remove camera repositioning action, which is of type 'CallMethod'
                 // cleanUp.RemoveAction( cleanUp.GetIndexOfFirstActionOfType<CallMethod>() );
 
-                InputBlock removeBossDiedInputBlock = new InputBlock()
+                InputBlock removeBossDiedInputBlock = new()
                 {
                     inputBlockName = "BossDiedBlock",
                     active = false
                 };
 
-                InputBlock removeIntroInputBlock = new InputBlock()
+                InputBlock removeIntroInputBlock = new()
                 {
                     inputBlockName = "INTRO",
                     active = false
@@ -443,7 +440,7 @@ namespace IterTormenti.Esdras
             //  - EsdrasNPC: Move to last position of Esdras boss, face TPO
             //  - Perpetvua Apparition: Move to TPO position, face Esdras
             //  - TPO: Face Esdras
-            FsmState moveCharacters = new FsmState(fsm.Fsm); // PLACEHOLDER
+            FsmState moveCharacters = new(fsm.Fsm); // PLACEHOLDER
             {
                 moveCharacters.Name = "Move Characters";
                 // SetPosition setPosition = new SetPosition();
@@ -462,7 +459,7 @@ namespace IterTormenti.Esdras
 
 
             // Start NPC workflow
-            FsmState startNPC = new FsmState(fsm.Fsm);
+            FsmState startNPC = new(fsm.Fsm);
             {
                 startNPC.Name = "START NPC";
 
@@ -476,17 +473,17 @@ namespace IterTormenti.Esdras
                 //       have the remote FSM process it independently
                 //       instead of doing this.                
 
-                CallMethod callMethod = new CallMethod();
+                CallMethod callMethod = new();
                 {
                     var methodParams = new List<FsmVar>();
                     {
                         FsmString value = "BlockPlayerInput";
-                        FsmVar param = new FsmVar(value);
+                        FsmVar param = new(value);
 
                         methodParams.Add(param);
                     }
                     
-                    FsmObject target = new FsmObject()
+                    FsmObject target = new()
                     {
                         Value = esdrasNpcFSM,
                         ObjectType = esdrasNpcFSM.GetType()
@@ -501,15 +498,15 @@ namespace IterTormenti.Esdras
             }
 
             // Switch to NPC
-            FsmState switchToNPC = new FsmState(fsm.Fsm);
+            FsmState switchToNPC = new(fsm.Fsm);
             {
                 switchToNPC.Name = "SWITCH TO NPC";
                 
-                ActivateGameObject deactivateBossStuff = new ActivateGameObject();
+                ActivateGameObject deactivateBossStuff = new();
                 {
-                    FsmOwnerDefault target = new FsmOwnerDefault();
+                    FsmOwnerDefault target = new();
                     {                        
-                        FsmGameObject fsmGameObject = new FsmGameObject()
+                        FsmGameObject fsmGameObject = new()
                         {
                             Value = bossFightStuff
                         };
@@ -685,13 +682,13 @@ namespace IterTormenti.Esdras
 
 
             // Wait until the Penitent object is in the scene
-            FsmState waitForPenitent = new FsmState(fsm.Fsm);
+            FsmState waitForPenitent = new(fsm.Fsm);
             {
                 waitForPenitent.Name = "Wait for Penitent";
 
                 fsm.AddVariable<FsmGameObject>("Penitent");
 
-                WaitForGameObject waitForObject = new WaitForGameObject()
+                WaitForGameObject waitForObject = new()
                 {
                     withTag = "Penitent",
                     store = fsm.GetVariable<FsmGameObject>("Penitent")
@@ -701,39 +698,39 @@ namespace IterTormenti.Esdras
             }
 
             // Attach Perpetva position to Penitent position
-            FsmState attachPerpetvaToPenitent = new FsmState(fsm.Fsm);
+            FsmState attachPerpetvaToPenitent = new(fsm.Fsm);
             {
                 attachPerpetvaToPenitent.Name = "Attach Perpetva to Penitent";
                 //TODO
             }
 
             // Attach NPC to Boss
-            FsmState attachNpcToBoss = new FsmState(fsm.Fsm);
+            FsmState attachNpcToBoss = new(fsm.Fsm);
             {
                 attachNpcToBoss.Name = "Attach NPC to Boss";
                 //TODO
             }
 
             // Dettach NPC from Boss
-            FsmState dettachNpcFromBoss = new FsmState(fsm.Fsm);
+            FsmState dettachNpcFromBoss = new(fsm.Fsm);
             {
                 attachNpcToBoss.Name = "Dettach NPC from Boss";
                 //TODO
             }
 
-            FsmState waitForBossfightStart = new FsmState(fsm.Fsm);
+            FsmState waitForBossfightStart = new(fsm.Fsm);
             {
                 waitForBossfightStart.Name = "Wait for Bossfight start";
             }
 
-            FsmState waitForBossfightEnd = new FsmState(fsm.Fsm);
+            FsmState waitForBossfightEnd = new(fsm.Fsm);
             {
                 waitForBossfightEnd.Name = "Wait for Bossfight end";
             }
 
             // Updates the facing of Esdras and the Penitent
             // Note: Perpetva is already facing the same direction as the Penitent
-            FsmState updateFacing = new FsmState(fsm.Fsm);
+            FsmState updateFacing = new(fsm.Fsm);
             {
                 updateFacing.Name = "Update Facing";
                 //TODO
@@ -794,19 +791,19 @@ namespace IterTormenti.Esdras
 
         private static bool CreateDefeatAnimation()
         {
-            GameObject esdrasDefeatAnimations = new GameObject("EsdrasDefeatAnimations");
+            GameObject esdrasDefeatAnimations = new("EsdrasDefeatAnimations");
             {
                 SpriteRenderer renderer = esdrasDefeatAnimations.AddComponent<SpriteRenderer>();
                 renderer.enabled = true;
                 renderer.drawMode = SpriteDrawMode.Simple;
                 renderer.sortingLayerName = "Player";
 
-                SpriteImportOptions importOptions = new SpriteImportOptions()
+                SpriteImportOptions importOptions = new()
                 {
                     Pivot = new Vector2(0.5f, 0.0f)
                 };
 
-                Vector2 frameSize = new Vector2(256.0f,128.0f);
+                Vector2 frameSize = new(256.0f,128.0f);
                 const float animationDelay = 0.1f; // 100fps?
 
                 AnimatedSprite defeat = esdrasDefeatAnimations.AddComponent<AnimatedSprite>();
@@ -891,19 +888,19 @@ namespace IterTormenti.Esdras
 
 #region TEST
 
-            GameObject animTest2 = new GameObject("AnimTest2");
+            GameObject animTest2 = new("AnimTest2");
             {
                 SpriteRenderer renderer = animTest2.AddComponent<SpriteRenderer>();
                 renderer.enabled = true;
                 renderer.drawMode = SpriteDrawMode.Simple;
                 renderer.sortingLayerName = "Player";
 
-                SpriteImportOptions importOptions = new SpriteImportOptions()
+                SpriteImportOptions importOptions = new()
                 {
                     Pivot = new Vector2(0.5f, 0.0f)
                 };
 
-                Vector2 frameSize = new Vector2(256.0f,128.0f);
+                Vector2 frameSize = new(256.0f,128.0f);
                 const float animationDelay = 0.1f; // 100fps?
 
                 AnimatedSprite hunchedOver = animTest2.AddComponent<AnimatedSprite>();
@@ -943,19 +940,19 @@ namespace IterTormenti.Esdras
             animTest2.transform.position = new Vector3(-88.0f,8.0f,0.0f);
             animTest2.SetActive(true);
 
-            GameObject animTest3 = new GameObject("AnimTest3");
+            GameObject animTest3 = new("AnimTest3");
             {
                 SpriteRenderer renderer = animTest3.AddComponent<SpriteRenderer>();
                 renderer.enabled = true;
                 renderer.drawMode = SpriteDrawMode.Simple;
                 renderer.sortingLayerName = "Player";
 
-                SpriteImportOptions importOptions = new SpriteImportOptions()
+                SpriteImportOptions importOptions = new()
                 {
                     Pivot = new Vector2(0.5f, 0.0f)
                 };
 
-                Vector2 frameSize = new Vector2(256.0f,128.0f);
+                Vector2 frameSize = new(256.0f,128.0f);
                 const float animationDelay = 0.1f; // 100fps?
 
                 AnimatedSprite pickUpWeapon = animTest3.AddComponent<AnimatedSprite>();
@@ -986,19 +983,19 @@ namespace IterTormenti.Esdras
             animTest3.SetActive(true);
 
 
-            GameObject animatorTest = new GameObject("AnimatorTest");
+            GameObject animatorTest = new("AnimatorTest");
             {
                 SpriteRenderer renderer = animatorTest.AddComponent<SpriteRenderer>();
                 renderer.enabled = true;
                 renderer.drawMode = SpriteDrawMode.Simple;
                 renderer.sortingLayerName = "Player";
 
-                SpriteImportOptions importOptions = new SpriteImportOptions()
+                SpriteImportOptions importOptions = new()
                 {
                     Pivot = new Vector2(0.5f, 0.0f)
                 };
 
-                Vector2 frameSize = new Vector2(256.0f,128.0f);
+                Vector2 frameSize = new(256.0f,128.0f);
                 const float animationDelay = 0.1f; // 100fps?
 
                 SpriteAnimator animator = animatorTest.AddComponent<SpriteAnimator>();
@@ -1043,66 +1040,66 @@ namespace IterTormenti.Esdras
 
                     // Build animations
                     {
-                        utils.sprite.Animation esdrasNonLethalDefeat = new utils.sprite.Animation("EsdrasNonLethalDefeat");
-                        utils.sprite.Animation esdrasDefeated        = new utils.sprite.Animation("EsdrasDefeated");
-                        utils.sprite.Animation esdrasPickUpWeapon    = new utils.sprite.Animation("EsdrasPickUpWeapon");
-                        utils.sprite.Animation demo                  = new utils.sprite.Animation("Demo");
+                        SpriteAnimation esdrasNonLethalDefeat = new("EsdrasNonLethalDefeat");
+                        SpriteAnimation esdrasDefeated        = new("EsdrasDefeated");
+                        SpriteAnimation esdrasPickUpWeapon    = new("EsdrasPickUpWeapon");
+                        SpriteAnimation demo                  = new("Demo");
 
 
                         esdrasNonLethalDefeat.DefaultDelay = animationDelay;
-                        esdrasNonLethalDefeat.frames = new utils.sprite.Animation.Frame[]
+                        esdrasNonLethalDefeat.frames = new Frame[]
                         {
-                            new utils.sprite.Animation.Frame(0), new utils.sprite.Animation.Frame(1), new utils.sprite.Animation.Frame(2), new utils.sprite.Animation.Frame(3),
-                            new utils.sprite.Animation.Frame(4), new utils.sprite.Animation.Frame(5), new utils.sprite.Animation.Frame(6), new utils.sprite.Animation.Frame(7),
-                            new utils.sprite.Animation.Frame(8), new utils.sprite.Animation.Frame(9), new utils.sprite.Animation.Frame(10), new utils.sprite.Animation.Frame(11),
-                            new utils.sprite.Animation.Frame(12), new utils.sprite.Animation.Frame(13), new utils.sprite.Animation.Frame(14), new utils.sprite.Animation.Frame(15),
-                            new utils.sprite.Animation.Frame(16), new utils.sprite.Animation.Frame(17), new utils.sprite.Animation.Frame(18), new utils.sprite.Animation.Frame(19),
-                            new utils.sprite.Animation.Frame(20), new utils.sprite.Animation.Frame(21), new utils.sprite.Animation.Frame(22), new utils.sprite.Animation.Frame(23),
-                            new utils.sprite.Animation.Frame(24), new utils.sprite.Animation.Frame(25)
+                            new(0),  new(1),  new(2),  new(3),
+                            new(4),  new(5),  new(6),  new(7),
+                            new(8),  new(9),  new(10), new(11),
+                            new(12), new(13), new(14), new(15),
+                            new(16), new(17), new(18), new(19),
+                            new(20), new(21), new(22), new(23),
+                            new(24), new(25)
                         };
 
                         esdrasDefeated.DefaultDelay = animationDelay;
-                        esdrasDefeated.frames = new utils.sprite.Animation.Frame[]
+                        esdrasDefeated.frames = new Frame[]
                         {
-                            new utils.sprite.Animation.Frame(26, animationDelay*2),
-                            new utils.sprite.Animation.Frame(27),
-                            new utils.sprite.Animation.Frame(28, animationDelay*2),
-                            new utils.sprite.Animation.Frame(27)
+                            new(26, animationDelay*2),
+                            new(27),
+                            new(28, animationDelay*2),
+                            new(27)
                         };
 
                         esdrasPickUpWeapon.DefaultDelay = animationDelay;
-                        esdrasPickUpWeapon.frames = new utils.sprite.Animation.Frame[]
+                        esdrasPickUpWeapon.frames = new Frame[]
                         {
-                            new utils.sprite.Animation.Frame(29), new utils.sprite.Animation.Frame(30), new utils.sprite.Animation.Frame(31),
-                            new utils.sprite.Animation.Frame(32), new utils.sprite.Animation.Frame(33), new utils.sprite.Animation.Frame(34),
-                            new utils.sprite.Animation.Frame(35), new utils.sprite.Animation.Frame(36), new utils.sprite.Animation.Frame(37),
-                            new utils.sprite.Animation.Frame(38), new utils.sprite.Animation.Frame(39), new utils.sprite.Animation.Frame(40),
-                            new utils.sprite.Animation.Frame(41), new utils.sprite.Animation.Frame(42), new utils.sprite.Animation.Frame(43)
+                            new(29), new(30), new(31),
+                            new(32), new(33), new(34),
+                            new(35), new(36), new(37),
+                            new(38), new(39), new(40),
+                            new(41), new(42), new(43)
                         };
 
                         demo.DefaultDelay = animationDelay;
-                        demo.frames = new utils.sprite.Animation.Frame[]
+                        demo.frames = new Frame[]
                         {
-                            new utils.sprite.Animation.Frame(0), new utils.sprite.Animation.Frame(1), new utils.sprite.Animation.Frame(2), new utils.sprite.Animation.Frame(3),
-                            new utils.sprite.Animation.Frame(4), new utils.sprite.Animation.Frame(5), new utils.sprite.Animation.Frame(6), new utils.sprite.Animation.Frame(7),
-                            new utils.sprite.Animation.Frame(8), new utils.sprite.Animation.Frame(9), new utils.sprite.Animation.Frame(10), new utils.sprite.Animation.Frame(11),
-                            new utils.sprite.Animation.Frame(12), new utils.sprite.Animation.Frame(13), new utils.sprite.Animation.Frame(14), new utils.sprite.Animation.Frame(15),
-                            new utils.sprite.Animation.Frame(16), new utils.sprite.Animation.Frame(17), new utils.sprite.Animation.Frame(18), new utils.sprite.Animation.Frame(19),
-                            new utils.sprite.Animation.Frame(20), new utils.sprite.Animation.Frame(21), new utils.sprite.Animation.Frame(22), new utils.sprite.Animation.Frame(23),
-                            new utils.sprite.Animation.Frame(24), new utils.sprite.Animation.Frame(25),
-                            new utils.sprite.Animation.Frame(26, animationDelay*2),
-                            new utils.sprite.Animation.Frame(27),
-                            new utils.sprite.Animation.Frame(28, animationDelay*2),
-                            new utils.sprite.Animation.Frame(27),
-                            new utils.sprite.Animation.Frame(29), new utils.sprite.Animation.Frame(30), new utils.sprite.Animation.Frame(31),
-                            new utils.sprite.Animation.Frame(32), new utils.sprite.Animation.Frame(33), new utils.sprite.Animation.Frame(34),
-                            new utils.sprite.Animation.Frame(35), new utils.sprite.Animation.Frame(36), new utils.sprite.Animation.Frame(37),
-                            new utils.sprite.Animation.Frame(38), new utils.sprite.Animation.Frame(39), new utils.sprite.Animation.Frame(40),
-                            new utils.sprite.Animation.Frame(41), new utils.sprite.Animation.Frame(42), new utils.sprite.Animation.Frame(43)
+                            new(0),  new(1),  new(2),  new(3),
+                            new(4),  new(5),  new(6),  new(7),
+                            new(8),  new(9),  new(10), new(11),
+                            new(12), new(13), new(14), new(15),
+                            new(16), new(17), new(18), new(19),
+                            new(20), new(21), new(22), new(23),
+                            new(24), new(25),
+                            new(26, animationDelay*2),
+                            new(27),
+                            new(28, animationDelay*2),
+                            new(27),
+                            new(29), new(30), new(31),
+                            new(32), new(33), new(34),
+                            new(35), new(36), new(37),
+                            new(38), new(39), new(40),
+                            new(41), new(42), new(43)
                         };
 
 
-                        animator.animations = new utils.sprite.Animation[]
+                        animator.animations = new SpriteAnimation[]
                         {
                             esdrasNonLethalDefeat,
                             esdrasDefeated,
