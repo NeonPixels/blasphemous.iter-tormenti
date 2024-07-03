@@ -71,25 +71,28 @@ namespace IterTormenti.Esdras
             Vector3 bossPosition = EsdrasBoss.transform.position;
             
             EsdrasAnimatorGO.transform.position = bossPosition;
-            // EsdrasNPC.transform.position = bossPosition;
+            EsdrasNPC.transform.position = bossPosition;
 
             // TODO: Move Perpetva? She should be a couple steps behind the Penitent
         }
 
         public void ReplaceBossWithAnimator()
         {
+            Main.IterTormenti.Log("EsdrasBehaviour::ReplaceBossWithAnimator");
             EsdrasBoss.transform.Find("#Constitution/Sprite").gameObject.GetComponent<SpriteRenderer>().enabled = false;
             EsdrasAnimator.Play();
         }
 
         public void SetAnimatorToStandUp()
         {
-            EsdrasAnimator.Animations["WeaponPickUp"].AnimationCompleted += ReplaceAnimatorWithNPC;
-            EsdrasAnimator.GoToAnimation("WeaponPickUp");
+            Main.IterTormenti.Log("EsdrasBehaviour::SetAnimatorToStandUp");
+            EsdrasAnimator.Animations["EsdrasPickUpWeapon"].AnimationCompleted += ReplaceAnimatorWithNPC;
+            EsdrasAnimator.GoToAnimation("EsdrasPickUpWeapon");
         }
 
         public void ReplaceAnimatorWithNPC(object item, AnimationEventArgs args)
         {
+            Main.IterTormenti.Log("EsdrasBehaviour::ReplaceAnimatorWithNPC");
             EsdrasAnimatorGO.SetActive(false);
             EsdrasNPC.transform.Find("#Constitution/Body").gameObject.GetComponent<SpriteRenderer>().enabled = true;
             EsdrasNpcFSM.SetState("BlockPlayerInput");

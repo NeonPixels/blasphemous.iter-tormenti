@@ -609,6 +609,22 @@ namespace IterTormenti.Esdras
             {
                 switchToNPC.Name = "SWITCH TO NPC";
                 
+                CallMethod callMethod = new();
+                {
+                    FsmObject target = new()
+                    {
+                        Value = esdrasBehaviour,
+                        ObjectType = esdrasBehaviour.GetType()
+                    };
+                    
+                    callMethod.behaviour = target;
+                    callMethod.methodName = "SetAnimatorToStandUp";
+                    callMethod.parameters = new FsmVar[0];
+                }
+
+                switchToNPC.AddAction(callMethod);
+
+
                 ActivateGameObject deactivateBossStuff = new();
                 {
                     FsmOwnerDefault target = new();
@@ -639,7 +655,7 @@ namespace IterTormenti.Esdras
             //fsm.AddState(bossTriggeredEvent);
             fsm.AddState(deferSetCamera);
             fsm.AddState(choiceDialog);
-            fsm.AddState(startNPC);
+            //fsm.AddState(startNPC);
             fsm.AddState(switchToNPC);            
             fsm.AddState(cleanUp);
             fsm.AddState(moveCharacters);            
@@ -727,13 +743,13 @@ namespace IterTormenti.Esdras
 
             // Insert startNPC into flow
             {
-                cleanUp.AddTransition(FsmEvent.Finished.Name, startNPC.Name);
+                cleanUp.AddTransition(FsmEvent.Finished.Name, switchToNPC.Name);//startNPC.Name);
             }
 
-            // Insert switchToNPC into flow
-            {
-                startNPC.AddTransition(FsmEvent.Finished.Name, switchToNPC.Name);
-            }           
+            // // Insert switchToNPC into flow
+            // {
+            //     startNPC.AddTransition(FsmEvent.Finished.Name, switchToNPC.Name);
+            // }           
 
 
         #endregion Update FSM Workflow
@@ -795,6 +811,12 @@ namespace IterTormenti.Esdras
                 return false;
             }
 
+            // Disable sprite directly, we will re-enable it when needed
+            gameObject.transform.Find("#Constitution/Body").gameObject.GetComponent<SpriteRenderer>().enabled = false;
+
+            // Disable the NPC dialog prompt, won't be used here
+            gameObject.transform.Find("ACT_Interaction").gameObject.SetActive(false);
+
 
         #endregion Find Required Objects
         #region Build FSM States
@@ -823,20 +845,6 @@ namespace IterTormenti.Esdras
             FsmState attachPerpetvaToPenitent = new(fsm.Fsm);
             {
                 attachPerpetvaToPenitent.Name = "Attach Perpetva to Penitent";
-                //TODO
-            }
-
-            // Attach NPC to Boss
-            FsmState attachNpcToBoss = new(fsm.Fsm);
-            {
-                attachNpcToBoss.Name = "Attach NPC to Boss";
-                //TODO
-            }
-
-            // Dettach NPC from Boss
-            FsmState dettachNpcFromBoss = new(fsm.Fsm);
-            {
-                attachNpcToBoss.Name = "Dettach NPC from Boss";
                 //TODO
             }
 
@@ -898,10 +906,10 @@ namespace IterTormenti.Esdras
                 blockPlayerInput.ChangeTransition(FsmEvent.Finished.Name, "Raise chapel flag");
             }
 
-            // Skip Esdras intro and taunt, it has already been done by the BossFight object
+            // Skip Esdras intro, it has already been done by the BossFight object
             {
                 FsmState wait9 = fsm.GetState("Wait 9");
-                wait9.ChangeTransition(FsmEvent.Finished.Name, "Play IdleDazzle animation");
+                wait9.ChangeTransition(FsmEvent.Finished.Name, "Make taunt animation 2");//"Play IdleDazzle animation");
             }
 
 
@@ -912,7 +920,6 @@ namespace IterTormenti.Esdras
 
         private static bool CreateDefeatAnimation()
         {
-
             GameObject esdrasDefeatAnimator = new("EsdrasDefeatAnimator");
             {
                 SpriteRenderer renderer = esdrasDefeatAnimator.AddComponent<SpriteRenderer>();
@@ -922,11 +929,11 @@ namespace IterTormenti.Esdras
 
                 SpriteImportOptions importOptions = new()
                 {
-                    Pivot = new Vector2(0.5f,0.1024f)//0.5f, 0.0f)
+                    Pivot = new Vector2(0.5f,0.1024f) // Sprite is 8 pixels higher than it should
                 };
 
                 Vector2 frameSize = new(256.0f,128.0f);
-                const float animationDelay = 0.1f; // 100fps?
+                const float animationDelay = 0.1f; // TODO: Find exact delay. 100fps?
 
                 SpriteAnimator animator = esdrasDefeatAnimator.AddComponent<SpriteAnimator>();
                 {
@@ -1023,399 +1030,15 @@ namespace IterTormenti.Esdras
                     //animator.Play();                    
                 }
             }
-            float xVal = -180f + 10.5625f + 102.28f -0.02999878f;
+            float xVal = -180f + 10.5625f + 102.28f -0.02999878f; //TODO: Just set it to the bossfight center position
             float yVal = 9f - 0.96875f;
-            esdrasDefeatAnimator.transform.position = new Vector3(xVal,yVal,0.0f);//-93.0f,8.0f,0.0f);
+            esdrasDefeatAnimator.transform.position = new Vector3(xVal,yVal,0.0f);
             esdrasDefeatAnimator.SetActive(true);
-
-
-
-
-
-#if DISABLED
-            GameObject esdrasDefeatAnimations = new("EsdrasDefeatAnimations");
-            {
-                SpriteRenderer renderer = esdrasDefeatAnimations.AddComponent<SpriteRenderer>();
-                renderer.enabled = true;
-                renderer.drawMode = SpriteDrawMode.Simple;
-                renderer.sortingLayerName = "Player";
-
-                SpriteImportOptions importOptions = new()
-                {
-                    Pivot = new Vector2(0.5f, 0.0f)
-                };
-
-                Vector2 frameSize = new(256.0f,128.0f);
-                const float animationDelay = 0.1f; // 100fps?
-
-                AnimatedSprite defeat = esdrasDefeatAnimations.AddComponent<AnimatedSprite>();
-                {
-                    defeat.Renderer = renderer;
-                    defeat.Delay = animationDelay;
-                    defeat.Loop = true;//false;
-
-                    Sprite[] sprites;
-                    Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasNonLethalDefeat.png", frameSize, out sprites, importOptions);
-
-                    
-                    if(sprites.Length < 26)
-                    {
-                        Main.IterTormenti.LogError($"Failed loading 'EsdrasNonLethalDefeat.png', received {sprites.Length} frames!");
-                        return false;
-                    }
-
-                    // Spritesheet only has 26 frames, ignore extra frames
-                    Array.Copy( sprites, defeat.frames = new Sprite[26], defeat.frames.Length);
-
-                    defeat.enabled = true;
-                    defeat.Play();
-
-                    Main.IterTormenti.Log("Defeat AnimatedSprite: " + defeat.ToString());
-                }
-
-                AnimatedSprite hunchedOver = esdrasDefeatAnimations.AddComponent<AnimatedSprite>();
-                {
-                    hunchedOver.Renderer = renderer;
-                    hunchedOver.Delay = animationDelay;
-                    hunchedOver.Loop = true;
-
-                    Sprite[] sprites;
-                    Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasDefeated.png", frameSize, out sprites, importOptions);
-
-                    
-                    if(sprites.Length < 3)
-                    {
-                        Main.IterTormenti.LogError($"Failed loading 'EsdrasDefeated.png', received {sprites.Length} frames!");
-                        return false;
-                    }
-
-                    // Spritesheet only has 3 frames, ignore extra frames
-                    Array.Copy( sprites, hunchedOver.frames = new Sprite[3], hunchedOver.frames.Length);
-
-                    hunchedOver.enabled = false;
-                    //hunchedOver.Play();
-
-                    Main.IterTormenti.Log("HunchedOver AnimatedSprite: " + hunchedOver.ToString());
-                }
-
-                AnimatedSprite pickUpWeapon = esdrasDefeatAnimations.AddComponent<AnimatedSprite>();
-                {
-                    pickUpWeapon.Renderer = renderer;
-                    pickUpWeapon.Delay = animationDelay;
-                    pickUpWeapon.Loop = true;//false;
-
-                    Sprite[] sprites;
-                    Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasPickupWeapon.png", frameSize, out sprites, importOptions);
-
-                    
-                    if(sprites.Length < 15)
-                    {
-                        Main.IterTormenti.LogError($"Failed loading 'EsdrasPickupWeapon.png', received {sprites.Length} frames!");
-                        return false;
-                    }
-
-                    // Spritesheet only has 15 frames, ignore extra frames
-                    Array.Copy( sprites, pickUpWeapon.frames = new Sprite[15], pickUpWeapon.frames.Length);
-
-                    pickUpWeapon.enabled = false;
-                    //hunchedOver.Play();
-
-                    Main.IterTormenti.Log("PickUpWeapon AnimatedSprite: " + pickUpWeapon.ToString());
-                }
-            }
-
-            esdrasDefeatAnimations.transform.position = new Vector3(-90.0f,8.0f,0.0f);
-            esdrasDefeatAnimations.SetActive(true);
-
-
-#region TEST
-
-            GameObject animTest2 = new("AnimTest2");
-            {
-                SpriteRenderer renderer = animTest2.AddComponent<SpriteRenderer>();
-                renderer.enabled = true;
-                renderer.drawMode = SpriteDrawMode.Simple;
-                renderer.sortingLayerName = "Player";
-
-                SpriteImportOptions importOptions = new()
-                {
-                    Pivot = new Vector2(0.5f, 0.0f)
-                };
-
-                Vector2 frameSize = new(256.0f,128.0f);
-                const float animationDelay = 0.1f; // 100fps?
-
-                AnimatedSprite hunchedOver = animTest2.AddComponent<AnimatedSprite>();
-                {
-                    hunchedOver.Renderer = renderer;
-                    hunchedOver.Delay = animationDelay;
-                    hunchedOver.Loop = true;
-
-                    Sprite[] sprites;
-                    Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasDefeated.png", frameSize, out sprites, importOptions);
-
-                    
-                    if(sprites.Length < 3)
-                    {
-                        Main.IterTormenti.LogError($"Failed loading 'EsdrasDefeated.png', received {sprites.Length} frames!");
-                        return false;
-                    }
-
-                    // Spritesheet only has 3 frames, ignore extra frames
-                    //Array.Copy( sprites, hunchedOver.frames = new Sprite[3], hunchedOver.frames.Length);
-
-                    // Assign frames
-                    hunchedOver.frames = new Sprite[6];
-                    hunchedOver.frames[0] = sprites[0];
-                    hunchedOver.frames[1] = sprites[0];
-                    hunchedOver.frames[2] = sprites[1];
-                    hunchedOver.frames[3] = sprites[2];
-                    hunchedOver.frames[4] = sprites[2];
-                    hunchedOver.frames[5] = sprites[1];
-
-
-                    hunchedOver.enabled = true;
-                    hunchedOver.Play();
-                }
-            }
-
-            animTest2.transform.position = new Vector3(-88.0f,8.0f,0.0f);
-            animTest2.SetActive(true);
-
-            GameObject animTest3 = new("AnimTest3");
-            {
-                SpriteRenderer renderer = animTest3.AddComponent<SpriteRenderer>();
-                renderer.enabled = true;
-                renderer.drawMode = SpriteDrawMode.Simple;
-                renderer.sortingLayerName = "Player";
-
-                SpriteImportOptions importOptions = new()
-                {
-                    Pivot = new Vector2(0.5f, 0.0f)
-                };
-
-                Vector2 frameSize = new(256.0f,128.0f);
-                const float animationDelay = 0.1f; // 100fps?
-
-                AnimatedSprite pickUpWeapon = animTest3.AddComponent<AnimatedSprite>();
-                {
-                    pickUpWeapon.Renderer = renderer;
-                    pickUpWeapon.Delay = animationDelay;
-                    pickUpWeapon.Loop = true;//false;
-
-                    Sprite[] sprites;
-                    Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasPickupWeapon.png", frameSize, out sprites, importOptions);
-
-                    
-                    if(sprites.Length < 15)
-                    {
-                        Main.IterTormenti.LogError($"Failed loading 'EsdrasPickupWeapon.png', received {sprites.Length} frames!");
-                        return false;
-                    }
-
-                    // Spritesheet only has 15 frames, ignore extra frames
-                    Array.Copy( sprites, pickUpWeapon.frames = new Sprite[15], pickUpWeapon.frames.Length);
-
-                    pickUpWeapon.enabled = true;
-                    pickUpWeapon.Play();
-                }
-            }
-
-            animTest3.transform.position = new Vector3(-86.0f,8.0f,0.0f);
-            animTest3.SetActive(true);
-
-
-            GameObject animatorTest = new("AnimatorTest");
-            {
-                SpriteRenderer renderer = animatorTest.AddComponent<SpriteRenderer>();
-                renderer.enabled = true;
-                renderer.drawMode = SpriteDrawMode.Simple;
-                renderer.sortingLayerName = "Player";
-
-                SpriteImportOptions importOptions = new()
-                {
-                    Pivot = new Vector2(0.5f, 0.0f)
-                };
-
-                Vector2 frameSize = new(256.0f,128.0f);
-                const float animationDelay = 0.1f; // 100fps?
-
-                SpriteAnimator animator = animatorTest.AddComponent<SpriteAnimator>();
-                {
-                    animator.Renderer = renderer;
-                    
-                    // Load sprites into SpriteAnimator
-                    {
-                        Sprite[] spritesA;
-                        Sprite[] spritesB;
-                        Sprite[] spritesC;
-                        Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasNonLethalDefeat.png", frameSize, out spritesA, importOptions);
-                        Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasDefeated.png", frameSize, out spritesB, importOptions);
-                        Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasPickupWeapon.png", frameSize, out spritesC, importOptions);
-
-                        if(spritesA.Length < 26)
-                        {
-                            Main.IterTormenti.LogError($"Failed loading 'EsdrasNonLethalDefeat.png', received {spritesA.Length} frames!");
-                            return false;
-                        }
-                        
-                        if(spritesB.Length < 3)
-                        {
-                            Main.IterTormenti.LogError($"Failed loading 'EsdrasDefeated.png', received {spritesB.Length} frames!");
-                            return false;
-                        }
-
-                        if(spritesC.Length < 15)
-                        {
-                            Main.IterTormenti.LogError($"Failed loading 'EsdrasPickupWeapon.png', received {spritesC.Length} frames!");
-                            return false;
-                        }
-
-                        animator.sprites = new Sprite[26 + 3 + 15];
-
-                        
-                        Array.Copy( spritesA, 0, animator.sprites, 0, 26 );
-                        Array.Copy( spritesB, 0, animator.sprites, 26, 3 );
-                        Array.Copy( spritesC, 0, animator.sprites, 29, 15 );
-                    }
-
-                    // Build animations
-                    {
-                        SpriteAnimation esdrasNonLethalDefeat = new("EsdrasNonLethalDefeat")
-                        {
-                            DefaultDelay = animationDelay,
-                            frames = new Frame[]
-                            {
-                                new(0),  new(1),  new(2),  new(3),
-                                new(4),  new(5),  new(6),  new(7),
-                                new(8),  new(9),  new(10), new(11),
-                                new(12), new(13), new(14), new(15),
-                                new(16), new(17), new(18), new(19),
-                                new(20), new(21), new(22), new(23),
-                                new(24), new(25)
-                            }
-                        };
-                        animator.Animations.Add(esdrasNonLethalDefeat.Name, esdrasNonLethalDefeat);
-
-                        SpriteAnimation esdrasDefeated = new("EsdrasDefeated")
-                        {
-                            DefaultDelay = animationDelay,
-                            frames = new Frame[]
-                            {
-                                new(26, animationDelay*2),
-                                new(27),
-                                new(28, animationDelay*2),
-                                new(27)
-                            }
-                        };
-                        animator.Animations.Add(esdrasDefeated.Name, esdrasDefeated);
-
-                        SpriteAnimation esdrasPickUpWeapon = new("EsdrasPickUpWeapon")
-                        {
-                            DefaultDelay = animationDelay,
-                            frames = new Frame[]
-                            {
-                                new(29), new(30), new(31),
-                                new(32), new(33), new(34),
-                                new(35), new(36), new(37),
-                                new(38), new(39), new(40),
-                                new(41), new(42), new(43)
-                            }
-                        };                        
-                        animator.Animations.Add(esdrasPickUpWeapon.Name, esdrasPickUpWeapon);
-
-                        // SpriteAnimation demo = new("Demo")
-                        // {
-                        //      DefaultDelay = animationDelay,
-                        //      frames = new Frame[]
-                        //      {
-                        //          new(0),  new(1),  new(2),  new(3),
-                        //          new(4),  new(5),  new(6),  new(7),
-                        //          new(8),  new(9),  new(10), new(11),
-                        //          new(12), new(13), new(14), new(15),
-                        //          new(16), new(17), new(18), new(19),
-                        //          new(20), new(21), new(22), new(23),
-                        //          new(24), new(25),
-                        //          new(26, animationDelay*2),
-                        //          new(27),
-                        //          new(28, animationDelay*2),
-                        //          new(27),
-                        //          new(29), new(30), new(31),
-                        //          new(32), new(33), new(34),
-                        //          new(35), new(36), new(37),
-                        //          new(38), new(39), new(40),
-                        //          new(41), new(42), new(43)
-                        //      }
-                        // };
-                        // animator.Animations.Add(demo.Name, demo);
-                    }
-
-#if DISABLED
-                    // Build FSM
-                    {
-                        // States
-
-                        State esdrasNonLethalDefeat = new State("EsdrasNonLethalDefeat")
-                        {
-                            AnimationName = "EsdrasNonLethalDefeat"
-                        };
-
-                        State esdrasDefeated = new State("EsdrasDefeated")
-                        {
-                            AnimationName = "EsdrasDefeated"
-                        };
-
-                        State esdrasWeaponPickup = new State("EsdrasWeaponPickup")
-                        {
-                            AnimationName = "EsdrasWeaponPickup"
-                        };
-
-                        // Transitions
-
-                        Transition start2a = new Transition("OnStart", esdrasNonLethalDefeat.Name);
-
-                        Transition a2b = new Transition(AnimationFsm.TRANSITION.ON_ANIMATION_END, esdrasDefeated.Name);
-
-                        //Transition b2c = new Transition("CombatOver", esdrasWeaponPickup.Name);
-                        Transition b2c = new Transition(AnimationFsm.TRANSITION.ON_ANIMATION_END, esdrasWeaponPickup.Name);
-
-                        //Transition c2end = new Transition(AnimationFsm.TRANSITION.ON_ANIMATION_END, AnimationFsm.STATE.END);
-                        Transition c2end = new Transition(AnimationFsm.TRANSITION.ON_ANIMATION_END, esdrasNonLethalDefeat.Name);
-
-                        // Assemble
-                        AnimationFsm Fsm = new AnimationFsm("TestFMS");
-                        Fsm.GetState(AnimationFsm.STATE.START).AddTransition(start2a);
-                        esdrasNonLethalDefeat.AddTransition(a2b);
-                        esdrasDefeated.AddTransition(b2c);
-                        esdrasWeaponPickup.AddTransition(c2end);
-
-                        Fsm.AddState(esdrasNonLethalDefeat);
-                        Fsm.AddState(esdrasDefeated);
-                        Fsm.AddState(esdrasWeaponPickup);
-                    }
-#endif // DISABLED                    
-
-                    Main.IterTormenti.Log("Animator: " + animator.ToString());
-
-                    animator.OnEndTransitions["EsdrasNonLethalDefeat"] = "EsdrasDefeated";
-                    animator.MakeAnimationLoop("EsdrasDefeated");
-
-                    animator.enabled = true;
-                    animator.ActiveAnimation = "EsdrasNonLethalDefeat";
-                    animator.Play();                    
-                }
-            }
-
-            animatorTest.transform.position = new Vector3(-93.0f,8.0f,0.0f);
-            animatorTest.SetActive(true);
-
-#endregion
-#endif
-
 
             return true;
         }
 
+        // TODO: Remove these when done. See what can be reused for utils
 
         [Conditional("DEBUG")]
         private static void DEVSTUFF()
