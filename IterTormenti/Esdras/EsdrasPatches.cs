@@ -27,6 +27,10 @@ namespace IterTormenti.Esdras
             {
                 Main.IterTormenti.Log("EsdrasAnimationInyector_Patch Death: Start");
 
+                // Call behaviour that moves animator to proper position
+                // Disable sprite
+
+
                 if( !Core.InventoryManager.IsQuestItemOwned("QI203") )
                 {
                     Main.IterTormenti.Log("EsdrasAnimationInyector_Patch Death: Scapular not owned! Continue as normal");
@@ -55,39 +59,6 @@ namespace IterTormenti.Esdras
     }
 }
 
-
-
-
-
-/*
-[Message:Iter Tormenti] Scene: D08Z01S01 - 'EsdrasNPC' is checking for flag: ESDRAS_CHAPEL  => False
-[Message:Iter Tormenti] Scene: D08Z01S01 - 'EsdrasFightActivator' is checking for flag: D01Z06S01_BOSSDEAD  => False
-[Message:Iter Tormenti] Scene: D08Z01S01 - 'EsdrasFightActivator' is checking for flag: D02Z05S01_BOSSDEAD  => False
-[Message:Iter Tormenti] Scene: D08Z01S01 - 'EsdrasFightActivator' is checking for flag: D03Z04S01_BOSSDEAD  => False
-[Message:Iter Tormenti] Scene: D08Z01S01 - 'EsdrasFightActivator' is checking for flag: D08Z01S01_BOSSDEAD  => True
-[Message:Iter Tormenti] Scene: D08Z01S01 - 'BossItemChecker' is checking for flag: D08Z01S01_BOSSDEAD  => True
-[Message:Modding API] 
-[Message:Modding API] ======================
-[Message:Modding API] Loaded level D08Z01S01
-[Message:Modding API] ======================
-[Message:Modding API] 
-[Message:Iter Tormenti] CallMethod Postfix: Scene: D08Z01S01 - 'BossFight' is calling 'SetBoundaries([])'
-[Message:Iter Tormenti] Wait Postfix: Scene: D08Z01S01 - 'BossFight' is waiting for 2
-[Message:Iter Tormenti] DialogStart Postfix: Scene: D08Z01S01 - 'BossFight' is starting dialog: { title: "DLG_BS12_02", isModal: True, useOnlyLasy: False, dontCloseWideAtEnd: False, useBackground: False }
-[Message:Iter Tormenti] CallMethod Postfix: Scene: D08Z01S01 - 'BossFight' is calling 'StartIntroSequence([])'
-[Message:Iter Tormenti] Wait Postfix: Scene: D08Z01S01 - 'BossFight' is waiting for 3
-[Message:Iter Tormenti] CallMethod Postfix: Scene: D08Z01S01 - 'BossFight' is calling 'StartBossFight([])'
-[Message:Iter Tormenti] EntityDead Postfix: Scene: D08Z01S01 - 'BossFight' is killing PerpetuaEsdrasFight(Clone)
-[Message:Iter Tormenti] CallMethod Postfix: Scene: D08Z01S01 - 'BossFight' is calling 'AddProgressToAC43([])'
-[Message:Iter Tormenti] EntityDead Postfix: Scene: D08Z01S01 - 'BossFight' is killing Esdras
-[Message:Iter Tormenti] CallMethod Postfix: Scene: D08Z01S01 - 'BossFight' is calling 'SetBoundaries([])'
-*/
-
-/*
-[Message:Iter Tormenti] DialogStart Postfix: Scene: D01Z04S12 - 'Viridiana' is starting dialog: { title: "DLG_0601", isModal: True, useOnlyLasy: False, dontCloseWideAtEnd: True, useBackground: False }
-[Message:Iter Tormenti] DialogStart Postfix: Scene: D01Z04S12 - 'Viridiana' is starting dialog: { title: "DLG_QT_0601", isModal: True, useOnlyLasy: False, dontCloseWideAtEnd: False, useBackground: False }
-[Message:Iter Tormenti] DialogStart Postfix: Scene: D01Z04S12 - 'Viridiana' is starting dialog: { title: "DLG_0603_A", isModal: True, useOnlyLasy: False, dontCloseWideAtEnd: False, useBackground: False }
-*/
 
 namespace IterTormenti.Playmaker
 {
@@ -370,15 +341,22 @@ namespace IterTormenti.Playmaker
         [HarmonyPatch] // Tools.Playmaker2.Events.EntityDead
         public class EntityDead_Patch
         {
-            // [HarmonyPatch(typeof(EntityDead), "Dead")]
-            // public static void Postfix(ref EntityDead __instance)
-            // {
-            //     string ownerName = __instance.Owner.name;
-            //     string sceneName  = Core.LevelManager.currentLevel.LevelName;
-            //     string entityName = __instance.entity.Value.name;
+            [HarmonyPatch(typeof(EntityDead), "Dead")]
+            public static void Postfix(ref EntityDead __instance)
+            {
+                string ownerName = __instance.Owner.name;
+                string sceneName  = Core.LevelManager.currentLevel.LevelName;
+                string entityName = __instance.entity.Value.name;
 
-            //     Main.IterTormenti.Log($"EntityDead::Dead Postfix: {{ scene: \"{sceneName}\", owner: \"{ownerName}\", entity: \"{entityName}\" }}");
-            // }
+                //Main.IterTormenti.Log($"EntityDead::Dead Postfix: {{ scene: \"{sceneName}\", owner: \"{ownerName}\", entity: \"{entityName}\" }}");
+
+                // Check if Esdras has died
+                if(sceneName.Equals("D08Z01S01") && ownerName.Equals("BossFight") && entityName.Equals("Esdras"))
+                {
+                    Main.IterTormenti.Log($"EntityDead::Dead Postfix: {{ scene: \"{sceneName}\", owner: \"{ownerName}\", entity: \"{entityName}\" }}");
+                }
+
+            }
 
 
             // [HarmonyPatch(typeof(Tools.Playmaker2.Events.EntityDead), "OnEnter")]
@@ -539,156 +517,6 @@ namespace IterTormenti.Playmaker
 */
 
 
-
-/*
-
-fsm: 
-{  
-  name: "EsdrasFightActivator",
-  events: [
-    { name: FINISHED },
-    { name: ON LEVEL READY },
-  ],
-  globalTransitions: [
-    {
-      event: ON LEVEL READY,
-      toState: DoesPenitentHaveTheThreeScars
-    }
-  ],
-  states: [
-    {
-      name: "DoesPenitentHaveTheThreeScars",
-      transitions: [
-        {
-          condition: !isBoss1Dead || !isBoss2Dead || !isBoss3Dead || isEsdrasDead,
-          toState: "DEACTIVATE FIGHT"
-        },
-        {
-          condition: isBoss1Dead && isBoss2Dead && isBoss3Dead && !isEsdrasDead,
-          toState: "Has TPO the Perpetua's Memento?",
-        }
-      ],
-      actions: [
-        {
-          name: isBoss1Dead,
-          type: Tools.Playmaker2.Condition.FlagExists,
-          flag: D01Z06S01_BOSSDEAD,
-        },
-        {
-          name: isBoss2Dead,
-          type: Tools.Playmaker2.Condition.FlagExists,
-          flag: D02Z05S01_BOSSDEAD,
-        },
-        {
-          name: isboss3Dead,
-          type: Tools.Playmaker2.Condition.FlagExists,
-          flag: D03Z04S01_BOSSDEAD,
-        },
-        {
-          name: isEsdrasDead,
-          name: Tools.Playmaker2.Condition.FlagExists,
-          flag: D08Z01S01_BOSSDEAD,
-        }
-      ]
-    },
-    {    
-      name: DEACTIVATE FIGHT,
-      transitions: [],
-      actions: [
-        {
-          name: deactivateFight,
-          type: HutongGames.PlayMaker.Actions.ActivateGameObject,
-          gameObject: BOSSFIGHT_STUFF,
-          value: false             
-        }
-      ]        
-    },
-    {
-      name: ActivateEsdrasFight,
-      transitions: [],
-      actions: [
-        {
-          name: activateFight,
-          type: HutongGames.PlayMaker.Actions.ActivateGameObject,
-          gameObject: BOSSFIGHT_STUFF,
-          value: true             
-        }
-      ]
-    },
-    {        
-      name: "Has TPO the Perpetua's Memento?",      
-      transitions: [
-        {
-          condition: !isMementoOwned,
-          toState: "ActivateEsdrasFight"
-        },
-        {
-          condition: isMementoOwned,
-          toState: "Is Esdras on the Chapel?"
-        }
-      ],
-      actions: [
-        {
-          name: isMementoOwned,
-          type: Tools.Playmaker2.Condition.ItemIsOwned,
-          item: QI203             
-        }
-      ]
-    },
-    {
-      name: "Activate Esdras NPC version",
-      transitions: [
-        {
-          condition: FINISHED,
-          toState: "DEACTIVATE FIGHT 2"
-        }
-      ],
-      actions: [
-        {
-          name: activateEsdrasNPC,
-          type: HutongGames.PlayMaker.Actions.ActivateGameObject,
-          gameObject: ???, //TODO: Game Object to activate?
-          value: true
-        }
-      ]
-    },
-    {    
-      name: "DEACTIVATE FIGHT 2", //TODO: Difference with first DEACTIVATE FIGHT?
-      transitions: [],
-      actions: [
-        {
-          name: deactivateFight,
-          type: HutongGames.PlayMaker.Actions.ActivateGameObject,
-          gameObject: BOSSFIGHT_STUFF,
-          value: false             
-        }
-      ]        
-    },
-    {        
-      name: "Is Esdras on the Chapel?",      
-      transitions: [
-        {
-          condition: !isEsdrasOnChapel,
-          toState: "Activate Esdras NPC version"
-        },
-        {
-          condition: isEsdrasOnChapel,
-          toState: "DEACTIVATE FIGHT 2"
-        }
-      ],
-      actions: [
-        {
-          name: isEsdrasOnChapel,
-          type: Tools.Playmaker2.Condition.FlagExists,
-          flags: [
-            ST08_BROTHERS, // TODO: What's this for?
-            ESDRAS_CHAPEL
-          ]
-        }
-      ]
-    }
-  ]  
-  */
 
 
 

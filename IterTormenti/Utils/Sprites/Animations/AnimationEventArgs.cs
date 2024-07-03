@@ -4,10 +4,15 @@ namespace IterTormenti.Utils.Sprites.Animations
 {
     public class AnimationEventArgs : EventArgs
     {
+        public const string ON_ANIMATION_END = "ON_ANIMATION_END";
+
         public AnimationEventArgs(string name)
         {
-            Name = name;
+            Event = name;
         }
-        public string Name { get; private set;}
+        
+        public string Event { get; private set;}
+        
+        public string Name { get; set;}
     }
 }

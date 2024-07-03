@@ -16,7 +16,7 @@ namespace IterTormenti.Utils.Sprites.Animations.Fsm
 
         public abstract class TRANSITION
         {
-            public const string ON_ANIMATION_END = "OnAnimationEnd";
+            public const string ON_ANIMATION_END = "OnAnimationEnd";            
         }
 
         public abstract class EVENT

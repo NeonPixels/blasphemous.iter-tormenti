@@ -120,7 +120,7 @@ namespace IterTormenti.Utils.Sprites.Animations
 
         protected virtual void OnAnimationCompleted()
         {
-            AnimationCompleted?.Invoke(this, new AnimationEventArgs(Name));
+            AnimationCompleted?.Invoke(this, new AnimationEventArgs(AnimationEventArgs.ON_ANIMATION_END){Name = this.Name});
         }
 
         // -- Methods --
@@ -162,6 +162,7 @@ namespace IterTormenti.Utils.Sprites.Animations
                 OnAnimationCompleted();
 
                 _index = 0;
+                //_index = frames.Length - 1;
             }
 
             return CurrentFrame;

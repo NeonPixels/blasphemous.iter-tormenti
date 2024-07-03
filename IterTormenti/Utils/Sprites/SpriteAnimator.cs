@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using UnityEngine;
 using IterTormenti.Utils.Sprites.Animations;
-using IterTormenti.Utils.Sprites.Animations.Fsm;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -29,28 +28,26 @@ namespace IterTormenti.Utils.Sprites
         {
             Name = "SpriteAnimator";
             sprites = new Sprite[0];
-            _animations = new Dictionary<string, SpriteAnimation>(0);
-            Fsm = new AnimationFsm(Name + "Fsm");
-            Fsm.FsmEvent += OnFsmEvent;
-
+            Animations = new Dictionary<string, SpriteAnimation>(0);
             _playing = false;
             _timeSinceLastUpdate = 0.0f;
             _waitingForAnimationChange = false;
             _activeAnimation = "";
+
+            OnEndTransitions = new Dictionary<string, string>(0);
         }
 
         public SpriteAnimator(string name = "SpriteAnimator")
         {
             Name = name;
             sprites = new Sprite[0];
-            _animations = new Dictionary<string, SpriteAnimation>(0);
-            Fsm = new AnimationFsm(Name + "Fsm");
-            Fsm.FsmEvent += OnFsmEvent;
-
+            Animations = new Dictionary<string, SpriteAnimation>(0);
             _playing = false;
             _timeSinceLastUpdate = 0.0f;
             _waitingForAnimationChange = false;
             _activeAnimation = "";
+
+            OnEndTransitions = new Dictionary<string, string>(0);
         }
 
         public SpriteAnimator(ref SpriteAnimator source)
@@ -71,20 +68,19 @@ namespace IterTormenti.Utils.Sprites
             sprites = new Sprite[source.sprites.Length];
             Array.Copy( source.sprites, sprites, source.sprites.Length );
             
-            _animations = new Dictionary<string, SpriteAnimation>(0);
-            foreach(KeyValuePair<string, SpriteAnimation> kvp in source._animations)
+            Animations = new Dictionary<string, SpriteAnimation>(0);
+            foreach(KeyValuePair<string, SpriteAnimation> kvp in source.Animations)
             {
                 SpriteAnimation anim = kvp.Value;
-                _animations.Add(kvp.Key, new SpriteAnimation(ref anim));
+                Animations.Add(kvp.Key, new SpriteAnimation(ref anim));
             }
-
-            Fsm = new AnimationFsm(source.Fsm);
-            Fsm.FsmEvent += OnFsmEvent;
 
             _playing = false;
             _timeSinceLastUpdate = 0.0f;
             _waitingForAnimationChange = false;
             _activeAnimation = "";
+
+            OnEndTransitions = new Dictionary<string, string>(0);
         }
 
         // -- Properties and Attribtues --
@@ -105,38 +101,14 @@ namespace IterTormenti.Utils.Sprites
         /// </summary>
         public SpriteRenderer Renderer {get; set;}
 
-        public SpriteAnimation[] Animations
-        { 
-            get{ return _animations.Values.ToArray(); }            
-        }
+        public Dictionary<string, SpriteAnimation> Animations { get; set; }
 
-        public SpriteAnimation AddAnimation(ref SpriteAnimation value)
-        {
-            if(null == value)
-            {
-                Main.IterTormenti.LogError("SpriteAnimator::AddAnimation: ERROR: Invalid animation!");
-                return null;
-            }
-
-            if(_animations.ContainsKey(value.Name))
-            {
-                Main.IterTormenti.LogError($"SpriteAnimator::AddAnimation: ERROR: Animation with name '{value.Name}' already exists");
-                return null;
-            }
-
-            _animations.Add(value.Name, new SpriteAnimation(ref value));
-
-            SpriteAnimation retVal = null;                
-            _animations.TryGetValue(value.Name, out retVal);
-            return retVal;
-        }
-       
         public SpriteAnimation CurrentAnimation
         {
             get
             {               
                 SpriteAnimation retVal = null;                
-                _animations.TryGetValue(_activeAnimation, out retVal);
+                Animations.TryGetValue(_activeAnimation, out retVal);
                 return retVal;
             }
         }
@@ -155,27 +127,24 @@ namespace IterTormenti.Utils.Sprites
             get { return _activeAnimation; }
             set
             {
-                if(_animations.ContainsKey(value))
+                if(Animations.ContainsKey(value))
                 {
                     _activeAnimation = value;
                 }                
             }            
         }
 
-        // -- FSM --
-
-        public AnimationFsm Fsm { get; private set; }
-
         // -- Methods --
+
+        private string _nextAnimation;
+        private int _nextAnimationIndex;
 
         private void ChangeAnimation()
         {
-            CurrentAnimation.AnimationCompleted -= Fsm.OnAnimationEvent;
+            //Main.IterTormenti.Log($"SpriteAnimation::ChangeAnimation: {CurrentAnimation.Name} => {_nextAnimation}");
             
-            ActiveAnimation = Fsm.ActiveState.AnimationName;
-            CurrentAnimation.Index = 0;
-
-            CurrentAnimation.AnimationCompleted += Fsm.OnAnimationEvent;
+            ActiveAnimation = _nextAnimation;
+            CurrentAnimation.Index = _nextAnimationIndex;
 
             _waitingForAnimationChange = false;
         }
@@ -185,18 +154,13 @@ namespace IterTormenti.Utils.Sprites
         /// </summary>
         public void Play()
         {
-            if(null == CurrentAnimation) return; // No animations to play!
+            Main.IterTormenti.Log("SpriteAnimation::Play");
 
-            // Register callbacks
-            // foreach(SpriteAnimation animation in animations)
-            // {
-            //     animation.AnimationCompleted += OnAnimationEvent;
-            // }
+            foreach(SpriteAnimation anim in Animations.Values)
+            {
+                anim.AnimationCompleted += OnAnimationEnded;
+            }
 
-            CurrentAnimation.AnimationCompleted += Fsm.OnAnimationEvent;
-            AnimatorEvent += Fsm.OnAnimationEvent;
-            
-            
             _playing = true;
         }
 
@@ -206,30 +170,29 @@ namespace IterTormenti.Utils.Sprites
         /// </summary>
         public void Stop()
         {
-            // Deregister callbacks
-            // foreach(SpriteAnimation animation in animations)
-            // {
-            //     animation.AnimationCompleted -= OnAnimationEvent;
-            // }
+            Main.IterTormenti.Log("SpriteAnimation::Stop");
 
-            CurrentAnimation.AnimationCompleted -= Fsm.OnAnimationEvent;
-            AnimatorEvent -= Fsm.OnAnimationEvent;
+            foreach(SpriteAnimation anim in Animations.Values)
+            {
+                anim.AnimationCompleted -= OnAnimationEnded;
+            }
 
-            _playing = false;            
+            _playing = false;
         }
 
         /// <summary>
-        /// Pause the animation at the current frame.
+        /// Pause/Unpause the animation at the current frame.
         /// </summary>
         public void Pause()
         {
-            _playing = false;
+            Main.IterTormenti.Log("SpriteAnimation::Pause");
+            _playing |= false;
         }
 
         override public string ToString()
         {
-            string text = $"{{ Sprites: {sprites.Length}, Animations: {_animations.Count} [ ";
-            foreach(SpriteAnimation anim in _animations.Values)
+            string text = $"{{ Sprites: {sprites.Length}, Animations: {Animations.Count} [ ";
+            foreach(SpriteAnimation anim in Animations.Values)
             {
                 if(null == anim) continue;
                 text += anim.ToString() + ", ";
@@ -238,50 +201,52 @@ namespace IterTormenti.Utils.Sprites
             return text;
         }
 
-        // --- Event handling ---
+        // --- Animation Handling ---
 
-        public event EventHandler<AnimationEventArgs> AnimatorEvent;
-
-        public void CallEvent(AnimationEventArgs eventArgs)
+        public void GoToAnimation(string name, int index = 0, bool synched = true)
         {
-            AnimatorEvent?.Invoke(this, eventArgs);   
-        }
-
-        protected void OnAnimationEvent(object animation, AnimationEventArgs eventArgs)
-        {
-            if(!_playing)
-            {
-                Main.IterTormenti.LogError($"ERROR: Animation  '{eventArgs.Name}' has somehow completed while not playing!");
-            }
-
-            Main.IterTormenti.Log($"Animation '{eventArgs.Name}' is complete");
-        }
-
-        protected void OnFsmEvent(object source, FsmEventArgs eventArgs) //TODO: Register to events
-        {
-            Main.IterTormenti.Log($"SpriteAnimator:OnFsmEvent: '{eventArgs.Name}'");
-
-            if(eventArgs.Name.Equals(AnimationFsm.EVENT.STATE_CHANGED))
-            {
-                if(eventArgs.Synched)
-                {
-                    _waitingForAnimationChange = true;
-                }
-                else
-                {
-                    ChangeAnimation();
-                    UpdateFrame();
-                }
-            }
+            //Main.IterTormenti.Log($"SpriteAnimator::GoToAnimation: '{name}' synched? {synched}");
             
-            if(eventArgs.Name.Equals(AnimationFsm.EVENT.END_REACHED))
+            if(!Animations.ContainsKey(name))
             {
-                Stop();
-                enabled = false;
-                // TODO: Is this enough to hide everything?
+                Main.IterTormenti.LogError($"SpriteAnimator::GoToAnimation: ERROR: '{name}' does not match an existing animation!");
+                return;
             }
+
+            _nextAnimation = name;
+            _nextAnimationIndex = index;
+
+            if(synched)
+            {
+                _waitingForAnimationChange = true;
+            }
+            else
+            {
+                ChangeAnimation();
+                UpdateFrame();
+            }            
         }
 
+        
+        // --- Animation Event Handling ---
+        // TODO: Placeholder until a better solution with the FSM?
+
+
+        public Dictionary<string, string> OnEndTransitions;
+
+        public void OnAnimationEnded(object sender, AnimationEventArgs args)
+        {
+             //Main.IterTormenti.Log($"SpriteAnimationr::OnAnimationEnded({args.Name})");
+
+            if(!OnEndTransitions.ContainsKey(args.Name)) return;
+
+            GoToAnimation(OnEndTransitions[args.Name], 0, false);
+        }
+
+        public void MakeAnimationLoop(string name)
+        {
+            OnEndTransitions[name] = name;
+        }
 
 
         // --- MonoBehaviour methods --
@@ -314,9 +279,10 @@ namespace IterTormenti.Utils.Sprites
         public void Update()
         {
             if(!_playing) return;
-            if(null == CurrentFrame) return;
-            
+
             _timeSinceLastUpdate += Time.deltaTime;
+
+            if(null == CurrentFrame) return;
 
             // Check if we've waited enough
             if (_timeSinceLastUpdate < CurrentAnimation.Delay) return;
@@ -358,8 +324,6 @@ namespace IterTormenti.Utils.Sprites
         /// the active animation in the next frame.
         /// </summary>
         private bool _waitingForAnimationChange;
-
-        private Dictionary<string, SpriteAnimation> _animations;
 
         /// <summary>
         /// Name of the currently active animation

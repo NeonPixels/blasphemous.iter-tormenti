@@ -13,6 +13,7 @@ using IterTormenti.FSMUtils;
 using Blasphemous.ModdingAPI.Files;
 using IterTormenti.Utils.Sprites;
 using IterTormenti.Utils.Sprites.Animations;
+using IterTormenti.Utils.Sprites.Animations.Fsm;
 
 namespace IterTormenti.Esdras
 {
@@ -57,6 +58,17 @@ namespace IterTormenti.Esdras
                 return;
             }
 #endif // DISABLED_FOR_TESTING
+
+            // Create the animator for the transition between the Boss and the NPC
+            // This animation will play upon boss defeat, replacing the boss sprite
+            // It will remain in an idle state during the Requiem Aeternam animation,
+            // and will be updated to the "WeaponPickup" state.
+            // Once the "WeaponPickup" state is done, the animator will be disabled, and replaced
+            // with the NPC
+            if(!CreateDefeatAnimation())
+            {
+                return;
+            }
 
             // At this point, we are ready to start the modified encounter, so we modify the FSMs to directly go to the state we need.
             // We can skip any decision states that do not apply.
@@ -110,7 +122,7 @@ namespace IterTormenti.Esdras
                 return;
             }
 
-            CreateDefeatAnimation();
+
 
             // TODO: If there's an error, crash to the main menu or something? If any of these fail, and the others don't, we might get unstable behaviour
         }
@@ -293,6 +305,31 @@ namespace IterTormenti.Esdras
                 return false;
             }
 
+            GameObject esdrasBoss = GameObject.Find("Esdras");
+            if(null == esdrasBoss)
+            {
+                Main.IterTormenti.LogError("Failed to patch 'BossFight': 'Esdras' object not found!");
+                return false;
+            }
+            
+            GameObject esdrasDefeatAnimator = GameObject.Find("EsdrasDefeatAnimator");
+            if(null == esdrasDefeatAnimator)
+            {
+                Main.IterTormenti.LogError("Failed to patch 'BossFight': 'EsdrasDefeatAnimator' object not found!");
+                return false;
+            }
+
+            EsdrasBehaviour esdrasBehaviour = gameObject.AddComponent<EsdrasBehaviour>();
+            esdrasBehaviour.EsdrasAnimatorGO = esdrasDefeatAnimator;
+            esdrasBehaviour.EsdrasBoss = esdrasBoss;
+            esdrasBehaviour.EsdrasNPC = esdrasNPC;
+            esdrasBehaviour.EsdrasNpcFSM = esdrasNpcFSM;
+           
+
+            // var esdrasAnimatorVariable = fsm.AddGetVariable<FsmGameObject>("EsdrasDefeatAnimator");
+            // esdrasAnimatorVariable.Value = esdrasDefeatAnimator;
+            
+
 
         #endregion Find Required Objects
         #region Build FSM States
@@ -443,6 +480,76 @@ namespace IterTormenti.Esdras
             FsmState moveCharacters = new(fsm.Fsm); // PLACEHOLDER
             {
                 moveCharacters.Name = "Move Characters";
+
+                CallMethod callMoveToFinalPosition = new();
+                {
+                    var methodParams = new List<FsmVar>();
+                    
+                    FsmObject target = new()
+                    {
+                        Value = esdrasBehaviour,
+                        ObjectType = esdrasBehaviour.GetType()
+                    };
+                    
+                    callMoveToFinalPosition.behaviour = target;
+                    callMoveToFinalPosition.methodName = "MoveToFinalPosition";
+                    callMoveToFinalPosition.parameters = methodParams.ToArray();
+                }
+
+                moveCharacters.AddAction(callMoveToFinalPosition);
+
+                 CallMethod callReplaceBossWithAnimator = new();
+                {
+                    var methodParams = new List<FsmVar>();
+                    
+                    FsmObject target = new()
+                    {
+                        Value = esdrasBehaviour,
+                        ObjectType = esdrasBehaviour.GetType()
+                    };
+                    
+                    callReplaceBossWithAnimator.behaviour = target;
+                    callReplaceBossWithAnimator.methodName = "ReplaceBossWithAnimator";
+                    callReplaceBossWithAnimator.parameters = methodParams.ToArray();
+                }
+
+                moveCharacters.AddAction(callReplaceBossWithAnimator);
+
+                // Main.IterTormenti.Log(fsm.AddGetVariable<FsmVector3>("BossPosition").ToString());
+                // Main.IterTormenti.Log(fsm.GetVariable<FsmGameObject>("BossEntity").Value.name);
+
+                // GetPosition getBossPosition = new GetPosition();
+                // {
+                //     FsmOwnerDefault target = new FsmOwnerDefault()
+                //     {
+                //         GameObject = fsm.GetVariable<FsmGameObject>("BossEntity"),
+                //         OwnerOption = OwnerDefaultOption.SpecifyGameObject
+                //     };
+
+                //     getBossPosition.gameObject = target;
+                //     getBossPosition.everyFrame = false;
+                //     getBossPosition.space = Space.World;
+                //     getBossPosition.vector = fsm.GetVariable<FsmVector3>("BossPosition");
+                // }
+
+                //moveCharacters.AddAction(getBossPosition);
+
+                // SetPosition setAnimatorPosition = new SetPosition();
+                // {
+                //     FsmOwnerDefault target = new FsmOwnerDefault()
+                //     {
+                //         GameObject = fsm.GetVariable<FsmGameObject>("EsdrasDefeatAnimator"),
+                //         OwnerOption = OwnerDefaultOption.SpecifyGameObject
+                //     };
+
+                //     setAnimatorPosition.gameObject = target;
+                //     setAnimatorPosition.everyFrame = false;
+                //     setAnimatorPosition.space = Space.World;
+                //     setAnimatorPosition.vector = fsm.GetVariable<FsmVector3>("BossPosition");
+                // }
+
+                //moveCharacters.AddAction(setAnimatorPosition);
+
                 // SetPosition setPosition = new SetPosition();
                 // {
                 //     FsmOwnerDefault target = new FsmOwnerDefault();
@@ -568,10 +675,30 @@ namespace IterTormenti.Esdras
                 // choiceDialog.AddTransition("Dissent", "StartBossfight");
             }
 
+            // Insert moveCharacters into flow // TODO
+            {
+                FsmState isBossDead = fsm.GetState("Is Boss?");
+                isBossDead.ChangeTransition("Yes", moveCharacters.Name);
+            }
+
+            // Get back to normal flow // TODO: Call behaviour
+            {                
+                moveCharacters.AddTransition(FsmEvent.Finished.Name, "Add completion %");
+            }
+
             // Skip granting the item reward, it will be handled by the NPC portion
             {
                 FsmState grantAchievement = fsm.GetState("Grant AC05");
                 grantAchievement.ChangeTransition(FsmEvent.Finished.Name, "Combat is Over (SET FLAG), block player");
+            }
+
+            // Insert moveCharacters into flow  // TODO: Replace boss sprite
+            {
+                //FsmState combatOver = fsm.GetState("Combat is Over (SET FLAG), block player");
+
+                // TODO: WTF? if we don't jump to the "Wait" state, the boss doesn't enter the death animation
+                //       and keeps attacking until disabled later on. WHY?!
+                //combatOver.ChangeTransition(FsmEvent.Finished.Name, moveCharacters.Name);
             }
 
             // Skip Esdras final dialog, he will be rudely interrupted
@@ -598,15 +725,10 @@ namespace IterTormenti.Esdras
                 guiltReset.ChangeTransition(FsmEvent.Finished.Name, cleanUp.Name);
             }
 
-            // Insert moveCharacters into flow
-            {
-                cleanUp.AddTransition(FsmEvent.Finished.Name, moveCharacters.Name);
-            }
-
             // Insert startNPC into flow
             {
-                moveCharacters.AddTransition(FsmEvent.Finished.Name, startNPC.Name);
-            }  
+                cleanUp.AddTransition(FsmEvent.Finished.Name, startNPC.Name);
+            }
 
             // Insert switchToNPC into flow
             {
@@ -788,9 +910,129 @@ namespace IterTormenti.Esdras
             return true;
         }
 
-
         private static bool CreateDefeatAnimation()
         {
+
+            GameObject esdrasDefeatAnimator = new("EsdrasDefeatAnimator");
+            {
+                SpriteRenderer renderer = esdrasDefeatAnimator.AddComponent<SpriteRenderer>();
+                renderer.enabled = true;
+                renderer.drawMode = SpriteDrawMode.Simple;
+                renderer.sortingLayerName = "Player";
+
+                SpriteImportOptions importOptions = new()
+                {
+                    Pivot = new Vector2(0.5f,0.1024f)//0.5f, 0.0f)
+                };
+
+                Vector2 frameSize = new(256.0f,128.0f);
+                const float animationDelay = 0.1f; // 100fps?
+
+                SpriteAnimator animator = esdrasDefeatAnimator.AddComponent<SpriteAnimator>();
+                {
+                    animator.Renderer = renderer;
+                    
+                    // Load sprites into SpriteAnimator
+                    {
+                        Sprite[] spritesA;
+                        Sprite[] spritesB;
+                        Sprite[] spritesC;
+                        Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasNonLethalDefeat.png", frameSize, out spritesA, importOptions);
+                        Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasDefeated.png", frameSize, out spritesB, importOptions);
+                        Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasPickupWeapon.png", frameSize, out spritesC, importOptions);
+
+                        if(spritesA.Length < 26)
+                        {
+                            Main.IterTormenti.LogError($"Failed loading 'EsdrasNonLethalDefeat.png', received {spritesA.Length} frames!");
+                            return false;
+                        }
+                        
+                        if(spritesB.Length < 3)
+                        {
+                            Main.IterTormenti.LogError($"Failed loading 'EsdrasDefeated.png', received {spritesB.Length} frames!");
+                            return false;
+                        }
+
+                        if(spritesC.Length < 15)
+                        {
+                            Main.IterTormenti.LogError($"Failed loading 'EsdrasPickupWeapon.png', received {spritesC.Length} frames!");
+                            return false;
+                        }
+
+                        animator.sprites = new Sprite[26 + 3 + 15];
+
+                        
+                        Array.Copy( spritesA, 0, animator.sprites, 0, 26 );
+                        Array.Copy( spritesB, 0, animator.sprites, 26, 3 );
+                        Array.Copy( spritesC, 0, animator.sprites, 29, 15 );
+                    }
+
+                    // Build animations
+                    {
+                        SpriteAnimation esdrasNonLethalDefeat = new("EsdrasNonLethalDefeat")
+                        {
+                            DefaultDelay = animationDelay,
+                            frames = new Frame[]
+                            {
+                                new(0),  new(1),  new(2),  new(3),
+                                new(4),  new(5),  new(6),  new(7),
+                                new(8),  new(9),  new(10), new(11),
+                                new(12), new(13), new(14), new(15),
+                                new(16), new(17), new(18), new(19),
+                                new(20), new(21), new(22), new(23),
+                                new(24), new(25)
+                            }
+                        };
+                        animator.Animations.Add(esdrasNonLethalDefeat.Name, esdrasNonLethalDefeat);
+
+                        SpriteAnimation esdrasDefeated = new("EsdrasDefeated")
+                        {
+                            DefaultDelay = animationDelay,
+                            frames = new Frame[]
+                            {
+                                new(26, animationDelay*2),
+                                new(27),
+                                new(28, animationDelay*2),
+                                new(27)
+                            }
+                        };
+                        animator.Animations.Add(esdrasDefeated.Name, esdrasDefeated);
+
+                        SpriteAnimation esdrasPickUpWeapon = new("EsdrasPickUpWeapon")
+                        {
+                            DefaultDelay = animationDelay,
+                            frames = new Frame[]
+                            {
+                                new(29), new(30), new(31),
+                                new(32), new(33), new(34),
+                                new(35), new(36), new(37),
+                                new(38), new(39), new(40),
+                                new(41), new(42), new(43)
+                            }
+                        };                        
+                        animator.Animations.Add(esdrasPickUpWeapon.Name, esdrasPickUpWeapon);
+                    }
+
+                    Main.IterTormenti.Log("Animator: " + animator.ToString());
+
+                    animator.OnEndTransitions["EsdrasNonLethalDefeat"] = "EsdrasDefeated";
+                    animator.MakeAnimationLoop("EsdrasDefeated");
+
+                    animator.enabled = true;
+                    animator.ActiveAnimation = "EsdrasNonLethalDefeat";
+                    //animator.Play();                    
+                }
+            }
+            float xVal = -180f + 10.5625f + 102.28f -0.02999878f;
+            float yVal = 9f - 0.96875f;
+            esdrasDefeatAnimator.transform.position = new Vector3(xVal,yVal,0.0f);//-93.0f,8.0f,0.0f);
+            esdrasDefeatAnimator.SetActive(true);
+
+
+
+
+
+#if DISABLED
             GameObject esdrasDefeatAnimations = new("EsdrasDefeatAnimations");
             {
                 SpriteRenderer renderer = esdrasDefeatAnimations.AddComponent<SpriteRenderer>();
@@ -1002,7 +1244,6 @@ namespace IterTormenti.Esdras
                 {
                     animator.Renderer = renderer;
                     
-
                     // Load sprites into SpriteAnimator
                     {
                         Sprite[] spritesA;
@@ -1040,75 +1281,128 @@ namespace IterTormenti.Esdras
 
                     // Build animations
                     {
-                        SpriteAnimation esdrasNonLethalDefeat = new("EsdrasNonLethalDefeat");
-                        SpriteAnimation esdrasDefeated        = new("EsdrasDefeated");
-                        SpriteAnimation esdrasPickUpWeapon    = new("EsdrasPickUpWeapon");
-                        SpriteAnimation demo                  = new("Demo");
-
-
-                        esdrasNonLethalDefeat.DefaultDelay = animationDelay;
-                        esdrasNonLethalDefeat.frames = new Frame[]
+                        SpriteAnimation esdrasNonLethalDefeat = new("EsdrasNonLethalDefeat")
                         {
-                            new(0),  new(1),  new(2),  new(3),
-                            new(4),  new(5),  new(6),  new(7),
-                            new(8),  new(9),  new(10), new(11),
-                            new(12), new(13), new(14), new(15),
-                            new(16), new(17), new(18), new(19),
-                            new(20), new(21), new(22), new(23),
-                            new(24), new(25)
+                            DefaultDelay = animationDelay,
+                            frames = new Frame[]
+                            {
+                                new(0),  new(1),  new(2),  new(3),
+                                new(4),  new(5),  new(6),  new(7),
+                                new(8),  new(9),  new(10), new(11),
+                                new(12), new(13), new(14), new(15),
+                                new(16), new(17), new(18), new(19),
+                                new(20), new(21), new(22), new(23),
+                                new(24), new(25)
+                            }
                         };
+                        animator.Animations.Add(esdrasNonLethalDefeat.Name, esdrasNonLethalDefeat);
 
-                        esdrasDefeated.DefaultDelay = animationDelay;
-                        esdrasDefeated.frames = new Frame[]
+                        SpriteAnimation esdrasDefeated = new("EsdrasDefeated")
                         {
-                            new(26, animationDelay*2),
-                            new(27),
-                            new(28, animationDelay*2),
-                            new(27)
+                            DefaultDelay = animationDelay,
+                            frames = new Frame[]
+                            {
+                                new(26, animationDelay*2),
+                                new(27),
+                                new(28, animationDelay*2),
+                                new(27)
+                            }
                         };
+                        animator.Animations.Add(esdrasDefeated.Name, esdrasDefeated);
 
-                        esdrasPickUpWeapon.DefaultDelay = animationDelay;
-                        esdrasPickUpWeapon.frames = new Frame[]
+                        SpriteAnimation esdrasPickUpWeapon = new("EsdrasPickUpWeapon")
                         {
-                            new(29), new(30), new(31),
-                            new(32), new(33), new(34),
-                            new(35), new(36), new(37),
-                            new(38), new(39), new(40),
-                            new(41), new(42), new(43)
-                        };
+                            DefaultDelay = animationDelay,
+                            frames = new Frame[]
+                            {
+                                new(29), new(30), new(31),
+                                new(32), new(33), new(34),
+                                new(35), new(36), new(37),
+                                new(38), new(39), new(40),
+                                new(41), new(42), new(43)
+                            }
+                        };                        
+                        animator.Animations.Add(esdrasPickUpWeapon.Name, esdrasPickUpWeapon);
 
-                        demo.DefaultDelay = animationDelay;
-                        demo.frames = new Frame[]
-                        {
-                            new(0),  new(1),  new(2),  new(3),
-                            new(4),  new(5),  new(6),  new(7),
-                            new(8),  new(9),  new(10), new(11),
-                            new(12), new(13), new(14), new(15),
-                            new(16), new(17), new(18), new(19),
-                            new(20), new(21), new(22), new(23),
-                            new(24), new(25),
-                            new(26, animationDelay*2),
-                            new(27),
-                            new(28, animationDelay*2),
-                            new(27),
-                            new(29), new(30), new(31),
-                            new(32), new(33), new(34),
-                            new(35), new(36), new(37),
-                            new(38), new(39), new(40),
-                            new(41), new(42), new(43)
-                        };
-
-                        animator.AddAnimation(ref esdrasNonLethalDefeat);
-                        animator.AddAnimation(ref esdrasDefeated);
-                        animator.AddAnimation(ref esdrasPickUpWeapon);
-                        animator.AddAnimation(ref demo);
+                        // SpriteAnimation demo = new("Demo")
+                        // {
+                        //      DefaultDelay = animationDelay,
+                        //      frames = new Frame[]
+                        //      {
+                        //          new(0),  new(1),  new(2),  new(3),
+                        //          new(4),  new(5),  new(6),  new(7),
+                        //          new(8),  new(9),  new(10), new(11),
+                        //          new(12), new(13), new(14), new(15),
+                        //          new(16), new(17), new(18), new(19),
+                        //          new(20), new(21), new(22), new(23),
+                        //          new(24), new(25),
+                        //          new(26, animationDelay*2),
+                        //          new(27),
+                        //          new(28, animationDelay*2),
+                        //          new(27),
+                        //          new(29), new(30), new(31),
+                        //          new(32), new(33), new(34),
+                        //          new(35), new(36), new(37),
+                        //          new(38), new(39), new(40),
+                        //          new(41), new(42), new(43)
+                        //      }
+                        // };
+                        // animator.Animations.Add(demo.Name, demo);
                     }
+
+#if DISABLED
+                    // Build FSM
+                    {
+                        // States
+
+                        State esdrasNonLethalDefeat = new State("EsdrasNonLethalDefeat")
+                        {
+                            AnimationName = "EsdrasNonLethalDefeat"
+                        };
+
+                        State esdrasDefeated = new State("EsdrasDefeated")
+                        {
+                            AnimationName = "EsdrasDefeated"
+                        };
+
+                        State esdrasWeaponPickup = new State("EsdrasWeaponPickup")
+                        {
+                            AnimationName = "EsdrasWeaponPickup"
+                        };
+
+                        // Transitions
+
+                        Transition start2a = new Transition("OnStart", esdrasNonLethalDefeat.Name);
+
+                        Transition a2b = new Transition(AnimationFsm.TRANSITION.ON_ANIMATION_END, esdrasDefeated.Name);
+
+                        //Transition b2c = new Transition("CombatOver", esdrasWeaponPickup.Name);
+                        Transition b2c = new Transition(AnimationFsm.TRANSITION.ON_ANIMATION_END, esdrasWeaponPickup.Name);
+
+                        //Transition c2end = new Transition(AnimationFsm.TRANSITION.ON_ANIMATION_END, AnimationFsm.STATE.END);
+                        Transition c2end = new Transition(AnimationFsm.TRANSITION.ON_ANIMATION_END, esdrasNonLethalDefeat.Name);
+
+                        // Assemble
+                        AnimationFsm Fsm = new AnimationFsm("TestFMS");
+                        Fsm.GetState(AnimationFsm.STATE.START).AddTransition(start2a);
+                        esdrasNonLethalDefeat.AddTransition(a2b);
+                        esdrasDefeated.AddTransition(b2c);
+                        esdrasWeaponPickup.AddTransition(c2end);
+
+                        Fsm.AddState(esdrasNonLethalDefeat);
+                        Fsm.AddState(esdrasDefeated);
+                        Fsm.AddState(esdrasWeaponPickup);
+                    }
+#endif // DISABLED                    
 
                     Main.IterTormenti.Log("Animator: " + animator.ToString());
 
+                    animator.OnEndTransitions["EsdrasNonLethalDefeat"] = "EsdrasDefeated";
+                    animator.MakeAnimationLoop("EsdrasDefeated");
+
                     animator.enabled = true;
-                    animator.ActiveAnimation = "Demo";
-                    animator.Play();
+                    animator.ActiveAnimation = "EsdrasNonLethalDefeat";
+                    animator.Play();                    
                 }
             }
 
@@ -1116,7 +1410,7 @@ namespace IterTormenti.Esdras
             animatorTest.SetActive(true);
 
 #endregion
-
+#endif
 
 
             return true;
