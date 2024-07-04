@@ -10,7 +10,7 @@ using NodeCanvas.BehaviourTrees;
 
 using System;
 
-
+#if DISABLED //TODO: No longer needed
 namespace IterTormenti.Esdras
 {
     using Gameplay.GameControllers.Bosses.EcclesiaBros.Esdras;
@@ -58,6 +58,7 @@ namespace IterTormenti.Esdras
         }
     }
 }
+#endif
 
 
 namespace IterTormenti.Playmaker

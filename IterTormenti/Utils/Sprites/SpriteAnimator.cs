@@ -4,6 +4,7 @@ using UnityEngine;
 using IterTormenti.Utils.Sprites.Animations;
 using System.Collections.Generic;
 using System.Linq;
+using IterTormenti.Utils.Audio;
 
 namespace IterTormenti.Utils.Sprites
 {
@@ -35,6 +36,7 @@ namespace IterTormenti.Utils.Sprites
             _activeAnimation = "";
 
             OnEndTransitions = new Dictionary<string, string>(0);
+            AudioPlayer = null;
         }
 
         public SpriteAnimator(string name = "SpriteAnimator")
@@ -48,6 +50,7 @@ namespace IterTormenti.Utils.Sprites
             _activeAnimation = "";
 
             OnEndTransitions = new Dictionary<string, string>(0);
+            AudioPlayer = null;
         }
 
         public SpriteAnimator(ref SpriteAnimator source)
@@ -81,6 +84,7 @@ namespace IterTormenti.Utils.Sprites
             _activeAnimation = "";
 
             OnEndTransitions = new Dictionary<string, string>(0);
+            AudioPlayer = source.AudioPlayer;
         }
 
         // -- Properties and Attribtues --
@@ -134,6 +138,11 @@ namespace IterTormenti.Utils.Sprites
             }            
         }
 
+        /// <summary>
+        /// Audio player that will manage animation audio events.
+        /// </summary>
+        public AudioPlayer AudioPlayer {get; set;}
+
         // -- Methods --
 
         private string _nextAnimation;
@@ -159,6 +168,7 @@ namespace IterTormenti.Utils.Sprites
             foreach(SpriteAnimation anim in Animations.Values)
             {
                 anim.AnimationCompleted += OnAnimationEnded;
+                anim.FrameAudio += OnFrameAudio;
             }
 
             _playing = true;
@@ -175,6 +185,7 @@ namespace IterTormenti.Utils.Sprites
             foreach(SpriteAnimation anim in Animations.Values)
             {
                 anim.AnimationCompleted -= OnAnimationEnded;
+                anim.FrameAudio -= OnFrameAudio;
             }
 
             _playing = false;
@@ -234,13 +245,20 @@ namespace IterTormenti.Utils.Sprites
 
         public Dictionary<string, string> OnEndTransitions;
 
-        public void OnAnimationEnded(object sender, AnimationEventArgs args)
+        private void OnAnimationEnded(object sender, AnimationEventArgs args)
         {
              //Main.IterTormenti.Log($"SpriteAnimationr::OnAnimationEnded({args.Name})");
 
             if(!OnEndTransitions.ContainsKey(args.Name)) return;
 
             GoToAnimation(OnEndTransitions[args.Name], 0, false);
+        }
+
+        private void OnFrameAudio(object sender, AudioEventArgs args)
+        {
+            Main.IterTormenti.Log($"SpriteAnimationr::OnFrameAudio({args.Name})");
+
+            AudioPlayer.Play(args.Name); // TODO: Add features?
         }
 
         public void MakeAnimationLoop(string name)
@@ -310,12 +328,12 @@ namespace IterTormenti.Utils.Sprites
         // -- Internal attributes --
 
         /// <summary>
-        /// Indicates if the animation is playing
+        /// Indicates if the animation is playing.
         /// </summary>
         private bool _playing;
 
         /// <summary>
-        /// Time, in seconds, ellapsed since the last frame was updated
+        /// Time, in seconds, ellapsed since the last frame was updated.
         /// </summary>          
         private float _timeSinceLastUpdate;
 
@@ -326,8 +344,8 @@ namespace IterTormenti.Utils.Sprites
         private bool _waitingForAnimationChange;
 
         /// <summary>
-        /// Name of the currently active animation
+        /// Name of the currently active animation.
         /// </summary>
-        private string _activeAnimation;
+        private string _activeAnimation;        
     }
 }

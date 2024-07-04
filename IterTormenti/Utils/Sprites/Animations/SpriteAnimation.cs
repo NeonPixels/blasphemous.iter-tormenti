@@ -1,4 +1,5 @@
 using System;
+using IterTormenti.Utils.Audio;
 
 namespace IterTormenti.Utils.Sprites.Animations
 {
@@ -123,6 +124,15 @@ namespace IterTormenti.Utils.Sprites.Animations
             AnimationCompleted?.Invoke(this, new AnimationEventArgs(AnimationEventArgs.ON_ANIMATION_END){Name = this.Name});
         }
 
+        public event EventHandler<AudioEventArgs> FrameAudio;
+
+        protected virtual void NotifyIfFrameHasAudio(Frame frame)
+        {
+            if(null == frame.Audio) return;
+
+            FrameAudio?.Invoke(this, frame.Audio);
+        }
+
         // -- Methods --
 
         
@@ -164,6 +174,8 @@ namespace IterTormenti.Utils.Sprites.Animations
                 _index = 0;
                 //_index = frames.Length - 1;
             }
+            
+            NotifyIfFrameHasAudio(CurrentFrame);
 
             return CurrentFrame;
         }

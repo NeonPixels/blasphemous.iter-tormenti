@@ -14,6 +14,8 @@ using Blasphemous.ModdingAPI.Files;
 using IterTormenti.Utils.Sprites;
 using IterTormenti.Utils.Sprites.Animations;
 using IterTormenti.Utils.Sprites.Animations.Fsm;
+using Gameplay.GameControllers.Bosses.EcclesiaBros.Esdras.Audio;
+using IterTormenti.Utils.Audio;
 
 namespace IterTormenti.Esdras
 {
@@ -481,22 +483,22 @@ namespace IterTormenti.Esdras
             {
                 moveCharacters.Name = "Move Characters";
 
-                CallMethod callMoveToFinalPosition = new();
-                {
-                    var methodParams = new List<FsmVar>();
+                // CallMethod callMoveToFinalPosition = new();
+                // {
+                //     var methodParams = new List<FsmVar>();
                     
-                    FsmObject target = new()
-                    {
-                        Value = esdrasBehaviour,
-                        ObjectType = esdrasBehaviour.GetType()
-                    };
+                //     FsmObject target = new()
+                //     {
+                //         Value = esdrasBehaviour,
+                //         ObjectType = esdrasBehaviour.GetType()
+                //     };
                     
-                    callMoveToFinalPosition.behaviour = target;
-                    callMoveToFinalPosition.methodName = "MoveToFinalPosition";
-                    callMoveToFinalPosition.parameters = methodParams.ToArray();
-                }
+                //     callMoveToFinalPosition.behaviour = target;
+                //     callMoveToFinalPosition.methodName = "MoveToFinalPosition";
+                //     callMoveToFinalPosition.parameters = methodParams.ToArray();
+                // }
 
-                moveCharacters.AddAction(callMoveToFinalPosition);
+                // moveCharacters.AddAction(callMoveToFinalPosition);
 
                  CallMethod callReplaceBossWithAnimator = new();
                 {
@@ -817,6 +819,8 @@ namespace IterTormenti.Esdras
             // Disable the NPC dialog prompt, won't be used here
             gameObject.transform.Find("ACT_Interaction").gameObject.SetActive(false);
 
+            // TODO: If Esdras is too close to Penitent, make him walk away, so the animations are visible
+            // TODO: Turn animator around to face penitent!
 
         #endregion Find Required Objects
         #region Build FSM States
@@ -938,6 +942,8 @@ namespace IterTormenti.Esdras
                 SpriteAnimator animator = esdrasDefeatAnimator.AddComponent<SpriteAnimator>();
                 {
                     animator.Renderer = renderer;
+
+                    animator.AudioPlayer = new EsdrasAudioPlayer();
                     
                     // Load sprites into SpriteAnimator
                     {
@@ -981,12 +987,11 @@ namespace IterTormenti.Esdras
                             DefaultDelay = animationDelay,
                             frames = new Frame[]
                             {
-                                new(0),  new(1),  new(2),  new(3),
-                                new(4),  new(5),  new(6),  new(7),
-                                new(8),  new(9),  new(10), new(11),
-                                new(12), new(13), new(14), new(15),
-                                new(16), new(17), new(18), new(19),
-                                new(20), new(21), new(22), new(23),
+                                new(0),  new(1),  new(2),  new(3),  new(4),  new(5),
+                                new(6),  new(7),  new(8),  new(9),  new(10), new(11),
+                                new(12), new(13), new(14), new(15), new(16), 
+                                new(17){ Audio = new AudioEventArgs("EsdrasGroundHit") },
+                                new(18), new(19), new(20), new(21), new(22), new(23),
                                 new(24), new(25)
                             }
                         };
@@ -1012,9 +1017,10 @@ namespace IterTormenti.Esdras
                             {
                                 new(29), new(30), new(31),
                                 new(32), new(33), new(34),
-                                new(35), new(36), new(37),
-                                new(38), new(39), new(40),
-                                new(41), new(42), new(43)
+                                new(35){ Audio = new AudioEventArgs("EsdrasNormalAttack") },
+                                new(36), new(37), new(38),
+                                new(39), new(40), new(41),
+                                new(42), new(43)
                             }
                         };                        
                         animator.Animations.Add(esdrasPickUpWeapon.Name, esdrasPickUpWeapon);
