@@ -924,12 +924,27 @@ namespace IterTormenti.Esdras
 
         private static bool CreateDefeatAnimation()
         {
+            GameObject esdrasBoss = GameObject.Find("Esdras");
+            if(null == esdrasBoss)
+            {
+                Main.IterTormenti.LogError("Failed to create Defeat Animation: 'Esdras' object not found!");
+                return false;
+            }
+
             GameObject esdrasDefeatAnimator = new("EsdrasDefeatAnimator");
             {
                 SpriteRenderer renderer = esdrasDefeatAnimator.AddComponent<SpriteRenderer>();
-                renderer.enabled = true;
-                renderer.drawMode = SpriteDrawMode.Simple;
-                renderer.sortingLayerName = "Player";
+                {
+                    renderer.enabled = true;
+                    renderer.drawMode = SpriteDrawMode.Simple;
+                    renderer.sortingLayerName = "Player";
+                    
+                    // Have the animation be in front of player so it is visible if both characters end up overlapping
+                    renderer.sortingOrder = 2;
+                    
+                    // This material is needed for the special shader effect when boss is defeated
+                    renderer.material = esdrasBoss.transform.Find("#Constitution/Sprite").gameObject.GetComponent<SpriteRenderer>().material;
+                }
 
                 SpriteImportOptions importOptions = new()
                 {
@@ -1032,11 +1047,10 @@ namespace IterTormenti.Esdras
                     animator.MakeAnimationLoop("EsdrasDefeated");
 
                     animator.enabled = true;
-                    animator.ActiveAnimation = "EsdrasNonLethalDefeat";
-                    //animator.Play();                    
+                    animator.ActiveAnimation = "EsdrasNonLethalDefeat";                    
                 }
             }
-            float xVal = -180f + 10.5625f + 102.28f -0.02999878f; //TODO: Just set it to the bossfight center position
+            float xVal = -180f + 10.5625f + 102.28f -0.02999878f; //TODO: Just set it to the bossfight center position?
             float yVal = 9f - 0.96875f;
             esdrasDefeatAnimator.transform.position = new Vector3(xVal,yVal,0.0f);
             esdrasDefeatAnimator.SetActive(true);

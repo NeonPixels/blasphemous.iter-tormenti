@@ -122,7 +122,10 @@ namespace IterTormenti.Esdras
             
             MoveElementsToFinalPosition();
             
+            
             EsdrasBoss.transform.Find("#Constitution/Sprite").gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            // TODO: Disable boss sounds too?            
+
             EsdrasAnimator.Play();
         }
 
