@@ -1,6 +1,5 @@
 
 using Framework.Managers;
-using Gameplay.GameControllers.Bosses.EcclesiaBros.Esdras.Audio;
 using IterTormenti.Utils.Audio;
 
 namespace IterTormenti.Esdras
