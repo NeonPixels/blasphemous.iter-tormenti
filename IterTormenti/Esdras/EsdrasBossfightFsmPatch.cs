@@ -85,44 +85,12 @@ namespace IterTormenti.Esdras
                 return false;
             }
 
-            GameObject perpetvaAppears = null;
-            foreach ( var go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) )
+            AnimatorBehaviour esdrasBehaviour = esdrasDefeatAnimator.GetComponent<AnimatorBehaviour>();
+            if(null == esdrasBehaviour)
             {
-                if(null == go) continue;
-                if(typeof(GameObject) != go.GetType()) continue;
-                if(!go.name.Equals("PerpetvaAppears_SimpleVFX")) continue;
-
-                perpetvaAppears = go as GameObject;
-                break;
-            }
-            if(null == perpetvaAppears)
-            {
-                Main.IterTormenti.LogError("Failed to patch 'BossFight': 'PerpetvaAppears_SimpleVFX' object not found!");
+                Main.IterTormenti.LogError("Failed to patch 'BossFight': 'esdrasBehaviour' object not found!");
                 return false;
             }
-
-            GameObject penitent = null;
-            foreach ( var go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) )
-            {
-                if(null == go) continue;
-                if(typeof(GameObject) != go.GetType()) continue;
-                if(!go.name.Equals("Penitent")) continue;
-
-                penitent = go as GameObject;
-                break;
-            }
-            if(null == penitent)
-            {
-                Main.IterTormenti.LogError("Failed to patch 'BossFight': 'Penitent' object not found!");
-                return false;
-            }
-
-            BossfightBehaviour esdrasBehaviour = gameObject.AddComponent<BossfightBehaviour>();
-            esdrasBehaviour.EsdrasAnimatorGO = esdrasDefeatAnimator;            
-            esdrasBehaviour.EsdrasNPC        = esdrasNPC;
-            //esdrasBehaviour.Penitent         = penitent;
-            esdrasBehaviour.BossFightStuff   = bossFightStuff;
-            esdrasBehaviour.PerpetvaVFX      = perpetvaAppears;
                        
 
         #endregion Find Required Objects
@@ -255,7 +223,7 @@ namespace IterTormenti.Esdras
             {
                 moveCharacters.Name = "Move Characters";
 
-                 CallMethod callReplaceBossWithAnimator = new();
+                CallMethod callReplaceBossWithAnimator = new();
                 {
                     var methodParams = new List<FsmVar>();
                     

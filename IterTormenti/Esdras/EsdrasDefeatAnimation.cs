@@ -15,12 +15,57 @@ namespace IterTormenti.Esdras
         /// <returns></returns>
         public static bool Create()
         {
+            //TODO: Add shadow! Hide NPC shadow!
+
+            // ---- Get needed GameObjects ----
+
             GameObject esdrasBoss = GameObject.Find("Esdras");
             if(null == esdrasBoss)
             {
                 Main.IterTormenti.LogError("Failed to create Defeat Animation: 'Esdras' object not found!");
                 return false;
             }
+            
+            GameObject esdrasNPC = GameObject.Find("EsdrasNPC");
+            if(null == esdrasNPC)
+            {
+                Main.IterTormenti.LogError("Failed to patch Defeat Animation: 'EsdrasNPC' object not found!");
+                return false;
+            }
+
+            GameObject bossFightStuff = GameObject.Find("BOSS_FIGHT_STUFF");
+            if(null == bossFightStuff)
+            {
+                Main.IterTormenti.LogError("Failed to create Defeat Animation: 'BOSS_FIGHT_STUFF' object not found!");
+                return false;
+            }
+
+            GameObject esdrasTarget = GameObject.Find("Esdras destination Point");
+            if(null == esdrasTarget)
+            {
+                Main.IterTormenti.LogError("Failed to create Defeat Animation: 'Esdras destination Point' object not found!");
+                return false;
+            }
+
+            GameObject perpetvaAppears = null;
+            foreach ( var go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) )
+            {
+                if(null == go) continue;
+                if(typeof(GameObject) != go.GetType()) continue;
+                if(!go.name.Equals("PerpetvaAppears_SimpleVFX")) continue;
+
+                perpetvaAppears = go as GameObject;
+                break;
+            }
+            if(null == perpetvaAppears)
+            {
+                Main.IterTormenti.LogError("Failed to create Defeat Animation: 'PerpetvaAppears_SimpleVFX' object not found!");
+                return false;
+            }
+
+
+            // ---- Create Animator ----
+
 
             GameObject esdrasDefeatAnimator = new("EsdrasDefeatAnimator");
             {
@@ -140,7 +185,22 @@ namespace IterTormenti.Esdras
                     animator.enabled = true;
                     animator.ActiveAnimation = "EsdrasNonLethalDefeat";                    
                 }
+            
+                AnimatorBehaviour esdrasBehaviour = esdrasDefeatAnimator.AddComponent<AnimatorBehaviour>();
+                {
+                    esdrasBehaviour.EsdrasAnimatorGO = esdrasDefeatAnimator;            
+                    esdrasBehaviour.EsdrasNPC        = esdrasNPC;
+                    esdrasBehaviour.BossFightStuff   = bossFightStuff;
+                    esdrasBehaviour.PerpetvaVFX      = perpetvaAppears;
+                    esdrasBehaviour.EsdrasTarget     = esdrasTarget;
+                }
+
+                // Copy the NPC shadow and add it as child of the animator
+                UnityEngine.Object.Instantiate( esdrasNPC.transform.Find("#Constitution/Body/BlobShadow").gameObject,
+                                                esdrasDefeatAnimator.transform,
+                                                false );
             }
+
             float xVal = -180f + 10.5625f + 102.28f -0.02999878f; //TODO: Just set it to the bossfight center position?
             float yVal = 9f - 0.96875f;
             esdrasDefeatAnimator.transform.position = new Vector3(xVal,yVal,0.0f);

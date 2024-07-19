@@ -2,6 +2,7 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 using IterTormenti.FSMUtils;
+using System.Collections.Generic;
 
 namespace IterTormenti.Esdras
 {
@@ -45,14 +46,27 @@ namespace IterTormenti.Esdras
                 return false;
             }
 
-            // Disable sprite directly, we will re-enable it when needed
+            // Hide sprite and shadow directly, we will re-enable them when needed
             gameObject.transform.Find("#Constitution/Body").gameObject.GetComponent<SpriteRenderer>().enabled = false;
-
+            gameObject.transform.Find("#Constitution/Body/BlobShadow").gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            
             // Disable the NPC dialog prompt, won't be used here
             gameObject.transform.Find("ACT_Interaction").gameObject.SetActive(false);
 
-            // TODO: If Esdras is too close to Penitent, make him walk away, so the animations are visible
-            // TODO: Turn animator around to face penitent!
+            
+            GameObject esdrasDefeatAnimator = GameObject.Find("EsdrasDefeatAnimator");
+            if(null == esdrasDefeatAnimator)
+            {
+                Main.IterTormenti.LogError("Failed to patch 'EsdrasNPC': 'EsdrasDefeatAnimator' object not found!");
+                return false;
+            }
+
+            AnimatorBehaviour esdrasBehaviour = esdrasDefeatAnimator.GetComponent<AnimatorBehaviour>();
+            if(null == esdrasBehaviour)
+            {
+                Main.IterTormenti.LogError("Failed to patch 'EsdrasNPC': 'esdrasBehaviour' object not found!");
+                return false;
+            }
 
         #endregion Find Required Objects
         #region Build FSM States
@@ -76,14 +90,7 @@ namespace IterTormenti.Esdras
 
                 waitForPenitent.AddAction(waitForObject);
             }
-
-            // Attach Perpetva position to Penitent position
-            FsmState attachPerpetvaToPenitent = new(fsm.Fsm);
-            {
-                attachPerpetvaToPenitent.Name = "Attach Perpetva to Penitent";
-                //TODO
-            }
-
+            
             FsmState waitForBossfightStart = new(fsm.Fsm);
             {
                 waitForBossfightStart.Name = "Wait for Bossfight start";
@@ -94,12 +101,27 @@ namespace IterTormenti.Esdras
                 waitForBossfightEnd.Name = "Wait for Bossfight end";
             }
 
-            // Updates the facing of Esdras and the Penitent
-            // Note: Perpetva is already facing the same direction as the Penitent
-            FsmState updateFacing = new(fsm.Fsm);
+            // Reset Esdras facing so final animation plays correctly
+            FsmState resetEsdrasFacing = new(fsm.Fsm);
             {
-                updateFacing.Name = "Update Facing";
-                //TODO
+                resetEsdrasFacing.Name = "Reset Esdras Facing";
+
+                CallMethod callMethod = new();
+                {
+                    var methodParams = new List<FsmVar>();
+                    
+                    FsmObject target = new()
+                    {
+                        Value = esdrasBehaviour,
+                        ObjectType = esdrasBehaviour.GetType()
+                    };
+                    
+                    callMethod.behaviour = target;
+                    callMethod.methodName = "ResetEsdrasFacing";
+                    callMethod.parameters = methodParams.ToArray();
+                }
+
+                resetEsdrasFacing.AddAction(callMethod);
             }
 
 
@@ -109,6 +131,7 @@ namespace IterTormenti.Esdras
 
             fsm.AddState(waitForBossfightStart);
             fsm.AddState(waitForBossfightEnd);
+            fsm.AddState(resetEsdrasFacing);
 
 
         #endregion Add States to FSM
@@ -145,7 +168,14 @@ namespace IterTormenti.Esdras
             // Skip Esdras intro, it has already been done by the BossFight object
             {
                 FsmState wait9 = fsm.GetState("Wait 9");
-                wait9.ChangeTransition(FsmEvent.Finished.Name, "Make taunt animation 2");//"Play IdleDazzle animation");
+                wait9.ChangeTransition(FsmEvent.Finished.Name, "Make taunt animation 2");
+            }
+
+            // Insert Esdras facing reset before he leaves
+            {
+                FsmState wait16 = fsm.GetState("Wait 16");
+                wait16.ChangeTransition(FsmEvent.Finished.Name, "Reset Esdras Facing");
+                resetEsdrasFacing.AddTransition(FsmEvent.Finished.Name, "Move back 3");
             }
 
 
