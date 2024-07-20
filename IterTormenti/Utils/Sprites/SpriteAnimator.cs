@@ -3,7 +3,6 @@ using System.Collections;
 using UnityEngine;
 using IterTormenti.Utils.Sprites.Animations;
 using System.Collections.Generic;
-using System.Linq;
 using IterTormenti.Utils.Audio;
 
 namespace IterTormenti.Utils.Sprites
@@ -150,8 +149,6 @@ namespace IterTormenti.Utils.Sprites
 
         private void ChangeAnimation()
         {
-            //Main.IterTormenti.Log($"SpriteAnimation::ChangeAnimation: {CurrentAnimation.Name} => {_nextAnimation}");
-            
             ActiveAnimation = _nextAnimation;
             CurrentAnimation.Index = _nextAnimationIndex;
 
@@ -163,8 +160,6 @@ namespace IterTormenti.Utils.Sprites
         /// </summary>
         public void Play()
         {
-            Main.IterTormenti.Log("SpriteAnimation::Play");
-
             foreach(SpriteAnimation anim in Animations.Values)
             {
                 anim.AnimationCompleted += OnAnimationEnded;
@@ -180,8 +175,6 @@ namespace IterTormenti.Utils.Sprites
         /// </summary>
         public void Stop()
         {
-            Main.IterTormenti.Log("SpriteAnimation::Stop");
-
             foreach(SpriteAnimation anim in Animations.Values)
             {
                 anim.AnimationCompleted -= OnAnimationEnded;
@@ -196,7 +189,6 @@ namespace IterTormenti.Utils.Sprites
         /// </summary>
         public void Pause()
         {
-            Main.IterTormenti.Log("SpriteAnimation::Pause");
             _playing |= false;
         }
 
@@ -216,8 +208,6 @@ namespace IterTormenti.Utils.Sprites
 
         public void GoToAnimation(string name, int index = 0, bool synched = true)
         {
-            //Main.IterTormenti.Log($"SpriteAnimator::GoToAnimation: '{name}' synched? {synched}");
-            
             if(!Animations.ContainsKey(name))
             {
                 Main.IterTormenti.LogError($"SpriteAnimator::GoToAnimation: ERROR: '{name}' does not match an existing animation!");
@@ -240,15 +230,13 @@ namespace IterTormenti.Utils.Sprites
 
         
         // --- Animation Event Handling ---
-        // TODO: Placeholder until a better solution with the FSM?
+        // TODO: Placeholder until a better solution with a FSM implementation?
 
 
         public Dictionary<string, string> OnEndTransitions;
 
         private void OnAnimationEnded(object sender, AnimationEventArgs args)
         {
-             //Main.IterTormenti.Log($"SpriteAnimationr::OnAnimationEnded({args.Name})");
-
             if(!OnEndTransitions.ContainsKey(args.Name)) return;
 
             GoToAnimation(OnEndTransitions[args.Name], 0, false);
@@ -256,8 +244,6 @@ namespace IterTormenti.Utils.Sprites
 
         private void OnFrameAudio(object sender, AudioEventArgs args)
         {
-            Main.IterTormenti.Log($"SpriteAnimationr::OnFrameAudio({args.Name})");
-
             AudioPlayer.Play(args.Name); // TODO: Add features?
         }
 

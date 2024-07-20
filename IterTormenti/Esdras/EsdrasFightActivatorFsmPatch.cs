@@ -52,8 +52,6 @@ namespace IterTormenti.Esdras
         #region Build FSM States
 
 
-            Main.IterTormenti.Log("Patching '" + gameObject.name + ":" + fsm.name + "' FSM...");
-            
             FsmState activateEverything = new(fsm.Fsm);
             {
                 activateEverything.Name = "ActivateEverything";

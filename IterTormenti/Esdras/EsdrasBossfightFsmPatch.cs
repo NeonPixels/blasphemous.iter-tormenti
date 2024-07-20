@@ -24,7 +24,7 @@ namespace IterTormenti.Esdras
         ///       and switch over to the EsdrasNPC FSM.
         ///     - If players choose to fight, continue normally until the deathblow.
         ///     - Upon the boss dying, do the following:
-        ///         - Instantly replace it with the NPC version, on the same position and with an appropriate animation // TODO
+        ///         - Instantly replace it with the NPC version, on the same position and with an appropriate animation
         ///           Note: The boss animations have to be overriden to avoid the death animation that makes Esdras explode.
         ///         - Display the 'Requiem Aeternam' message.
         ///     - Afterwards, do any cleanup and switch over to the EsdrasNPC FSM.        
@@ -93,49 +93,11 @@ namespace IterTormenti.Esdras
                 Main.IterTormenti.LogError("Failed to patch 'BossFight': 'esdrasBehaviour' object not found!");
                 return false;
             }
-                       
+
 
         #endregion Find Required Objects
         #region Build FSM States
 
-            Main.IterTormenti.Log("Patching '" + gameObject.name + ":" + fsm.name + "' FSM...");
-            
-
-        #if DISABLED_CODE // TODO: This should work but doesn't, leaving as reference
-            // Send Bossfight Start event
-            FsmState bossTriggeredEvent = new FsmState(fsm.Fsm);
-            {
-                bossTriggeredEvent.Name = "BOSS TRIGGERED";
-
-                SendEvent sendEventAction = new SendEvent();
-                {
-                    FsmEvent bossStartEvent = new FsmEvent("ON ESDRAS BOSSFIGHT START");
-                    bossStartEvent.IsGlobal = true;
-
-                    FsmEventTarget eventTarget = new FsmEventTarget();
-                    {
-                        FsmOwnerDefault target = new FsmOwnerDefault();
-                        {                        
-                            FsmGameObject fsmGameObject = new FsmGameObject()
-                            {
-                                Value = esdrasNPC
-                            };
-
-                            target.OwnerOption = OwnerDefaultOption.SpecifyGameObject;
-                            target.GameObject = fsmGameObject;
-                        }
-
-                        eventTarget.target = FsmEventTarget.EventTarget.GameObjectFSM;
-                        eventTarget.gameObject = target;
-                    }
-
-                    sendEventAction.sendEvent = bossStartEvent;
-                    sendEventAction.eventTarget = eventTarget;
-                }
-                
-                bossTriggeredEvent.AddAction(sendEventAction);
-            }
-        #endif //DISABLED_CODE
 
             // Tell EsdrasNPC FSM to set camera boundaries
             FsmState deferSetCamera = new(fsm.Fsm);
@@ -176,14 +138,17 @@ namespace IterTormenti.Esdras
                 deferSetCamera.AddAction(callMethod);
             }
 
-            
-            FsmState choiceDialog = new(fsm.Fsm); // PLACEHOLDER
+            // PLACEHOLDER for the dialog choice prior to comnbat.
+            // For now I won't implement this, but I might change
+            // my mind.
+            FsmState choiceDialog = new(fsm.Fsm);
             {
                 choiceDialog.Name = "Choice Dialog";
 
                 // FsmEvent assent  = new FsmEvent("Assent");
                 // FsmEvent dissent = new FsmEvent("Dissent");
 
+                // TODO: This doesn't work yet
                 // DialogStart dialog = new DialogStart();
                 // {
                 //     dialog.conversation = "DLG_QUESTION_ASSENT";                                    
@@ -208,7 +173,7 @@ namespace IterTormenti.Esdras
                 cleanUp.AddAction(removeBossDiedInputBlock);
             }
 
-            // Move the different characters to their expected positions
+            // Replace the boss sprite with the transition animator
             FsmState replaceBossWithAnimator = new(fsm.Fsm);
             {
                 replaceBossWithAnimator.Name = "Replace Boss With Animator";
@@ -231,47 +196,8 @@ namespace IterTormenti.Esdras
                 replaceBossWithAnimator.AddAction(callReplaceBossWithAnimator);
             }
 
-
-            // Start NPC workflow
-            // FsmState startNPC = new(fsm.Fsm);
-            // {
-            //     startNPC.Name = "START NPC";
-
-
-            //     // NOTE: Since using events to trigger state changes in
-            //     //       other FSMs doesn't seem to work via code, we
-            //     //       are resorting to directly telling the FSM to
-            //     //       swith to an specific state.
-            //     //       If a way to make it work is found, it would
-            //     //       be preferable to issue an event signal and
-            //     //       have the remote FSM process it independently
-            //     //       instead of doing this.                
-
-            //     CallMethod callMethod = new();
-            //     {
-            //         var methodParams = new List<FsmVar>();
-            //         {
-            //             FsmString value = "BlockPlayerInput";
-            //             FsmVar param = new(value);
-
-            //             methodParams.Add(param);
-            //         }
-                    
-            //         FsmObject target = new()
-            //         {
-            //             Value = esdrasNpcFSM,
-            //             ObjectType = esdrasNpcFSM.GetType()
-            //         };
-                    
-            //         callMethod.behaviour = target;
-            //         callMethod.methodName = "SetState";
-            //         callMethod.parameters = methodParams.ToArray();
-            //     }
-
-            //     startNPC.AddAction(callMethod);
-            // }
-
-            // Switch to NPC
+            // At this point the boss is fully dead, so deactivate everything,
+            // and tell the transition animator to continue
             FsmState switchToNPC = new(fsm.Fsm);
             {
                 switchToNPC.Name = "SWITCH TO NPC";
@@ -319,7 +245,6 @@ namespace IterTormenti.Esdras
         #region Add States to FSM
 
 
-            //fsm.AddState(bossTriggeredEvent);
             fsm.AddState(deferSetCamera);
             fsm.AddState(choiceDialog);
             fsm.AddState(switchToNPC);            
@@ -343,7 +268,8 @@ namespace IterTormenti.Esdras
                 FsmState introWait = fsm.GetState("IntroWait");
                 introWait.ChangeTransition(FsmEvent.Finished.Name, choiceDialog.Name);
                 
-                choiceDialog.AddTransition(FsmEvent.Finished.Name, "StartBossfight");//cleanUp.Name); // PLACEHOLDER
+                // PLACEHOLDER
+                choiceDialog.AddTransition(FsmEvent.Finished.Name, "StartBossfight");
                 // choiceDialog.AddTransition("Assent", "Clean up");
                 // choiceDialog.AddTransition("Dissent", "StartBossfight");
             }

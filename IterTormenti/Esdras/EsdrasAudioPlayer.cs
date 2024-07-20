@@ -31,11 +31,8 @@ namespace IterTormenti.Esdras
 
         public override void Play(string name)
         {
-            Main.IterTormenti.Log($"EsdrasAudioPlayer::Play: {name}");
-
             if(ESDRAS_NORMAL_ATTACK.Equals(name))
             {
-                //EsdrasAudio.PlayLightAttack_AUDIO(); //TODO: Use material properties from this function?
                 Core.Audio.PlaySfx(ESDRAS_BOSS_HEADER + ESDRAS_NORMAL_ATTACK);
                 return;
             }
@@ -64,7 +61,7 @@ namespace IterTormenti.Esdras
                 return;
             }
 
-            Main.IterTormenti.Log($"EsdrasAudioPlayer::Play: Unknown audio: {name}");
+            Main.IterTormenti.LogError($"EsdrasAudioPlayer::Play: ERROR: Unknown audio: {name}");
         }
     }
 }

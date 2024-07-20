@@ -117,13 +117,7 @@ namespace IterTormenti.Esdras
             Vector3 targetLeft = new Vector3( bossfightCenter.x - Vector3.Distance(bossfightCenter, targetRight),
                                               targetRight.y,
                                               targetRight.z );  
-
-            // Main.IterTormenti.Log($"PenitentXpos: {penitentPosition.x} ");
-            // Main.IterTormenti.Log($"LeftXpos: {targetLeft.x} CenterXpos: {bossfightCenter.x} RightXpos: {targetRight.x}");
-
-            // Main.IterTormenti.Log($"Distance to Right Target: {Vector3.Distance(penitentPosition, targetRight)}");
-            // Main.IterTormenti.Log($"Distance to Left Target:  {Vector3.Distance(penitentPosition, targetLeft)}");
-            
+           
             // Select the target depending on which side of the arena the penitent is at
             if(penitentPosition.x <=  bossfightCenter.x)//if(Vector3.Distance(penitentPosition, targetRight) >= Vector3.Distance(penitentPosition, targetLeft))
             {
@@ -186,8 +180,6 @@ namespace IterTormenti.Esdras
 
         public void ReplaceBossWithAnimator()
         {
-            Main.IterTormenti.Log("EsdrasBehaviour::ReplaceBossWithAnimator");
-            
             MoveElementsToFinalPosition();
             
             Vector3 penitentPosition =  Core.Logic.Penitent.gameObject.transform.position;
@@ -222,7 +214,6 @@ namespace IterTormenti.Esdras
 
         public void SetAnimatorToStandUp()
         {
-            Main.IterTormenti.Log("EsdrasBehaviour::SetAnimatorToStandUp");
             EsdrasAnimator.Animations["EsdrasPickUpWeapon"].AnimationCompleted += MoveAnimatorToTarget;
             EsdrasAnimator.GoToAnimation("EsdrasPickUpWeapon");
         }
@@ -234,14 +225,11 @@ namespace IterTormenti.Esdras
 
         protected virtual void OnMovementComplete()
         {
-            Main.IterTormenti.Log("EsdrasBehaviour::OnMovementComplete");
             MovementComplete?.Invoke(this, new EventArgs());
         }
 
         public void MoveAnimatorToTarget(object item, AnimationEventArgs args)
         {
-            Main.IterTormenti.Log("EsdrasBehaviour::MoveAnimatorToTarget");
-            
             if(EsdrasNPC.transform.position.x > EsdrasAnimatorGO.transform.position.x)
             {
                 EsdrasAnimatorGO.transform.GetComponent<SpriteRenderer>().flipX = false;
@@ -267,23 +255,8 @@ namespace IterTormenti.Esdras
 
         private IEnumerator MoveToTargetCoroutine(float speed)
         {
-            Main.IterTormenti.Log("EsdrasBehaviour::MoveToTargetCoroutine");
             float distance = Vector3.Distance(EsdrasNPC.transform.position, EsdrasAnimatorGO.transform.position);
 
-            //float speedMs
-
-            //1.0f / Time.deltaTime
-            
-            // if(Vector3.Distance(EsdrasNPC.transform.position, EsdrasAnimatorGO.transform.position) <= minDistance)
-            // {
-            //     OnMovementComplete(); //TODO: Better destination reached conditions
-            // }
-
-            // public static IEnumerator Tweeng( this float duration,
-            //                               System.Action<float> var,
-            //                               float start,
-            //                               float end )
-        
             float duration = speed <= 0.0f? 0.0f : distance / speed;
             float startTime = Time.time;
             float endTime = startTime + duration;
@@ -291,12 +264,9 @@ namespace IterTormenti.Esdras
             Vector3 start = EsdrasAnimatorGO.transform.position;
             Vector3 end   = EsdrasNPC.transform.position;
             
-            Main.IterTormenti.Log($"EsdrasBehaviour::MoveToTargetCoroutine PreLoop: duration: {duration}, startTime: {startTime}, endTime: {endTime}");
-
             while (Time.time < endTime)
             {
                 float currentTime = (Time.time - startTime) / duration;
-                //Main.IterTormenti.Log($"EsdrasBehaviour::MoveToTargetCoroutine Loop: {currentTime}");
                 EsdrasAnimatorGO.transform.position = Vector3.Lerp(start, end, Mathf.SmoothStep(0f, 1f, currentTime) );
                 yield return null;
             }
@@ -309,8 +279,6 @@ namespace IterTormenti.Esdras
 
         private IEnumerator PenitentLookAtEsdrasCoroutine()
         {
-            Main.IterTormenti.Log("EsdrasBehaviour::PenitentLookAtEsdrasCoroutine");
-            
             while(true)
             {
                 PenitentLookAtEsdras();
@@ -320,8 +288,6 @@ namespace IterTormenti.Esdras
 
         private void  PenitentLookAtEsdras()
         {
-            Main.IterTormenti.Log("EsdrasBehaviour::PenitentLookAtEsdras");
-
             Penitent penitent = Core.Logic.Penitent.gameObject.GetComponent<Penitent>();
             Vector3 penitentPosition = Core.Logic.Penitent.gameObject.transform.position;
 
@@ -338,8 +304,6 @@ namespace IterTormenti.Esdras
 
         private void StopMovingAndFacePenitent(object item, EventArgs args)        
         {
-            Main.IterTormenti.Log("EsdrasBehaviour::StopMovingAndFacePenitent");
-
             StopCoroutine(moveToTargetCoroutine);
             StopCoroutine(lookAtEsdrasCoroutine);
             PenitentLookAtEsdras(); // Just in case the movement was too short
@@ -358,19 +322,16 @@ namespace IterTormenti.Esdras
                 EsdrasNPC.transform.Find("#Constitution/Body").gameObject.GetComponent<SpriteRenderer>().flipX = true;
             }
 
-            //TODO: Add a new action that forces the flipX variable to its default state (false) when Esdras is about to run away
-
             ReplaceAnimatorWithNPC();
         }
 
         
         public void ReplaceAnimatorWithNPC()
         {
-            Main.IterTormenti.Log("EsdrasBehaviour::ReplaceAnimatorWithNPC");
             EsdrasAnimatorGO.SetActive(false);
             EsdrasNPC.transform.Find("#Constitution/Body").gameObject.GetComponent<SpriteRenderer>().enabled = true;
             EsdrasNPC.transform.Find("#Constitution/Body/BlobShadow").gameObject.GetComponent<SpriteRenderer>().enabled = true;
-            EsdrasNpcFSM.SetState("Make taunt animation 2");//"Wait9");
+            EsdrasNpcFSM.SetState("Make taunt animation 2");
         }
 
         public void ResetEsdrasFacing()

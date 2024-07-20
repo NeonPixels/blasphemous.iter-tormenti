@@ -80,22 +80,25 @@ namespace IterTormenti.Esdras
                     renderer.material = esdrasBoss.transform.Find("#Constitution/Sprite").gameObject.GetComponent<SpriteRenderer>().material;
                 }
 
-                SpriteImportOptions importOptions = new()
-                {
-                    Pivot = new Vector2(0.5f,0.1024f) // Sprite is 8 pixels higher than it should
-                };
-
-                Vector2 frameSize = new(256.0f,128.0f);
-                const float animationDelay = 0.1f; // TODO: Find exact delay. 100fps?
-
                 SpriteAnimator animator = esdrasDefeatAnimator.AddComponent<SpriteAnimator>();
                 {
                     animator.Renderer = renderer;
 
                     animator.AudioPlayer = new EsdrasAudioPlayer();
                     
+                    // TODO: Implement a way to read sprite and animation
+                    // configurations from json files, so they don't
+                    // need to be hard-coded
+
                     // Load sprites into SpriteAnimator
                     {
+                        Vector2 frameSize = new(256.0f,128.0f);
+
+                        SpriteImportOptions importOptions = new()
+                        {
+                            Pivot = new Vector2(0.5f,0.1024f) // Sprite is 8 pixels higher than it should
+                        };
+
                         Sprite[] spritesA;
                         Sprite[] spritesB;
                         Sprite[] spritesC;
@@ -141,6 +144,8 @@ namespace IterTormenti.Esdras
 
                     // Build animations
                     {
+                        const float animationDelay = 0.1f; // TODO: Find exact delay. 100fps?
+
                         SpriteAnimation esdrasNonLethalDefeat = new("EsdrasNonLethalDefeat")
                         {
                             DefaultDelay = animationDelay,
@@ -197,8 +202,6 @@ namespace IterTormenti.Esdras
                         };                        
                         animator.Animations.Add(esdrasRun.Name, esdrasRun);
                     }
-
-                    Main.IterTormenti.Log("Animator: " + animator.ToString());
 
                     animator.OnEndTransitions["EsdrasNonLethalDefeat"] = "EsdrasDefeated";
                     animator.MakeAnimationLoop("EsdrasDefeated");

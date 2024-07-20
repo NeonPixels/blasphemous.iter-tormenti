@@ -12,17 +12,15 @@ namespace IterTormenti.Esdras
         /// <summary>
         /// Update the EsdrasNPC FSM to perform the following actions:
         ///     - On level load:
-        ///         - Make the Esdras sprite invisible. // TODO
-        ///         - Attach the position of the PerpetvaAppears sprite to the Penitent. // TODO
-        ///         - Attach the position of the Esdras NPC sprite to the Boss position. // TODO
+        ///         - Make the Esdras sprite invisible.
         ///         - just wait.
         ///     - When requested, do the camera setup, and then wait.
-        ///     - When requested, make Esdras sprite visible at a given position, with an appropriate animation. // TODO: Attach NPC sprite to boss?
+        ///     - When requested, make Esdras sprite visible at a given position, with an appropriate animation.
         ///     - When requested, start the Bridge workflow, with the following changes:
         ///         - Apply input blockers.
         ///         - Skip camera setup.
-        ///         - Make TPO face Esdras.  // TODO
-        ///         - Make Esdras face TPO. // TODO
+        ///         - Make TPO face Esdras.
+        ///         - Make Esdras face TPO.
         ///         - Skip directly to the point where Perpetva reveals herself.
         ///     - Play the whole animation normally, including the item rewards and flag updates.
         /// </summary>
@@ -69,11 +67,9 @@ namespace IterTormenti.Esdras
                 return false;
             }
 
+
         #endregion Find Required Objects
         #region Build FSM States
-
-
-            Main.IterTormenti.Log("Patching '" + gameObject.name + ":" + fsm.name + "' FSM...");
 
 
             // Wait until the Penitent object is in the scene
@@ -148,22 +144,12 @@ namespace IterTormenti.Esdras
             // Initial state, the FSM will wait until activated
             {                
                 fsm.ChangeGlobalTransition("ON LEVEL READY", waitForBossfightStart.Name);
-             
-                // TODO: This doesn't seem to work. Why?
-                // waitForBossfightStart.AddTransition("ON ESDRAS BOSSFIGHT START", "SetCamera");
             }
 
             // Move camera to position used for bossfight, then wait again until activated
             {
                 FsmState setCamera = fsm.GetState("SetCamera");
                 setCamera.ChangeTransition(FsmEvent.Finished.Name, waitForBossfightEnd.Name);                
-            }
-
-            // We need to block input here to avoid having to manage input blocks across different FSMs, each
-            // one should clear their own input blockers before ending.
-            {
-                // TODO: This doesn't seem to work. Why?
-                // waitForBossfightEnd.AddTransition("ON ESDRAS BOSSFIGHT DONE", "BlockPlayerInput");
             }
 
             // Skip camera setup, it has already been done
