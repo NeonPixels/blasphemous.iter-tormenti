@@ -6,17 +6,25 @@ namespace IterTormenti.Esdras
 {
     class EsdrasAudioPlayer : AudioPlayer
     {
-        private const string ESDRAS_DEATH = "EsdrasDeath";
-		private const string ESDRAS_NORMAL_ATTACK = "EsdrasNormalAttack";
-		private const string ESDRAS_GROUND_HIT = "EsdrasGroundHit";
-		private const string ESDRAS_FOOTSTEP = "EsdrasRun";
-		private const string ESDRAS_HEAVY_ATTACK_SMASH = "EsdrasThunderAttack";
-		public const string ESDRAS_SLIDE_ATTACK = "EsdrasSlideAttack";
-		public const string ESDRAS_SPIN_LOOP = "EsdrasSpinLoop";
-		public const string ESDRAS_SPINPROJECTILE = "EsdrasSpinProjectile";
-		public const string ESDRAS_CALL_SISTER = "EsdrasPerpetuaCall";
+        //private const string ESDRAS_DEATH = "EsdrasDeath";
+		
+        public const string ESDRAS_NORMAL_ATTACK = "EsdrasNormalAttack";
+		public const string ESDRAS_GROUND_HIT = "EsdrasGroundHit";
+		public const string ESDRAS_FOOTSTEP = "EsdrasRun";
+		
+        //private const string ESDRAS_HEAVY_ATTACK_SMASH = "EsdrasThunderAttack";
+		//public const string ESDRAS_SLIDE_ATTACK = "EsdrasSlideAttack";
+		//public const string ESDRAS_SPIN_LOOP = "EsdrasSpinLoop";
+		//public const string ESDRAS_SPINPROJECTILE = "EsdrasSpinProjectile";
+		//public const string ESDRAS_CALL_SISTER = "EsdrasPerpetuaCall";
 
         private const string ESDRAS_BOSS_HEADER = "event:/SFX/Bosses/Esdras/";
+
+        public const string ESDRAS_GET_UP = "EsdrasGetup";
+
+        public const string ESDRAS_DROP_WEAPON = "EsdrasDropWeapon";
+
+        private const string ESDRAS_NPC_HEADER = "event:/SFX/NPC/";
 
         public EsdrasAudioPlayer()
         { }
@@ -44,11 +52,17 @@ namespace IterTormenti.Esdras
                 return;
             }
 
-            // if(name.Equals("EsdrasGetup"))
-            // {
-            //     Core.Audio.PlaySfx("event:/SFX/NPC/EsdrasGetup"); //TODO: Add constants. Will this specific one be used?
-            //     return;
-            // }
+            if(ESDRAS_DROP_WEAPON.Equals(name))
+            {
+                Core.Audio.PlaySfx(ESDRAS_NPC_HEADER + ESDRAS_DROP_WEAPON);
+                return;
+            }
+
+            if(ESDRAS_GET_UP.Equals(name))
+            {
+                Core.Audio.PlaySfx(ESDRAS_NPC_HEADER + ESDRAS_GET_UP);
+                return;
+            }
 
             Main.IterTormenti.Log($"EsdrasAudioPlayer::Play: Unknown audio: {name}");
         }

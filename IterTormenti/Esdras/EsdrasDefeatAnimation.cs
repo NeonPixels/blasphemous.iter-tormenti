@@ -103,13 +103,8 @@ namespace IterTormenti.Esdras
                         Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasNonLethalDefeat.png", frameSize, out spritesA, importOptions);
                         Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasDefeated.png", frameSize, out spritesB, importOptions);
                         Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasPickupWeapon.png", frameSize, out spritesC, importOptions);
-                        // Load existing resources                        
-                        {
-                            spritesD = new Sprite[1];
-                            spritesD[0] = Resources.Load("Esdras_run_anim_0", typeof(Sprite)) as Sprite;
-
-                            Main.IterTormenti.Log("Loaded asset is: " + (spritesD[0] == null? "NULL" : "NOT NULL") );
-                        }
+                        Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasRun.png", frameSize, out spritesD, importOptions);
+                        
 
                         if(spritesA.Length < 26)
                         {
@@ -129,13 +124,19 @@ namespace IterTormenti.Esdras
                             return false;
                         }
 
-                        animator.sprites = new Sprite[26 + 3 + 15 + 1];
+                        if(spritesC.Length < 14)
+                        {
+                            Main.IterTormenti.LogError($"Failed loading 'EsdrasRun.png', received {spritesD.Length} frames!");
+                            return false;
+                        }
+
+                        animator.sprites = new Sprite[26 + 3 + 15 + 14];
 
                         
                         Array.Copy( spritesA, 0, animator.sprites, 0, 26 );
                         Array.Copy( spritesB, 0, animator.sprites, 26, 3 );
                         Array.Copy( spritesC, 0, animator.sprites, 29, 15 );
-                        Array.Copy( spritesD, 0, animator.sprites, 44, 1 );
+                        Array.Copy( spritesD, 0, animator.sprites, 44, 14 );
                     }
 
                     // Build animations
@@ -148,9 +149,9 @@ namespace IterTormenti.Esdras
                                 new(0),  new(1),  new(2),  new(3),  new(4),  new(5),
                                 new(6),  new(7),  new(8),  new(9),  new(10), new(11),
                                 new(12), new(13), new(14), new(15), new(16), 
-                                new(17){ Audio = new AudioEventArgs("EsdrasGroundHit") },
-                                new(18), new(19), new(20), new(21), new(22), new(23),
-                                new(24), new(25)
+                                new(17){ Audio = new AudioEventArgs(EsdrasAudioPlayer.ESDRAS_GROUND_HIT) },
+                                new(18){ Audio = new AudioEventArgs(EsdrasAudioPlayer.ESDRAS_DROP_WEAPON) }, // Playing audio early, as it has leading silence
+                                new(19), new(20), new(21), new(22), new(23), new(24), new(25)
                             }
                         };
                         animator.Animations.Add(esdrasNonLethalDefeat.Name, esdrasNonLethalDefeat);
@@ -160,9 +161,9 @@ namespace IterTormenti.Esdras
                             DefaultDelay = animationDelay,
                             frames = new Frame[]
                             {
-                                new(26, animationDelay*2),
+                                new(26, animationDelay*2.0f),
                                 new(27),
-                                new(28, animationDelay*2),
+                                new(28, animationDelay*2.0f),
                                 new(27)
                             }
                         };
@@ -175,7 +176,7 @@ namespace IterTormenti.Esdras
                             {
                                 new(29), new(30), new(31),
                                 new(32), new(33), new(34),
-                                new(35){ Audio = new AudioEventArgs("EsdrasNormalAttack") },
+                                new(35){ Audio = new AudioEventArgs(EsdrasAudioPlayer.ESDRAS_NORMAL_ATTACK) },
                                 new(36), new(37), new(38),
                                 new(39), new(40), new(41),
                                 new(42), new(43)
@@ -185,10 +186,13 @@ namespace IterTormenti.Esdras
 
                         SpriteAnimation esdrasRun = new("EsdrasRun")
                         {
-                            DefaultDelay = animationDelay,
+                            DefaultDelay = animationDelay/2.0f,
                             frames = new Frame[]
                             {
-                                new(44) //TODO: Step sounds
+                                new(44), new(45), new(46), new(47), new(48), new(49),
+                                new(50){ Audio = new AudioEventArgs(EsdrasAudioPlayer.ESDRAS_FOOTSTEP) },
+                                new(51), new(52), new(53), new(54), new(55), new(56),
+                                new(57){ Audio = new AudioEventArgs(EsdrasAudioPlayer.ESDRAS_FOOTSTEP) }
                             }
                         };                        
                         animator.Animations.Add(esdrasRun.Name, esdrasRun);
@@ -199,6 +203,7 @@ namespace IterTormenti.Esdras
                     animator.OnEndTransitions["EsdrasNonLethalDefeat"] = "EsdrasDefeated";
                     animator.MakeAnimationLoop("EsdrasDefeated");
                     animator.MakeAnimationLoop("EsdrasRun");
+                    animator.OnEndTransitions["EsdrasPickUpWeapon"] = "EsdrasRun";
 
                     animator.enabled = true;
                     animator.ActiveAnimation = "EsdrasNonLethalDefeat";                    
@@ -219,9 +224,7 @@ namespace IterTormenti.Esdras
                                                 false );
             }
 
-            float xVal = -180f + 10.5625f + 102.28f -0.02999878f; //TODO: Just set it to the bossfight center position?
-            float yVal = 9f - 0.96875f;
-            esdrasDefeatAnimator.transform.position = new Vector3(xVal,yVal,0.0f);
+            esdrasDefeatAnimator.transform.position = esdrasNPC.transform.position;
             esdrasDefeatAnimator.SetActive(true);
 
             return true;

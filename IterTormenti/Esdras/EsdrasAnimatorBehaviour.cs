@@ -255,7 +255,7 @@ namespace IterTormenti.Esdras
             lookAtEsdrasCoroutine = PenitentLookAtEsdrasCoroutine();
             StartCoroutine(lookAtEsdrasCoroutine);
 
-            EsdrasAnimator.GoToAnimation("EsdrasRun");//"EsdrasLimp"); //TODO: Make animation
+            EsdrasAnimator.GoToAnimation("EsdrasRun");
             
             moveToTargetCoroutine = MoveToTargetCoroutine(4.0f);
             StartCoroutine(moveToTargetCoroutine);
