@@ -101,6 +101,11 @@ namespace IterTormenti.Esdras
                 waitForBossfightEnd.Name = "Wait for Bossfight end";
             }
 
+            FsmState waitForAnimatorEnd = new(fsm.Fsm);
+            {
+                waitForAnimatorEnd.Name = "Wait for Animator end";
+            }
+
             // Reset Esdras facing so final animation plays correctly
             FsmState resetEsdrasFacing = new(fsm.Fsm);
             {
@@ -131,6 +136,7 @@ namespace IterTormenti.Esdras
 
             fsm.AddState(waitForBossfightStart);
             fsm.AddState(waitForBossfightEnd);
+            fsm.AddState(waitForAnimatorEnd);
             fsm.AddState(resetEsdrasFacing);
 
 
@@ -165,10 +171,10 @@ namespace IterTormenti.Esdras
                 blockPlayerInput.ChangeTransition(FsmEvent.Finished.Name, "Raise chapel flag");
             }
 
-            // Skip Esdras intro, it has already been done by the BossFight object
+            // Wait until Animator changes state
             {
-                FsmState wait9 = fsm.GetState("Wait 9");
-                wait9.ChangeTransition(FsmEvent.Finished.Name, "Make taunt animation 2");
+                FsmState getReward = fsm.GetState("Get reward");
+                getReward.ChangeTransition("reward given", waitForAnimatorEnd.Name);
             }
 
             // Insert Esdras facing reset before he leaves

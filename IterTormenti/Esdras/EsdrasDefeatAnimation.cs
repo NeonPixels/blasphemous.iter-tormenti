@@ -15,8 +15,6 @@ namespace IterTormenti.Esdras
         /// <returns></returns>
         public static bool Create()
         {
-            //TODO: Add shadow! Hide NPC shadow!
-
             // ---- Get needed GameObjects ----
 
             GameObject esdrasBoss = GameObject.Find("Esdras");
@@ -101,9 +99,17 @@ namespace IterTormenti.Esdras
                         Sprite[] spritesA;
                         Sprite[] spritesB;
                         Sprite[] spritesC;
+                        Sprite[] spritesD;
                         Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasNonLethalDefeat.png", frameSize, out spritesA, importOptions);
                         Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasDefeated.png", frameSize, out spritesB, importOptions);
                         Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasPickupWeapon.png", frameSize, out spritesC, importOptions);
+                        // Load existing resources                        
+                        {
+                            spritesD = new Sprite[1];
+                            spritesD[0] = Resources.Load("Esdras_run_anim_0", typeof(Sprite)) as Sprite;
+
+                            Main.IterTormenti.Log("Loaded asset is: " + (spritesD[0] == null? "NULL" : "NOT NULL") );
+                        }
 
                         if(spritesA.Length < 26)
                         {
@@ -123,12 +129,13 @@ namespace IterTormenti.Esdras
                             return false;
                         }
 
-                        animator.sprites = new Sprite[26 + 3 + 15];
+                        animator.sprites = new Sprite[26 + 3 + 15 + 1];
 
                         
                         Array.Copy( spritesA, 0, animator.sprites, 0, 26 );
                         Array.Copy( spritesB, 0, animator.sprites, 26, 3 );
                         Array.Copy( spritesC, 0, animator.sprites, 29, 15 );
+                        Array.Copy( spritesD, 0, animator.sprites, 44, 1 );
                     }
 
                     // Build animations
@@ -175,12 +182,23 @@ namespace IterTormenti.Esdras
                             }
                         };                        
                         animator.Animations.Add(esdrasPickUpWeapon.Name, esdrasPickUpWeapon);
+
+                        SpriteAnimation esdrasRun = new("EsdrasRun")
+                        {
+                            DefaultDelay = animationDelay,
+                            frames = new Frame[]
+                            {
+                                new(44) //TODO: Step sounds
+                            }
+                        };                        
+                        animator.Animations.Add(esdrasRun.Name, esdrasRun);
                     }
 
                     Main.IterTormenti.Log("Animator: " + animator.ToString());
 
                     animator.OnEndTransitions["EsdrasNonLethalDefeat"] = "EsdrasDefeated";
                     animator.MakeAnimationLoop("EsdrasDefeated");
+                    animator.MakeAnimationLoop("EsdrasRun");
 
                     animator.enabled = true;
                     animator.ActiveAnimation = "EsdrasNonLethalDefeat";                    

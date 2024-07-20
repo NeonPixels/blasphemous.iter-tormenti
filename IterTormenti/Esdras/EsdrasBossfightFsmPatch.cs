@@ -192,9 +192,7 @@ namespace IterTormenti.Esdras
                 // choiceDialog.AddAction(dialog);
             }
 
-            // Cleanup removes bosss stuff, but doesn't change camera, as the NPC portion will do that
-            // It also disables the INTRO input blocker, in case the player chose to show the scapular,
-            // and the blocker wasn't removed before the fight            
+            // Cleanup removes boss stuff, but doesn't change camera, as the NPC portion will do that            
             FsmState cleanUp = new(fsm.Fsm);
             {
                 cleanUp.Name = "Clean up";
@@ -205,23 +203,13 @@ namespace IterTormenti.Esdras
                     active = false
                 };
 
-                InputBlock removeIntroInputBlock = new()
-                {
-                    inputBlockName = "INTRO",
-                    active = false
-                };
-
                 cleanUp.AddAction(removeBossDiedInputBlock);
-                cleanUp.AddAction(removeIntroInputBlock);                
             }
 
             // Move the different characters to their expected positions
-            //  - EsdrasNPC: Move to last position of Esdras boss, face TPO
-            //  - Perpetvua Apparition: Move to TPO position, face Esdras
-            //  - TPO: Face Esdras
-            FsmState moveCharacters = new(fsm.Fsm); // PLACEHOLDER
+            FsmState replaceBossWithAnimator = new(fsm.Fsm);
             {
-                moveCharacters.Name = "Move Characters";
+                replaceBossWithAnimator.Name = "Replace Boss With Animator";
 
                 CallMethod callReplaceBossWithAnimator = new();
                 {
@@ -238,48 +226,48 @@ namespace IterTormenti.Esdras
                     callReplaceBossWithAnimator.parameters = methodParams.ToArray();
                 }
 
-                moveCharacters.AddAction(callReplaceBossWithAnimator);
+                replaceBossWithAnimator.AddAction(callReplaceBossWithAnimator);
             }
 
 
             // Start NPC workflow
-            FsmState startNPC = new(fsm.Fsm);
-            {
-                startNPC.Name = "START NPC";
+            // FsmState startNPC = new(fsm.Fsm);
+            // {
+            //     startNPC.Name = "START NPC";
 
 
-                // NOTE: Since using events to trigger state changes in
-                //       other FSMs doesn't seem to work via code, we
-                //       are resorting to directly telling the FSM to
-                //       swith to an specific state.
-                //       If a way to make it work is found, it would
-                //       be preferable to issue an event signal and
-                //       have the remote FSM process it independently
-                //       instead of doing this.                
+            //     // NOTE: Since using events to trigger state changes in
+            //     //       other FSMs doesn't seem to work via code, we
+            //     //       are resorting to directly telling the FSM to
+            //     //       swith to an specific state.
+            //     //       If a way to make it work is found, it would
+            //     //       be preferable to issue an event signal and
+            //     //       have the remote FSM process it independently
+            //     //       instead of doing this.                
 
-                CallMethod callMethod = new();
-                {
-                    var methodParams = new List<FsmVar>();
-                    {
-                        FsmString value = "BlockPlayerInput";
-                        FsmVar param = new(value);
+            //     CallMethod callMethod = new();
+            //     {
+            //         var methodParams = new List<FsmVar>();
+            //         {
+            //             FsmString value = "BlockPlayerInput";
+            //             FsmVar param = new(value);
 
-                        methodParams.Add(param);
-                    }
+            //             methodParams.Add(param);
+            //         }
                     
-                    FsmObject target = new()
-                    {
-                        Value = esdrasNpcFSM,
-                        ObjectType = esdrasNpcFSM.GetType()
-                    };
+            //         FsmObject target = new()
+            //         {
+            //             Value = esdrasNpcFSM,
+            //             ObjectType = esdrasNpcFSM.GetType()
+            //         };
                     
-                    callMethod.behaviour = target;
-                    callMethod.methodName = "SetState";
-                    callMethod.parameters = methodParams.ToArray();
-                }
+            //         callMethod.behaviour = target;
+            //         callMethod.methodName = "SetState";
+            //         callMethod.parameters = methodParams.ToArray();
+            //     }
 
-                startNPC.AddAction(callMethod);
-            }
+            //     startNPC.AddAction(callMethod);
+            // }
 
             // Switch to NPC
             FsmState switchToNPC = new(fsm.Fsm);
@@ -334,7 +322,7 @@ namespace IterTormenti.Esdras
             fsm.AddState(choiceDialog);
             fsm.AddState(switchToNPC);            
             fsm.AddState(cleanUp);
-            fsm.AddState(moveCharacters);            
+            fsm.AddState(replaceBossWithAnimator);            
 
             
         #endregion Add States to FSM
@@ -358,30 +346,21 @@ namespace IterTormenti.Esdras
                 // choiceDialog.AddTransition("Dissent", "StartBossfight");
             }
 
-            // Insert moveCharacters into flow // TODO
+            // Insert replaceBossWithAnimator into flow
             {
                 FsmState isBossDead = fsm.GetState("Is Boss?");
-                isBossDead.ChangeTransition("Yes", moveCharacters.Name);
+                isBossDead.ChangeTransition("Yes", replaceBossWithAnimator.Name);
             }
 
-            // Get back to normal flow // TODO: Call behaviour
+            // Get back to normal flow
             {                
-                moveCharacters.AddTransition(FsmEvent.Finished.Name, "Add completion %");
+                replaceBossWithAnimator.AddTransition(FsmEvent.Finished.Name, "Add completion %");
             }
 
             // Skip granting the item reward, it will be handled by the NPC portion
             {
                 FsmState grantAchievement = fsm.GetState("Grant AC05");
                 grantAchievement.ChangeTransition(FsmEvent.Finished.Name, "Combat is Over (SET FLAG), block player");
-            }
-
-            // Insert moveCharacters into flow  // TODO: Replace boss sprite
-            {
-                //FsmState combatOver = fsm.GetState("Combat is Over (SET FLAG), block player");
-
-                // TODO: WTF? if we don't jump to the "Wait" state, the boss doesn't enter the death animation
-                //       and keeps attacking until disabled later on. WHY?!
-                //combatOver.ChangeTransition(FsmEvent.Finished.Name, moveCharacters.Name);
             }
 
             // Skip Esdras final dialog, he will be rudely interrupted
@@ -396,7 +375,7 @@ namespace IterTormenti.Esdras
                 showMessage.ChangeTransition(FsmEvent.Finished.Name, "Is guilt >0?");
             }
 
-            // Update guitl check 'No' transition
+            // Update guilt check 'No' transition
             {
                 FsmState guiltCheck = fsm.GetState("Is guilt >0?");
                 guiltCheck.ChangeTransition("No", cleanUp.Name);

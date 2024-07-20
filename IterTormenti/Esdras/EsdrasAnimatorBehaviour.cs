@@ -205,7 +205,19 @@ namespace IterTormenti.Esdras
             EsdrasBoss.transform.Find("#Constitution/Sprite").gameObject.GetComponent<SpriteRenderer>().enabled = false;
             EsdrasBoss.transform.Find("#Constitution/Sprite/BlobShadow").gameObject.GetComponent<SpriteRenderer>().enabled = false;
 
+            // Make Penitent seath weapon like a boss when Esdras is down
+            EsdrasAnimator.Animations["EsdrasNonLethalDefeat"].AnimationCompleted += PenitentSeathWeapon;
+
             EsdrasAnimator.Play();
+
+            EsdrasNpcFSM.SetState("BlockPlayerInput");
+        }
+
+        private readonly int _sheathedAnim = Animator.StringToHash("IdleToSheathed");
+        public void PenitentSeathWeapon(object item, AnimationEventArgs args)
+        {
+            Core.Logic.Penitent.Animator.Play(_sheathedAnim);
+		    Core.Logic.Penitent.Animator.SetBool("IS_DIALOGUE_MODE", true);
         }
 
         public void SetAnimatorToStandUp()
@@ -243,7 +255,7 @@ namespace IterTormenti.Esdras
             lookAtEsdrasCoroutine = PenitentLookAtEsdrasCoroutine();
             StartCoroutine(lookAtEsdrasCoroutine);
 
-            EsdrasAnimator.GoToAnimation("EsdrasDefeated");//"EsdrasLimp"); //TODO: Make animation
+            EsdrasAnimator.GoToAnimation("EsdrasRun");//"EsdrasLimp"); //TODO: Make animation
             
             moveToTargetCoroutine = MoveToTargetCoroutine(4.0f);
             StartCoroutine(moveToTargetCoroutine);
@@ -358,7 +370,7 @@ namespace IterTormenti.Esdras
             EsdrasAnimatorGO.SetActive(false);
             EsdrasNPC.transform.Find("#Constitution/Body").gameObject.GetComponent<SpriteRenderer>().enabled = true;
             EsdrasNPC.transform.Find("#Constitution/Body/BlobShadow").gameObject.GetComponent<SpriteRenderer>().enabled = true;
-            EsdrasNpcFSM.SetState("BlockPlayerInput");
+            EsdrasNpcFSM.SetState("Make taunt animation 2");//"Wait9");
         }
 
         public void ResetEsdrasFacing()
