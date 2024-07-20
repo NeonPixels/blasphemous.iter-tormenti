@@ -4,6 +4,8 @@ using HutongGames.PlayMaker.Actions;
 using Tools.PlayMaker.Action;
 using System.Collections.Generic;
 
+using IterTormenti.Utils.Fsm;
+
 namespace IterTormenti.Esdras
 {
     public abstract class BossfightFsmPatch

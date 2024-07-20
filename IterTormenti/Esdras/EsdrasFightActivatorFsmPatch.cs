@@ -2,6 +2,8 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 
+using IterTormenti.Utils.Fsm;
+
 namespace IterTormenti.Esdras
 {
     public abstract class FightActivatorFsmPatch

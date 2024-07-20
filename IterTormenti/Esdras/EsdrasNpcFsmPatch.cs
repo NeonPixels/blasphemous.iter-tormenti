@@ -1,8 +1,9 @@
 using UnityEngine;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
-using IterTormenti.FSMUtils;
 using System.Collections.Generic;
+
+using IterTormenti.Utils.Fsm;
 
 namespace IterTormenti.Esdras
 {
