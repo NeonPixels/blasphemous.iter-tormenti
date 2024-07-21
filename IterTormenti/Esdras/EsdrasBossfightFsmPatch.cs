@@ -17,15 +17,9 @@ namespace IterTormenti.Esdras
         ///     - Ask EsdrasNPC FSM to set the camera. This is done because, if the camera is managed
         ///       by BossFight FSM, once the GameObject is disabled, the camera resets, so camera management is
         ///       deferred to EsdrasNPC's FSM.
-        ///     - Play the introduction to the fight normally, until Esdras performs his taunt
-        ///       (slams weapon on ground)
-        ///     - Initiate a dialog, allowing players to choose wether to fight Esdras or skip the fight.
-        ///     - If players choose to skip the fight, immediately replace the boss with the NPC, do any cleanup
-        ///       and switch over to the EsdrasNPC FSM.
-        ///     - If players choose to fight, continue normally until the deathblow.
+        ///     - Play the fight normally until the deathblow.
         ///     - Upon the boss dying, do the following:
-        ///         - Instantly replace it with the NPC version, on the same position and with an appropriate animation
-        ///           Note: The boss animations have to be overriden to avoid the death animation that makes Esdras explode.
+        ///         - Instantly replace it with the Animator to transition between Boss and NPC version
         ///         - Display the 'Requiem Aeternam' message.
         ///     - Afterwards, do any cleanup and switch over to the EsdrasNPC FSM.        
         ///     - Cleanup involves removing any input blocks that might've been enabled. EsdrasNPC FSM will manage its
@@ -138,27 +132,6 @@ namespace IterTormenti.Esdras
                 deferSetCamera.AddAction(callMethod);
             }
 
-            // PLACEHOLDER for the dialog choice prior to comnbat.
-            // For now I won't implement this, but I might change
-            // my mind.
-            FsmState choiceDialog = new(fsm.Fsm);
-            {
-                choiceDialog.Name = "Choice Dialog";
-
-                // FsmEvent assent  = new FsmEvent("Assent");
-                // FsmEvent dissent = new FsmEvent("Dissent");
-
-                // TODO: This doesn't work yet
-                // DialogStart dialog = new DialogStart();
-                // {
-                //     dialog.conversation = "DLG_QUESTION_ASSENT";                                    
-                //     dialog.answer1 = assent;
-                //     dialog.answer2 = dissent;
-                // }
-
-                // choiceDialog.AddAction(dialog);
-            }
-
             // Cleanup removes boss stuff, but doesn't change camera, as the NPC portion will do that            
             FsmState cleanUp = new(fsm.Fsm);
             {
@@ -246,7 +219,6 @@ namespace IterTormenti.Esdras
 
 
             fsm.AddState(deferSetCamera);
-            fsm.AddState(choiceDialog);
             fsm.AddState(switchToNPC);            
             fsm.AddState(cleanUp);
             fsm.AddState(replaceBossWithAnimator);            
@@ -261,17 +233,6 @@ namespace IterTormenti.Esdras
                 blockPlayerInput.ChangeTransition(FsmEvent.Finished.Name, deferSetCamera.Name);
 
                 deferSetCamera.AddTransition(FsmEvent.Finished.Name, "Wait 3");
-            }
-
-            // Insert dialog into flow
-            {
-                FsmState introWait = fsm.GetState("IntroWait");
-                introWait.ChangeTransition(FsmEvent.Finished.Name, choiceDialog.Name);
-                
-                // PLACEHOLDER
-                choiceDialog.AddTransition(FsmEvent.Finished.Name, "StartBossfight");
-                // choiceDialog.AddTransition("Assent", "Clean up");
-                // choiceDialog.AddTransition("Dissent", "StartBossfight");
             }
 
             // Insert replaceBossWithAnimator into flow

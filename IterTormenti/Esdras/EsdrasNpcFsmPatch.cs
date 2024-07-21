@@ -19,8 +19,6 @@ namespace IterTormenti.Esdras
         ///     - When requested, start the Bridge workflow, with the following changes:
         ///         - Apply input blockers.
         ///         - Skip camera setup.
-        ///         - Make TPO face Esdras.
-        ///         - Make Esdras face TPO.
         ///         - Skip directly to the point where Perpetva reveals herself.
         ///     - Play the whole animation normally, including the item rewards and flag updates.
         /// </summary>

@@ -24,6 +24,10 @@ namespace IterTormenti.Utils.Sprites
     [Serializable]
     class SpriteAnimator : MonoBehaviour
     {
+        /// <summary>
+        /// Make default constructor empty so it isn't used.
+        /// Note: Seems to be necessary to implement this constructor for Unity.
+        /// </summary>
         private SpriteAnimator()
         {
             Name = "SpriteAnimator";
@@ -104,8 +108,18 @@ namespace IterTormenti.Utils.Sprites
         /// </summary>
         public SpriteRenderer Renderer {get; set;}
 
+        /// <summary>
+        /// Map of SpriteAnimations registered. The animation name is used as the
+        /// key value.
+        /// TODO: Implement a way to read sprite and animation
+        ///       configurations from json files, so they don't
+        ///       need to be hard-coded
+        /// </summary>
         public Dictionary<string, SpriteAnimation> Animations { get; set; }
 
+        /// <summary>
+        /// Currently active anumation. Will return null if no animation is active.
+        /// </summary>
         public SpriteAnimation CurrentAnimation
         {
             get
@@ -116,6 +130,10 @@ namespace IterTormenti.Utils.Sprites
             }
         }
 
+        /// <summary>
+        /// Current active frame of the currently active animation,
+        /// will return null if no animation is active.
+        /// </summary>
         public Frame CurrentFrame
         { 
             get
@@ -125,6 +143,10 @@ namespace IterTormenti.Utils.Sprites
             }
         }
 
+        /// <summary>
+        /// Name of the currently active animation.
+        /// Will only be updated if the value matches an existing animation.
+        /// </summary>
         public string ActiveAnimation
         {
             get { return _activeAnimation; }
@@ -144,9 +166,10 @@ namespace IterTormenti.Utils.Sprites
 
         // -- Methods --
 
-        private string _nextAnimation;
-        private int _nextAnimationIndex;
 
+        /// <summary>
+        /// Function used to managed delayed animation switching.
+        /// </summary>
         private void ChangeAnimation()
         {
             ActiveAnimation = _nextAnimation;
@@ -206,6 +229,13 @@ namespace IterTormenti.Utils.Sprites
 
         // --- Animation Handling ---
 
+        /// <summary>
+        /// Changes the active animation
+        /// </summary>
+        /// <param name="name">Animation to change to</param>
+        /// <param name="index">Frame index to change to, default: 0</param>
+        /// <param name="synched">If 'true', animation will wait until current frame ends
+        /// before switching, if 'false' the animation will switch instantly, default: true</param>
         public void GoToAnimation(string name, int index = 0, bool synched = true)
         {
             if(!Animations.ContainsKey(name))
@@ -232,9 +262,19 @@ namespace IterTormenti.Utils.Sprites
         // --- Animation Event Handling ---
         // TODO: Placeholder until a better solution with a FSM implementation?
 
-
+        /// <summary>
+        /// Map of transitions to do when a given animation ends.
+        /// Key is the animation that ends, and the Value is the animation
+        /// to transition to.
+        /// </summary>
         public Dictionary<string, string> OnEndTransitions;
 
+        /// <summary>
+        /// AnimationEnded event handler. Will switch to the next animation
+        /// if there is a transition defined on OnEndTransitions.
+        /// </summary>
+        /// <param name="sender">Event sender</param>
+        /// <param name="args">Event arguments</param>
         private void OnAnimationEnded(object sender, AnimationEventArgs args)
         {
             if(!OnEndTransitions.ContainsKey(args.Name)) return;
@@ -242,11 +282,22 @@ namespace IterTormenti.Utils.Sprites
             GoToAnimation(OnEndTransitions[args.Name], 0, false);
         }
 
+        /// <summary>
+        /// FrameAudio event handler. Will play the sound.
+        /// TODO: Add extra audio features?
+        /// </summary>
+        /// <param name="sender">Event sender</param>
+        /// <param name="args">Event arguments</param>
         private void OnFrameAudio(object sender, AudioEventArgs args)
         {
-            AudioPlayer.Play(args.Name); // TODO: Add features?
+            AudioPlayer.Play(args.Name);
         }
 
+        /// <summary>
+        /// Helper function that makes an animation loop by setting it as its
+        /// own target for the OnEndTransition
+        /// </summary>
+        /// <param name="name">Animation to loop</param>
         public void MakeAnimationLoop(string name)
         {
             OnEndTransitions[name] = name;
@@ -332,6 +383,16 @@ namespace IterTormenti.Utils.Sprites
         /// <summary>
         /// Name of the currently active animation.
         /// </summary>
-        private string _activeAnimation;        
+        private string _activeAnimation;
+
+        /// <summary>
+        /// Name of the animation to switch to.
+        /// </summary>                        
+        private string _nextAnimation;
+
+        /// <summary>
+        /// Frame index to switch to.
+        /// </summary>
+        private int _nextAnimationIndex;
     }
 }

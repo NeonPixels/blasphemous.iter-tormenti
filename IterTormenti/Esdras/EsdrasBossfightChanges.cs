@@ -1,7 +1,9 @@
+using Framework.Managers;
+
 namespace IterTormenti.Esdras
 {
     /// <summary>
-    /// TODO
+    /// Asbtract class that manages all the changes to the Esdras Bossfight.
     /// </summary>
     public abstract class BossfightChanges
     {
@@ -9,26 +11,22 @@ namespace IterTormenti.Esdras
         {
             // We need to override FSM behaviour ONLY when the Esdras fight is to be skipped by the Incomplete Scapular,
             // as such, check first if the conditions match, and exit if not:
-
-#if DISABLED_FOR_TESTING // TODO: Re-enable
-            // Esdras already down?
+#if DISABLED
+            // Has Esdras already been defeated?
             if( Core.Events.GetFlag("D08Z01S01_BOSSDEAD") )
             {
-                Main.IterTormenti.Log("IterTormenti.Esdras.FSMChanges.Apply: Esdras has already been defeated! Ending execution");
                 return;
             }
 
             // Is Esdras already in the chapel?
             if( Core.Events.GetFlag("ESDRAS_CHAPEL") )
             {
-                Main.IterTormenti.Log("IterTormenti.Esdras.FSMChanges.Apply: Esdras is already in the Chapel! Ending execution");
                 return;
             }
 
             // Do we have the scapular?
             if( !Core.InventoryManager.IsQuestItemOwned("QI203") )
             {
-                Main.IterTormenti.Log("IterTormenti.Esdras.FSMChanges.Apply: Scapular not owned! Ending execution");
                 return;
             }
 
@@ -37,19 +35,19 @@ namespace IterTormenti.Esdras
                 || !Core.Events.GetFlag("D02Z05S01_BOSSDEAD")
                 || !Core.Events.GetFlag("D03Z04S01_BOSSDEAD") )
             {
-                Main.IterTormenti.Log("IterTormenti.Esdras.FSMChanges.Apply: Esdras can't be fought yet! Ending execution");
                 return;
             }
-#endif // DISABLED_FOR_TESTING
+#endif
 
             // Create the animator for the transition between the Boss and the NPC
             // This animation will play upon boss defeat, replacing the boss sprite
             // It will remain in an idle state during the Requiem Aeternam animation,
             // and will be updated to the "WeaponPickup" state.
-            // Once the "WeaponPickup" state is done, the animator will be disabled, and replaced
-            // with the NPC
+            // Once the "WeaponPickup" state is done, the animator will move to the
+            // target position, where it will be disabled, and replaced with the NPC
             if(!DefeatAnimation.Create())
             {
+                //HandleError();
                 return;
             }
 
@@ -57,11 +55,9 @@ namespace IterTormenti.Esdras
             // We can skip any decision states that do not apply.
 
             // OBJECTIVE:
-            // When the Penitent One reaches Esdras, he should speak his introductory dialog, and perform his taunt (slamming his weapon).
-            // Once done, a dialog choice should pop up asking if the player wants to show the Incomplete Scapular or not.
-            // If the player assents, the fight is skipped.
-            // If the player dissents, the fight starts, and upon Esdras being defeated, he remains stunned, and the Requiem Aeternam message is displayed.
-            // Afterwards, regardless of choice, the animation where Esdras reacts to Perpetva plays normally, and items are awarded.
+            // When the Penitent One reaches Esdras while in possesion of the Incomplete Scapular, the fight should proceed normally,
+            // but after defeat, Esdras should transition into the animation where Perpetva reveals hersef, and the animation should
+            // proceed normally.
 
             // GameObjects:
             // These are the GameObjects containing the FSMs that we need to modify, all of them contained in the 'D08Z01S01_LOGIC' scene:
@@ -77,35 +73,38 @@ namespace IterTormenti.Esdras
 
 
             // Modifications:
-            //  -EsdrasFightActivator: Directly activate the BossFight gameobject and associated elements (Arena boundaries and such)
-            //  -BossFight: After the taunt is performed, display dialog choice. If player assents, disable BossFight and enable EsdrasNPC.
-            //              If player dissents, continue fight normally. Upon Esdras death, display Requien message, move EsdrasNPC to the same position as
-            //              the boss, and move the Scapular Shine object to the same position as the Penitent, then disable BossFight and enable EsdrasNPC.
-            //  -EsdrasNPC: Jump directly to Perpetvua animation, perform normally, grant rewards.
+            //  -EsdrasFightActivator: Directly activate the BossFight and NPC gameobjects and associated elements (Arena boundaries and such)
+            //  -BossFight: Initiate fight normally, but upon Esdras death, replace the boss sprite with the Animator and transition to the NPC.
+            //  -EsdrasNPC: Hide the sprite intially, Reposition based on final Penitent position, jump directly to Perpetvua animation, perform normally, grant rewards.
             
             // Note: Make sure to do proper setup/cleanup of camera position, fight boundaries, input blockers, and completion flags.
 
-            // Why not activate EsdrasNPC first, and only activate the bossfight if needed? Mostly convenience. If we do that, we would need to track
-            // when Esdras is defeated so upon reactivating EsdrasNPC we know which state to jump to.
-            // I think it is easier to only activate each GameObject once, and then forget about it.
+            // Why are both the Bossfight and NPC activated at the start? So the FSMs are active, as we need the NPC to manage some features,
+            // since once the Bossfight is disabled it won't be able to do so.
             
 
             if(!FightActivatorFsmPatch.Apply())
             {
+                // HandleError();
                 return;
             }
 
             if(!BossfightFsmPatch.Apply())
             {
+                // HandleError();
                 return;
             }
 
             if(!NpcFsmPatch.Apply())
             {
+                //HandleError();
                 return;
             }
-
-            // TODO: If there's an error, crash to the main menu or something? If any of these fail, and the others don't, we might get unstable behaviour
         }
+
+        // private static void HandleError()
+        // {
+        //     Main.IterTormenti.FatalError = "IterTormenti: Failed to apply changes to Esdras bossfight. Please review log";
+        // }
     }
 }

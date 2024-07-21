@@ -4,19 +4,17 @@ using IterTormenti.Utils.Audio;
 
 namespace IterTormenti.Esdras
 {
+    /// <summary>
+    /// Implementation of an AudioPlayer containing the
+    /// paths for Esdras Audio events.
+    /// </summary>
     class EsdrasAudioPlayer : AudioPlayer
     {
-        //private const string ESDRAS_DEATH = "EsdrasDeath";
-		
         public const string ESDRAS_NORMAL_ATTACK = "EsdrasNormalAttack";
-		public const string ESDRAS_GROUND_HIT = "EsdrasGroundHit";
-		public const string ESDRAS_FOOTSTEP = "EsdrasRun";
-		
-        //private const string ESDRAS_HEAVY_ATTACK_SMASH = "EsdrasThunderAttack";
-		//public const string ESDRAS_SLIDE_ATTACK = "EsdrasSlideAttack";
-		//public const string ESDRAS_SPIN_LOOP = "EsdrasSpinLoop";
-		//public const string ESDRAS_SPINPROJECTILE = "EsdrasSpinProjectile";
-		//public const string ESDRAS_CALL_SISTER = "EsdrasPerpetuaCall";
+
+        public const string ESDRAS_GROUND_HIT = "EsdrasGroundHit";
+
+        public const string ESDRAS_FOOTSTEP = "EsdrasRun";
 
         private const string ESDRAS_BOSS_HEADER = "event:/SFX/Bosses/Esdras/";
 

@@ -31,7 +31,7 @@ namespace IterTormenti.Utils.Sprites.Animations
         }
         
         /// <summary>
-        /// Creates a depp copy of the Animator.
+        /// Creates a deep copy of the Animator.
         /// In an attempt to keep names unique, the name of the copy will be 
         /// modified.
         /// </summary>
@@ -102,6 +102,11 @@ namespace IterTormenti.Utils.Sprites.Animations
             set { if(value >= 0.0f) _delay = value; }
         }
 
+        /// <summary>
+        /// Index of the current frame.
+        /// Negative values indicate that no frame is selected.
+        /// Values being set will be clamped to valid values.
+        /// </summary>
         public int Index 
         {
             get { return _index; }
@@ -117,15 +122,29 @@ namespace IterTormenti.Utils.Sprites.Animations
 
         // -- Event Notification --
 
+        /// <summary>
+        /// Event issued when an animation is complete.
+        /// </summary>
         public event EventHandler<AnimationEventArgs> AnimationCompleted;
 
+        /// <summary>
+        /// Issues the AnimationCompleted event.
+        /// </summary>
         protected virtual void OnAnimationCompleted()
         {
             AnimationCompleted?.Invoke(this, new AnimationEventArgs(AnimationEventArgs.ON_ANIMATION_END){Name = this.Name});
         }
 
+        /// <summary>
+        /// Event issued when a frame wants to play audio.
+        /// </summary>
         public event EventHandler<AudioEventArgs> FrameAudio;
 
+        /// <summary>
+        /// Issues the frame audio event, but only if the Frame
+        /// does have a defined Audio property.
+        /// </summary>
+        /// <param name="frame">Frame to check for audio.</param>
         protected virtual void NotifyIfFrameHasAudio(Frame frame)
         {
             if(null == frame.Audio) return;
@@ -133,8 +152,8 @@ namespace IterTormenti.Utils.Sprites.Animations
             FrameAudio?.Invoke(this, frame.Audio);
         }
 
-        // -- Methods --
 
+        // -- Methods --
         
 
         /// <summary>

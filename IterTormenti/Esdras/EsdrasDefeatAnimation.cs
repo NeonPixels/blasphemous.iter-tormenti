@@ -10,7 +10,8 @@ namespace IterTormenti.Esdras
     public abstract class DefeatAnimation
     {
         /// <summary>
-        /// TODO
+        /// This creates the objects managing the Defeat Animation that is used to
+        /// transition between the Boss and NPC versions of Esdras.
         /// </summary>
         /// <returns></returns>
         public static bool Create()
@@ -86,10 +87,6 @@ namespace IterTormenti.Esdras
 
                     animator.AudioPlayer = new EsdrasAudioPlayer();
                     
-                    // TODO: Implement a way to read sprite and animation
-                    // configurations from json files, so they don't
-                    // need to be hard-coded
-
                     // Load sprites into SpriteAnimator
                     {
                         Vector2 frameSize = new(256.0f,128.0f);
@@ -108,7 +105,6 @@ namespace IterTormenti.Esdras
                         Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasPickupWeapon.png", frameSize, out spritesC, importOptions);
                         Main.IterTormenti.FileHandler.LoadDataAsFixedSpritesheet("EsdrasRun.png", frameSize, out spritesD, importOptions);
                         
-
                         if(spritesA.Length < 26)
                         {
                             Main.IterTormenti.LogError($"Failed loading 'EsdrasNonLethalDefeat.png', received {spritesA.Length} frames!");
@@ -134,7 +130,6 @@ namespace IterTormenti.Esdras
                         }
 
                         animator.sprites = new Sprite[26 + 3 + 15 + 14];
-
                         
                         Array.Copy( spritesA, 0, animator.sprites, 0, 26 );
                         Array.Copy( spritesB, 0, animator.sprites, 26, 3 );
@@ -144,7 +139,7 @@ namespace IterTormenti.Esdras
 
                     // Build animations
                     {
-                        const float animationDelay = 0.1f; // TODO: Find exact delay. 100fps?
+                        const float animationDelay = 0.1f; // TODO: Find exact delay used in Unity project. 100fps?
 
                         SpriteAnimation esdrasNonLethalDefeat = new("EsdrasNonLethalDefeat")
                         {

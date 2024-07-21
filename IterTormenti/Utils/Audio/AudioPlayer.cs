@@ -1,8 +1,9 @@
 
 namespace IterTormenti.Utils.Audio
 {
-    // TODO: Documentation
-
+    /// <summary>
+    /// Abstract AudioPlayer class
+    /// </summary>
     public abstract class AudioPlayer
     {
         public abstract void Play(string name);

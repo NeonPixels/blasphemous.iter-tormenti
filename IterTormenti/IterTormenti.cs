@@ -2,6 +2,7 @@
 using Blasphemous.ModdingAPI.Persistence;
 using Blasphemous.Framework.Penitence;
 using System.Collections.Generic;
+using Framework.Managers;
 
 namespace IterTormenti
 {
@@ -47,6 +48,8 @@ namespace IterTormenti
             GameSettings = new Config();
         }
 
+        // public string FatalError {get; set;}
+
         public List<ComboPenitence> ComboPenitenceList { get; } = new(){
             new PenitenceAB(),
             new PenitenceBC(),
@@ -69,5 +72,20 @@ namespace IterTormenti
                 Esdras.BossfightChanges.Apply();
             }
         }
+
+        // protected override void OnLevelLoaded(string oldLevel, string newLevel)
+        // {
+        //     if(null != FatalError)
+        //     {
+        //         if(newLevel != "MainMenu")
+        //         {
+        //             Core.LevelManager.ChangeLevel("MainMenu");
+        //         }
+
+        //         Main.IterTormenti.LogDisplay(FatalError);
+
+        //         FatalError = null;
+        //     }           
+        // }
     }
 }
