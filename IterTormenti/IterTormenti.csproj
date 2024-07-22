@@ -18,9 +18,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blasphemous.ModdingAPI" Version="2.1.0" />
+    <PackageReference Include="Blasphemous.ModdingAPI" Version="2.2.1" />
     <PackageReference Include="Blasphemous.Framework.Penitence" Version="0.2.0" />
-    <PackageReference Include="Blasphemous.Framework.Levels" Version="0.1.2" />
+    <PackageReference Include="Blasphemous.Framework.Levels" Version="0.1.3" />
     <PackageReference Include="Blasphemous.ModdingReferences" Version="4.0.67" />
   </ItemGroup>
 
@@ -39,7 +39,7 @@
 
     <!-- Copy plugin & resources to development folder -->
     <PropertyGroup>
-      <DevFolder>YOUR_MODDED_BLASPHEMOUS_PATH</DevFolder>
+      <DevFolder>YOUR_MODDED_BLASPHEMOUS_PATH\</DevFolder>
     </PropertyGroup>
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DevFolder)plugins" />
     <Copy SourceFiles="@(DataDlls)" DestinationFolder="$(DevFolder)data" />
