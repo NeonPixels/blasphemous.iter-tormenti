@@ -2,7 +2,8 @@
 using Blasphemous.ModdingAPI.Persistence;
 using Blasphemous.Framework.Penitence;
 using System.Collections.Generic;
-using Framework.Managers;
+using Blasphemous.Framework.Levels;
+using Blasphemous.Framework.Levels.Loaders;
 
 namespace IterTormenti
 {
@@ -48,8 +49,6 @@ namespace IterTormenti
             GameSettings = new Config();
         }
 
-        // public string FatalError {get; set;}
-
         public List<ComboPenitence> ComboPenitenceList { get; } = new(){
             new PenitenceAB(),
             new PenitenceBC(),
@@ -63,6 +62,11 @@ namespace IterTormenti
             {
                 provider.RegisterPenitence(penitence);
             }
+
+            provider.RegisterObjectCreator( "item-ground-custom",
+                                            new ObjectCreator(
+                                                new SceneLoader("D02Z02S14_LOGIC", "LOGIC/INTERACTABLES/ACT_Collectible"),
+                                                new CustomGroundItemModifier() ) );
         }
 
         protected override void OnLevelPreloaded(string oldLevel, string newLevel)
@@ -72,20 +76,5 @@ namespace IterTormenti
                 Esdras.BossfightChanges.Apply();
             }
         }
-
-        // protected override void OnLevelLoaded(string oldLevel, string newLevel)
-        // {
-        //     if(null != FatalError)
-        //     {
-        //         if(newLevel != "MainMenu")
-        //         {
-        //             Core.LevelManager.ChangeLevel("MainMenu");
-        //         }
-
-        //         Main.IterTormenti.LogDisplay(FatalError);
-
-        //         FatalError = null;
-        //     }           
-        // }
     }
 }

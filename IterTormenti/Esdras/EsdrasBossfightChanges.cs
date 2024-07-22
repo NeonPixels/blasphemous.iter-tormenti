@@ -99,11 +99,14 @@ namespace IterTormenti.Esdras
                 //HandleError();
                 return;
             }
+
+            
         }
 
         // private static void HandleError()
         // {
-        //     Main.IterTormenti.FatalError = "IterTormenti: Failed to apply changes to Esdras bossfight. Please review log";
+        //      TODO: We need some manner of error handling to avoid corrupting saves
+        //            if this setup fails
         // }
     }
 }
