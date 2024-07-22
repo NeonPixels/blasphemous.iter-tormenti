@@ -274,5 +274,4 @@ namespace IterTormenti
 
         protected override string Spritesheet => "PenitenceABC.png";
     }
-
 }
