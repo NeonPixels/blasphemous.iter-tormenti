@@ -199,12 +199,10 @@ namespace IterTormenti.Esdras
                     }
 
                     animator.OnEndTransitions["EsdrasNonLethalDefeat"] = "EsdrasDefeated";
-                    animator.MakeAnimationLoop("EsdrasDefeated");
-                    animator.MakeAnimationLoop("EsdrasRun");
                     animator.OnEndTransitions["EsdrasPickUpWeapon"] = "EsdrasRun";
 
                     animator.enabled = true;
-                    animator.ActiveAnimation = "EsdrasNonLethalDefeat";                    
+                    animator.ActiveAnimation = "EsdrasNonLethalDefeat";
                 }
             
                 AnimatorBehaviour esdrasBehaviour = esdrasDefeatAnimator.AddComponent<AnimatorBehaviour>();

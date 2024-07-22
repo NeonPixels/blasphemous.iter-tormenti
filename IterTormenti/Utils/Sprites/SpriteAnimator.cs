@@ -189,6 +189,8 @@ namespace IterTormenti.Utils.Sprites
                 anim.FrameAudio += OnFrameAudio;
             }
 
+            UpdateFrame();
+
             _playing = true;
         }
 
@@ -293,6 +295,7 @@ namespace IterTormenti.Utils.Sprites
             AudioPlayer.Play(args.Name);
         }
 
+#if DISABLED // TODO: Currently, all animations loop by default, as this doesn't seem to work
         /// <summary>
         /// Helper function that makes an animation loop by setting it as its
         /// own target for the OnEndTransition
@@ -302,7 +305,7 @@ namespace IterTormenti.Utils.Sprites
         {
             OnEndTransitions[name] = name;
         }
-
+#endif
 
         // --- MonoBehaviour methods --
 

@@ -248,7 +248,7 @@ namespace IterTormenti.Esdras
         {
             MoveElementsToFinalPosition();
             
-            Vector3 penitentPosition =  Core.Logic.Penitent.gameObject.transform.position;
+            Vector3 penitentPosition = Core.Logic.Penitent.gameObject.transform.position;
 
             // EsdrasAnimator sprite is facing right by default
             if(EsdrasAnimatorGO.transform.position.x > penitentPosition.x)

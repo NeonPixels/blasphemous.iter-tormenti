@@ -69,6 +69,7 @@ namespace IterTormenti.Utils.Sprites.Animations
             get
             {
                 if(frames.Length == 0) return null;
+                if(_index < 0) return null;
 
                 return frames[_index];
             }
@@ -183,6 +184,7 @@ namespace IterTormenti.Utils.Sprites.Animations
         public Frame NextFrame()
         {
             if(frames.Length == 0) return null;
+            if(_index < 0) return null;
             
             _index++;
             
@@ -191,11 +193,10 @@ namespace IterTormenti.Utils.Sprites.Animations
                 OnAnimationCompleted();
 
                 _index = 0;
-                //_index = frames.Length - 1;
             }
             
             NotifyIfFrameHasAudio(CurrentFrame);
-
+            
             return CurrentFrame;
         }
         

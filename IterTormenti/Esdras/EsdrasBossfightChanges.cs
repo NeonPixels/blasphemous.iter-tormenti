@@ -11,7 +11,7 @@ namespace IterTormenti.Esdras
         {
             // We need to override FSM behaviour ONLY when the Esdras fight is to be skipped by the Incomplete Scapular,
             // as such, check first if the conditions match, and exit if not:
-#if DISABLED
+
             // Has Esdras already been defeated?
             if( Core.Events.GetFlag("D08Z01S01_BOSSDEAD") )
             {
@@ -37,7 +37,7 @@ namespace IterTormenti.Esdras
             {
                 return;
             }
-#endif
+
 
             // Create the animator for the transition between the Boss and the NPC
             // This animation will play upon boss defeat, replacing the boss sprite
