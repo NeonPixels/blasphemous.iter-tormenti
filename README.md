@@ -20,10 +20,9 @@
 ## Table of Contents
 
 - [Links](https://github.com/NeonPixels/blasphemous.iter-tormenti#links)
-- [Installation](https://github.com/NeonPixels/blasphemous.iter-tormenti#installation)<!-- - [Available commands](https://github.com/NeonPixels/blasphemous.iter-tormenti#available-commands) -->
+- [Installation](https://github.com/NeonPixels/blasphemous.iter-tormenti#installation)
 - [Mod info](https://github.com/NeonPixels/blasphemous.iter-tormenti#mod-info)
-  - [Current features](https://github.com/NeonPixels/blasphemous.iter-tormenti#current-features)
-  - [Planned features](https://github.com/NeonPixels/blasphemous.iter-tormenti#planned-features)
+  - [Current features](https://github.com/NeonPixels/blasphemous.iter-tormenti#features)
   - [Important notes](https://github.com/NeonPixels/blasphemous.iter-tormenti#important-notes)
 - [Credits](https://github.com/NeonPixels/blasphemous.iter-tormenti#credits)
 
@@ -63,17 +62,6 @@ Remove the following files and folders from the `Modding` folder:
 
 ---
 
-<!--
-## Available commands
-- Press the `backslash` key to open the debug console
-- Type the desired command followed by the parameters all separated by a single space
-
-| Command | Parameters | Description |
-| ------- | ----------- | ------- |
-| `itertormenti help` | none | List all available commands |
-
----
--->
 ## Mod info
 
 Iter Tormenti (Path of Torment) is a modification (mod) for [Blasphemous](https://thegamekitchen.com/blasphemous/), meant for those who want to experience all that the game has to offer in a single playthrough, without needing to ascend and restart in True Torment mode.
