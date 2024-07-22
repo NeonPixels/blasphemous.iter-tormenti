@@ -260,6 +260,7 @@ namespace IterTormenti.Esdras
                 EsdrasAnimatorGO.transform.GetComponent<SpriteRenderer>().flipX = false;
             }
             
+            // Hide boss sprite (this won't stop the audio, but we don't mind)
             EsdrasBoss.transform.Find("#Constitution/Sprite").gameObject.GetComponent<SpriteRenderer>().enabled = false;
             EsdrasBoss.transform.Find("#Constitution/Sprite/BlobShadow").gameObject.GetComponent<SpriteRenderer>().enabled = false;
 
@@ -384,12 +385,14 @@ namespace IterTormenti.Esdras
             Penitent penitent = Core.Logic.Penitent.gameObject.GetComponent<Penitent>();
             Vector3 penitentPosition = Core.Logic.Penitent.gameObject.transform.position;
 
-            if(EsdrasAnimatorGO.transform.position.x < penitentPosition.x && penitent.GetOrientation() == EntityOrientation.Right)
+            if(    EsdrasAnimatorGO.transform.position.x < penitentPosition.x
+                && penitent.GetOrientation() == EntityOrientation.Right )
             {
                 penitent.SetOrientation(EntityOrientation.Left);
             }
 
-            if(EsdrasAnimatorGO.transform.position.x > penitentPosition.x && penitent.GetOrientation() == EntityOrientation.Left)
+            if(    EsdrasAnimatorGO.transform.position.x > penitentPosition.x
+                && penitent.GetOrientation() == EntityOrientation.Left )
             {
                 penitent.SetOrientation(EntityOrientation.Right);
             }

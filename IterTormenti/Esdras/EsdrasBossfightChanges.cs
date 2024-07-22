@@ -38,7 +38,6 @@ namespace IterTormenti.Esdras
                 return;
             }
 
-
             // Create the animator for the transition between the Boss and the NPC
             // This animation will play upon boss defeat, replacing the boss sprite
             // It will remain in an idle state during the Requiem Aeternam animation,

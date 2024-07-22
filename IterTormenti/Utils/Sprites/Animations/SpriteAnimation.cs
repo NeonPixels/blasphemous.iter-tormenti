@@ -192,7 +192,8 @@ namespace IterTormenti.Utils.Sprites.Animations
             {
                 OnAnimationCompleted();
 
-                _index = 0;
+                _index = 0; // TODO: We loop by default because using OnAnimationCompleted to loop
+                            //       doesn't seem to work.... yet
             }
             
             NotifyIfFrameHasAudio(CurrentFrame);
