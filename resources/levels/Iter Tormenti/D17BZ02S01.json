@@ -1,0 +1,17 @@
+{
+    "additions": [        
+        {
+            "type": "item-ground-custom",
+            "id": "QI106",
+            "position": {
+                "x": -882.50,
+                "y": -3
+            },
+            "condition": "gamemode:NEW_GAME",
+            "properties":
+            [
+                "PetrifiedBellItem.png", "32", "32", "0.05"
+            ]
+        }
+    ]
+}

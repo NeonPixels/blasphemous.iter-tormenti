@@ -2,6 +2,8 @@
 using Blasphemous.ModdingAPI.Persistence;
 using Blasphemous.Framework.Penitence;
 using System.Collections.Generic;
+using Blasphemous.Framework.Levels;
+using Blasphemous.Framework.Levels.Loaders;
 
 namespace IterTormenti
 {
@@ -59,6 +61,19 @@ namespace IterTormenti
             foreach (ComboPenitence penitence in ComboPenitenceList)
             {
                 provider.RegisterPenitence(penitence);
+            }
+
+            provider.RegisterObjectCreator( "item-ground-custom",
+                                            new ObjectCreator(
+                                                new SceneLoader("D02Z02S14_LOGIC", "LOGIC/INTERACTABLES/ACT_Collectible"),
+                                                new CustomGroundItemModifier() ) );
+        }
+
+        protected override void OnLevelPreloaded(string oldLevel, string newLevel)
+        {
+            if(newLevel == "D08Z01S01") // Bridge
+            {
+                Esdras.BossfightChanges.Apply();
             }
         }
     }

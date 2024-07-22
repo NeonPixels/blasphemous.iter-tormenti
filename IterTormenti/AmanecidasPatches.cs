@@ -2,7 +2,7 @@ using HarmonyLib;
 using Framework.Managers;
 using Tools.Playmaker2.Action;
 
-namespace IterTormenti
+namespace IterTormenti.Amanecidas
 {
     [HarmonyPatch(typeof(CheckGameModeActive), nameof(CheckGameModeActive.OnEnter))]
     class CheckGameModeActiveOnEnter_Patch

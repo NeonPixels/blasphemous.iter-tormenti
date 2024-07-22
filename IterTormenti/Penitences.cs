@@ -84,7 +84,7 @@ namespace IterTormenti
                 
                 if(null == penitenceToComplete)
                 {
-                    Main.IterTormenti.LogError("ComboPenitence::" + Id +"::CompletePenitences: Penitence with id: " + penitence.Id + " could not be found!");
+                    Main.IterTormenti.LogError($"ComboPenitence::{Id}::CompletePenitences: Penitence with id: " + penitence.Id + " could not be found!");
                     continue;
                 }
 
@@ -104,7 +104,7 @@ namespace IterTormenti
 
                 if(null == reward)
                 {
-                    Main.IterTormenti.LogError("ComboPenitence::" + Id +"::GiveRewards: Invalid reward object found!");
+                    Main.IterTormenti.LogError($"ComboPenitence::{Id}::GiveRewards: Invalid reward object found!");
                     continue;
                 }
 
@@ -165,7 +165,7 @@ namespace IterTormenti
                 imageCollection.Abandoned        =
                 imageCollection.Gameplay         = null;
 
-                Main.IterTormenti.Log("Failed to load sprites for " + Id);
+                Main.IterTormenti.LogError($"ComboPenitence::{Id}::LoadImages: ERROR: Failed to load sprites!");
             }
 
             return imageCollection;
@@ -274,5 +274,4 @@ namespace IterTormenti
 
         protected override string Spritesheet => "PenitenceABC.png";
     }
-
 }
