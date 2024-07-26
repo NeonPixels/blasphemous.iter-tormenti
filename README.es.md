@@ -20,10 +20,9 @@
 ## Tabla de Contenidos
 
 - [Enlaces](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#enlaces)
-- [Instalación](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#instalacion)<!-- - [Comandos disponibles](https://github.com/NeonPixels/blasphemous.iter-tormenti#comandos-disponibles) -->
+- [Instalación](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#instalacion)
 - [Información del mod](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#informacion-del-mod)
-  - [Características actuales](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#caracteristicas-actuales)
-  - [Características planificadas](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#caracteristicas-planificadas)
+  - [Características](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#caracteristicas)  
   - [Notas importantes](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#notas-importantes)
 - [Créditos](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#creditos)
 
@@ -62,22 +61,11 @@ Elimina los siguientes archivos y carpetas de la carpeta `Modding`:
 
 ---
 
-<!--
-## Comandos disponibles
-- Pulsa la tecla `º` para abrir la consola de depuración
-- Escribe el comando deseado, seguido de los parámetros, separados por un único espacio en blanco
-
-| Comando | Parámetros | Descripcion |
-| ------- | ----------- | ------- |
-| `itertormenti ayuda` | ninguno | Muestra una lista de los comandos disponibles |
-
----
--->
 ## Informacion del mod
 
 Iter Tormenti (Senda del Tormento) es una modificación (mod) de [Blasphemous](https://thegamekitchen.com/blasphemous/) pensada para quienes quieran experimentar todo lo que el juego tiene que ofrecer en una sola partida, sin que sea necesario ascender y reiniciar en modo Verdadero Calvario.
 
-### Caracteristicas actuales
+### Caracteristicas
 
 - Las Ranuras de Partida Vacías pueden ser ascendidas, permitiendo comenzar el juego directamente en modo Verdadero Calvario, otorgando acceso a las misiones de las Amanecidas, así como al altar de Penitencias. Ten cuidado, pues este modo presenta un desafío considerable.
 - En el Altar de Penitencias, se puede escoger una de las siguientes nuevas penitencias:
@@ -87,13 +75,7 @@ Iter Tormenti (Senda del Tormento) es una modificación (mod) de [Blasphemous](h
   - `Penitencia de la Senda del Tormento`: Combina los efectos y recompensas de las tres penitencias básicas.
 - Completar una penitencia combinada también marcará como completadas las penitencias asociadas.
 - La Campanilla Petrificada puede ser obtenida en una partida no ascendida, activando así las misiones de las Amanecidas. Tened cuidado, las Amanecidas están equilbradas para el modo Verdadero Calvario, y presentarán un considerable desafio en una partida no ascendida.
-
-<b>Nota:</b> La ubicación actual de la Campanilla Petrificada es temporal. Será movida a otro lugar con la entrega final del mod.
-
-
-### Caracteristicas planeadas
-
-- Posibilidad de, aun estando en posesión del Escapulario Incompleto, elegir luchar contra Esdras.
+- El enfrentamiento con Esdras siempre tendrá lugar, aun si se tiene el Escapulario Incompleto, pero el desenlace cambiará, permitiendo llegar al final C.
 
 ### Notas importantes
 
@@ -102,3 +84,4 @@ Iter Tormenti (Senda del Tormento) es una modificación (mod) de [Blasphemous](h
 ## Creditos
 
 - Ayuda de programación e inspiración - [BrandenEK](https://github.com/BrandenEK)
+- Código de utilidades FSM basadas en [Satchel](https://github.com/PrashantMohta/Satchel)

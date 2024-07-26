@@ -20,10 +20,9 @@
 ## Table of Contents
 
 - [Links](https://github.com/NeonPixels/blasphemous.iter-tormenti#links)
-- [Installation](https://github.com/NeonPixels/blasphemous.iter-tormenti#installation)<!-- - [Available commands](https://github.com/NeonPixels/blasphemous.iter-tormenti#available-commands) -->
+- [Installation](https://github.com/NeonPixels/blasphemous.iter-tormenti#installation)
 - [Mod info](https://github.com/NeonPixels/blasphemous.iter-tormenti#mod-info)
-  - [Current features](https://github.com/NeonPixels/blasphemous.iter-tormenti#current-features)
-  - [Planned features](https://github.com/NeonPixels/blasphemous.iter-tormenti#planned-features)
+  - [Features](https://github.com/NeonPixels/blasphemous.iter-tormenti#features)
   - [Important notes](https://github.com/NeonPixels/blasphemous.iter-tormenti#important-notes)
 - [Credits](https://github.com/NeonPixels/blasphemous.iter-tormenti#credits)
 
@@ -63,22 +62,11 @@ Remove the following files and folders from the `Modding` folder:
 
 ---
 
-<!--
-## Available commands
-- Press the `backslash` key to open the debug console
-- Type the desired command followed by the parameters all separated by a single space
-
-| Command | Parameters | Description |
-| ------- | ----------- | ------- |
-| `itertormenti help` | none | List all available commands |
-
----
--->
 ## Mod info
 
 Iter Tormenti (Path of Torment) is a modification (mod) for [Blasphemous](https://thegamekitchen.com/blasphemous/), meant for those who want to experience all that the game has to offer in a single playthrough, without needing to ascend and restart in True Torment mode.
 
-### Current features
+### Features
 
 - Empty Save Slots can be ascended, thus beginning the game directly in True Torment mode, granting access to the Amanecidas questline, as well as the Penitence altar. Beware, as this mode presents a considerable challenge.
 - At the Penitece Altar, one of the following new penitences can be selected:
@@ -88,12 +76,7 @@ Iter Tormenti (Path of Torment) is a modification (mod) for [Blasphemous](https:
   - `Penitence of the Path of Torment`: Combines the effects and rewards of all three of the basic penitences.
 - Completing a combined penitence will also award completion of the penitences involved.
 - The Petrified Bell can now be obtained in a non-ascended playthrough, thus enabling the Amanecidas questline. Beware, as the Amanecidas are balanced for True Torment mode, and will pose a significant challenge in a non-Ascended game.
-
-<b>Note:</b> The current location of the Petrified Bell is a placeholder. It will be moved to a different location upon final mod release.
-
-### Planned features
-
-- Ability to, when in possesion of the Incomplete Scapular, choose to fight Esdras.
+- The fight with Esdras will always happen, even if the player has the Incomplete Scapular, but the ending will change, leading to the C ending.
 
 ### Important notes
 
@@ -102,3 +85,4 @@ Iter Tormenti (Path of Torment) is a modification (mod) for [Blasphemous](https:
 ## Credits
 
 - Coding help & inspiration - [BrandenEK](https://github.com/BrandenEK)
+- FSM utils code based on [Satchel](https://github.com/PrashantMohta/Satchel)
