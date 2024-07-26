@@ -11,8 +11,8 @@
 
 <div align="center">
   <img src="https://img.shields.io/github/v/release/NeonPixels/blasphemous.iter-tormenti?style=for-the-badge">
-  <img src="https://img.shields.io/github/last-commit/NeonPixels/blasphemous.iter-tormenti?color=important?style=for-the-badge">
-  <img src="https://img.shields.io/github/downloads/NeonPixels/blasphemous.iter-tormenti/total?color=success?style=for-the-badge">
+  <img src="https://img.shields.io/github/last-commit/NeonPixels/blasphemous.iter-tormenti?color=important&style=for-the-badge">
+  <img src="https://img.shields.io/github/downloads/NeonPixels/blasphemous.iter-tormenti/total?color=success&style=for-the-badge">
 </div>
 
 ---
