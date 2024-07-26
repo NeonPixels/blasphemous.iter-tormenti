@@ -88,9 +88,9 @@ Manual installation:
 Manual removal:
 Remove the following files and folders from the `Modding` folder:
 - `plugins\IterTormenti.dll`
-- `data\IterTormenti\`
-- `levels\IterTormenti\`
-- `localitazion\IterTomenti.txt`
+- `data\Iter Tormenti\`
+- `levels\Iter Tormenti\`
+- `localitazion\Iter Tomenti.txt`
 
 <b>Note:</b> When manually updating the mod to a new version, it is recommended to manually remove the previous mod files first, as files that might have been removed from the mod release won't be removed automatically.
 

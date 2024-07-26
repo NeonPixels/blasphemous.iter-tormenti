@@ -5,11 +5,11 @@
     <LangVersion>latest</LangVersion>
 
     <Title>Iter Tormenti</Title>
-    <Product>IterTormenti</Product>
+    <Product>Iter Tormenti</Product>
     <Authors>NeonPixels</Authors>
     <Company>NeonPixels</Company>
     <Description>Do everything in a single playthrough</Description>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
 
     <TargetName>IterTormenti</TargetName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>

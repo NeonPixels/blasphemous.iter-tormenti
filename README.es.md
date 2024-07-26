@@ -89,9 +89,9 @@ Instalación manual:
 Desinstalación manual:
 Elimina los siguientes archivos y carpetas de la carpeta `Modding`:
 - `plugins\IterTormenti.dll`
-- `data\IterTormenti\`
-- `levels\IterTormenti\`
-- `localitazion\IterTomenti.txt`
+- `data\Iter Tormenti\`
+- `levels\Iter Tormenti\`
+- `localitazion\Iter Tomenti.txt`
 
 <b>Nota:</b> Cuando se actualiza manualmente a una nueva versión del mod, se recomienda eliminar manialmente los archivos de la versión anterior, dado que si hay archivos que se han eliminado de la nueva versión, estos no será eliminados automaticamente al instalar manualmente.
 
