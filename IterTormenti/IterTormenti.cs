@@ -4,6 +4,9 @@ using Blasphemous.Framework.Penitence;
 using System.Collections.Generic;
 using Blasphemous.Framework.Levels;
 using Blasphemous.Framework.Levels.Loaders;
+using System.Collections;
+using UnityEngine;
+using Framework.Managers;
 
 namespace IterTormenti
 {
@@ -69,6 +72,57 @@ namespace IterTormenti
             {
                 Esdras.BossfightChanges.Apply();
             }
+        }
+
+        /// <summary>
+        /// Kicks player out to main menu and displays message. Meant to
+        /// interrupt gameplay and avoid undefined behaviour when a serious
+        /// error happens.
+        /// </summary>
+        /// <param name="message">Error message to display</param>
+        public void FatalError(string message)
+        {
+            if(_fatalErrorIssued)
+            {
+                ModLog.Error($"Fatal Error already issued, can't process error with message: {message}");
+                return;
+            }
+
+            ModLog.Error($"Fatal Error issued: {message}");
+
+            fatalErrorCoroutine = FatalErrorCoroutine(message);
+            Main.Instance.StartCoroutine(fatalErrorCoroutine);
+        }
+
+
+        private bool _fatalErrorIssued = false;
+        private IEnumerator fatalErrorCoroutine;
+
+        /// <summary>
+        /// Coroutine managing the handling of a fatal error. It will kick the player 
+        /// back to the main menu, and display an error message.
+        /// </summary>
+        /// <param name="message">Error message to display</param>
+        /// <returns>Coroutine IEnumerator</returns>
+        private IEnumerator FatalErrorCoroutine(string message)
+        {
+            _fatalErrorIssued = true;
+
+            yield return new WaitUntil(() => !Core.LevelManager.InsideChangeLevel);
+            yield return new WaitForSecondsRealtime(0.05f);
+
+            // Check if we're already in the MainMenu scene
+            if(!Core.LevelManager.currentLevel.LevelName.Equals("MainMenu"))
+            {
+                Core.LevelManager.ChangeLevel("MainMenu");
+
+                yield return new WaitUntil(() => !Core.LevelManager.InsideChangeLevel);
+                yield return new WaitForSecondsRealtime(0.05f);
+            }
+
+            ModLog.Display(message);
+
+            _fatalErrorIssued = false;
         }
     }
 }

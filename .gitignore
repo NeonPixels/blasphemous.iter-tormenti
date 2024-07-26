@@ -1,7 +1,7 @@
 ## Ignore VSCode files
 *.code-workspace
 build/
-IterTormenti/design
+design/
 
 ## Ignore ModdingAPI files
 ModdingAPI.dll

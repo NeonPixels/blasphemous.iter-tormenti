@@ -9,11 +9,11 @@
     <Authors>NeonPixels</Authors>
     <Company>NeonPixels</Company>
     <Description>Do everything in a single playthrough</Description>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
 
     <TargetName>IterTormenti</TargetName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <RepositoryUrl>https://github.com/NeonPixels/blasphemous.iter-tormenti</RepositoryUrl>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>

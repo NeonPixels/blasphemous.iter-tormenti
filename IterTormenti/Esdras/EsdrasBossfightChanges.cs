@@ -46,7 +46,7 @@ namespace IterTormenti.Esdras
             // target position, where it will be disabled, and replaced with the NPC
             if(!DefeatAnimation.Create())
             {
-                //HandleError();
+                Main.IterTormenti.FatalError("Fatal Error: Failed to create Esdras extra animations");
                 return;
             }
 
@@ -84,29 +84,21 @@ namespace IterTormenti.Esdras
 
             if(!FightActivatorFsmPatch.Apply())
             {
-                // HandleError();
+                Main.IterTormenti.FatalError("Fatal Error: Failed to patch Esdras FightActivator FSM");
                 return;
             }
 
             if(!BossfightFsmPatch.Apply())
             {
-                // HandleError();
+                Main.IterTormenti.FatalError("Fatal Error: Failed to patch Esdras BossFight FSM");
                 return;
             }
 
             if(!NpcFsmPatch.Apply())
             {
-                //HandleError();
+                Main.IterTormenti.FatalError("Fatal Error: Failed to patch Esdras NPC FSM");
                 return;
             }
-
-            
         }
-
-        // private static void HandleError()
-        // {
-        //      TODO: We need some manner of error handling to avoid corrupting saves
-        //            if this setup fails
-        // }
     }
 }
