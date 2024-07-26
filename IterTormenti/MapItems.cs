@@ -1,12 +1,13 @@
-using System;
-using Blasphemous.Framework.Levels;
-using Blasphemous.Framework.Levels.Modifiers;
 using Blasphemous.ModdingAPI;
 using Blasphemous.ModdingAPI.Files;
+using Blasphemous.Framework.Levels;
+using Blasphemous.Framework.Levels.Modifiers;
+using System;
+using UnityEngine;
 using Framework.Inventory;
 using Framework.Util;
+
 using IterTormenti.Utils.Sprites;
-using UnityEngine;
 
 namespace IterTormenti
 {
@@ -68,12 +69,10 @@ namespace IterTormenti
             int spriteHeight = int.Parse(data.properties[2]);
             float frameDelay = float.Parse(data.properties[3]);
 
-            // Main.IterTormenti.Log($"CustomGroundItemModifier::Apply: path: {spriteSheetPath}, width: {spriteWidth}, height: {spriteHeight}, delay: {frameDelay}");
-
             GameObject interactableAnimation = obj.transform.Find("Interactable Animation").gameObject;
             if(null == interactableAnimation)
             {
-                Main.IterTormenti.LogError("CustomGroundItemModifier::Apply: ERROR - Failed to find Interactable Animator object");
+                ModLog.Error("CustomGroundItemModifier::Apply: ERROR - Failed to find Interactable Animator object");
                 return;
             }
             
@@ -96,7 +95,7 @@ namespace IterTormenti
 
             if(sprites.Length <= 0)
             {
-                Main.IterTormenti.LogError($"CustomGroundItemModifier::Apply: ERROR - Failed to load sprites from: {spriteSheetPath}");
+                ModLog.Error($"CustomGroundItemModifier::Apply: ERROR - Failed to load sprites from: {spriteSheetPath}");
                 return;
             }
 
@@ -104,7 +103,7 @@ namespace IterTormenti
             Animator animator = interactableAnimation.GetComponent<Animator>();
             if(null == animator)
             {
-                Main.IterTormenti.LogError("CustomGroundItemModifier::Apply: ERROR - Failed to find Animator component");
+                ModLog.Error("CustomGroundItemModifier::Apply: ERROR - Failed to find Animator component");
                 return;
             }
 
@@ -113,7 +112,7 @@ namespace IterTormenti
             SpriteRenderer renderer = interactableAnimation.GetComponent<SpriteRenderer>();
             if(null == renderer)
             {
-                Main.IterTormenti.LogError("CustomGroundItemModifier::Apply: ERROR - Failed to find SpriteRenderer component");
+                ModLog.Error("CustomGroundItemModifier::Apply: ERROR - Failed to find SpriteRenderer component");
                 return;
             }
 

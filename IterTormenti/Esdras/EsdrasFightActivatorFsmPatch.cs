@@ -1,3 +1,4 @@
+using Blasphemous.ModdingAPI;
 using UnityEngine;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
@@ -22,28 +23,28 @@ namespace IterTormenti.Esdras
             GameObject gameObject = GameObject.Find("EsdrasFightActivator");
             if(null == gameObject)
             {
-                Main.IterTormenti.LogError("Failed to patch 'EsdrasFightActivator': Main object not found!");
+                ModLog.Error("Failed to patch 'EsdrasFightActivator': Main object not found!");
                 return false;
             }
 
             PlayMakerFSM fsm = PlayMakerFSM.FindFsmOnGameObject(gameObject, "EsdrasFightActivator");
             if(null == fsm)
             {
-                Main.IterTormenti.LogError("Failed to patch 'EsdrasFightActivator': FSM object not found!");
+                ModLog.Error("Failed to patch 'EsdrasFightActivator': FSM object not found!");
                 return false;
             }
 
             GameObject esdrasNPC = GameObject.Find("EsdrasNPC");
             if(null == esdrasNPC)
             {
-                Main.IterTormenti.LogError("Failed to patch 'EsdrasFightActivator': 'EsdrasNPC' object not found!");
+                ModLog.Error("Failed to patch 'EsdrasFightActivator': 'EsdrasNPC' object not found!");
                 return false;
             }
 
             GameObject bossFightStuff = GameObject.Find("BOSS_FIGHT_STUFF");
             if(null == bossFightStuff)
             {
-                Main.IterTormenti.LogError("Failed to patch 'EsdrasFightActivator': 'BOSS_FIGHT_STUFF' object not found!");
+                ModLog.Error("Failed to patch 'EsdrasFightActivator': 'BOSS_FIGHT_STUFF' object not found!");
                 return false;
             }
 

@@ -1,3 +1,4 @@
+using Blasphemous.ModdingAPI;
 using UnityEngine;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
@@ -32,14 +33,14 @@ namespace IterTormenti.Esdras
             GameObject gameObject = GameObject.Find("EsdrasNPC");
             if(null == gameObject)
             {
-                Main.IterTormenti.LogError("Failed to patch 'EsdrasNPC': Main object not found!");
+                ModLog.Error("Failed to patch 'EsdrasNPC': Main object not found!");
                 return false;
             }
         
             PlayMakerFSM fsm = PlayMakerFSM.FindFsmOnGameObject(gameObject, "FSM");
             if(null == fsm)
             {
-                Main.IterTormenti.LogError("Failed to patch 'EsdrasNPC': FSM object not found!");
+                ModLog.Error("Failed to patch 'EsdrasNPC': FSM object not found!");
                 return false;
             }
 
@@ -54,14 +55,14 @@ namespace IterTormenti.Esdras
             GameObject esdrasDefeatAnimator = GameObject.Find("EsdrasDefeatAnimator");
             if(null == esdrasDefeatAnimator)
             {
-                Main.IterTormenti.LogError("Failed to patch 'EsdrasNPC': 'EsdrasDefeatAnimator' object not found!");
+                ModLog.Error("Failed to patch 'EsdrasNPC': 'EsdrasDefeatAnimator' object not found!");
                 return false;
             }
 
             AnimatorBehaviour esdrasBehaviour = esdrasDefeatAnimator.GetComponent<AnimatorBehaviour>();
             if(null == esdrasBehaviour)
             {
-                Main.IterTormenti.LogError("Failed to patch 'EsdrasNPC': 'esdrasBehaviour' object not found!");
+                ModLog.Error("Failed to patch 'EsdrasNPC': 'esdrasBehaviour' object not found!");
                 return false;
             }
 

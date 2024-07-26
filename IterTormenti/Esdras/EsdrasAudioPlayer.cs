@@ -1,4 +1,4 @@
-
+using Blasphemous.ModdingAPI;
 using Framework.Managers;
 using IterTormenti.Utils.Audio;
 
@@ -59,7 +59,7 @@ namespace IterTormenti.Esdras
                 return;
             }
 
-            Main.IterTormenti.LogError($"EsdrasAudioPlayer::Play: ERROR: Unknown audio: {name}");
+            ModLog.Error($"EsdrasAudioPlayer::Play: ERROR: Unknown audio: {name}");
         }
     }
 }

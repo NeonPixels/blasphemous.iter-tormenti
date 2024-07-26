@@ -1,3 +1,4 @@
+using Blasphemous.ModdingAPI;
 using UnityEngine;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
@@ -35,56 +36,56 @@ namespace IterTormenti.Esdras
             GameObject gameObject = GameObject.Find("BossFight");
             if(null == gameObject)
             {
-                Main.IterTormenti.LogError("Failed to patch 'BossFight': Main object not found!");
+                ModLog.Error("Failed to patch 'BossFight': Main object not found!");
                 return false;
             }
 
             PlayMakerFSM fsm = PlayMakerFSM.FindFsmOnGameObject(gameObject, "FSM");
             if(null == fsm)
             {
-                Main.IterTormenti.LogError("Failed to patch 'BossFight': FSM object not found!");
+                ModLog.Error("Failed to patch 'BossFight': FSM object not found!");
                 return false;
             }
 
             GameObject esdrasNPC = GameObject.Find("EsdrasNPC");
             if(null == esdrasNPC)
             {
-                Main.IterTormenti.LogError("Failed to patch 'BossFight': 'EsdrasNPC' object not found!");
+                ModLog.Error("Failed to patch 'BossFight': 'EsdrasNPC' object not found!");
                 return false;
             }
 
             PlayMakerFSM esdrasNpcFSM = PlayMakerFSM.FindFsmOnGameObject(esdrasNPC, "FSM");
             if(null == esdrasNpcFSM)
             {
-                Main.IterTormenti.LogError("Failed to patch 'BossFight': EsdrasNPC FSM object not found!");
+                ModLog.Error("Failed to patch 'BossFight': EsdrasNPC FSM object not found!");
                 return false;
             }
 
             GameObject bossFightStuff = GameObject.Find("BOSS_FIGHT_STUFF");
             if(null == bossFightStuff)
             {
-                Main.IterTormenti.LogError("Failed to patch 'BossFight': 'BOSS_FIGHT_STUFF' object not found!");
+                ModLog.Error("Failed to patch 'BossFight': 'BOSS_FIGHT_STUFF' object not found!");
                 return false;
             }
 
             GameObject esdrasBoss = GameObject.Find("Esdras");
             if(null == esdrasBoss)
             {
-                Main.IterTormenti.LogError("Failed to patch 'BossFight': 'Esdras' object not found!");
+                ModLog.Error("Failed to patch 'BossFight': 'Esdras' object not found!");
                 return false;
             }
 
             GameObject esdrasDefeatAnimator = GameObject.Find("EsdrasDefeatAnimator");
             if(null == esdrasDefeatAnimator)
             {
-                Main.IterTormenti.LogError("Failed to patch 'BossFight': 'EsdrasDefeatAnimator' object not found!");
+                ModLog.Error("Failed to patch 'BossFight': 'EsdrasDefeatAnimator' object not found!");
                 return false;
             }
 
             AnimatorBehaviour esdrasBehaviour = esdrasDefeatAnimator.GetComponent<AnimatorBehaviour>();
             if(null == esdrasBehaviour)
             {
-                Main.IterTormenti.LogError("Failed to patch 'BossFight': 'esdrasBehaviour' object not found!");
+                ModLog.Error("Failed to patch 'BossFight': 'esdrasBehaviour' object not found!");
                 return false;
             }
 
