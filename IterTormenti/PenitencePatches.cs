@@ -128,6 +128,11 @@ namespace IterTormenti
     {
         public static void Postfix()
         {
+            if(null == Core.PenitenceManager.GetCurrentPenitence())
+            {
+                return;
+            }
+
             ComboPenitence penitence = Main.IterTormenti.ComboPenitenceList.Find((ComboPenitence x) => x.id == Core.PenitenceManager.GetCurrentPenitence().Id);
 
             if(null == penitence)
