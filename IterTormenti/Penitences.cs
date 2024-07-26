@@ -1,3 +1,4 @@
+using Blasphemous.ModdingAPI;
 using Blasphemous.Framework.Penitence;
 using Framework.Managers;
 using Framework.Penitences;
@@ -22,6 +23,7 @@ namespace IterTormenti
 
         public List<IPenitence> Penitences = new();
         public List<RewardItem> Rewards = new();
+        public List<string> Skins = new();
 
         public string id { get { return Id; } } // TODO: Temporary fix until base class gets public Id method
 
@@ -84,7 +86,7 @@ namespace IterTormenti
                 
                 if(null == penitenceToComplete)
                 {
-                    Main.IterTormenti.LogError($"ComboPenitence::{Id}::CompletePenitences: Penitence with id: " + penitence.Id + " could not be found!");
+                    ModLog.Error($"ComboPenitence::{Id}::CompletePenitences: Penitence with id: " + penitence.Id + " could not be found!");
                     continue;
                 }
 
@@ -104,7 +106,7 @@ namespace IterTormenti
 
                 if(null == reward)
                 {
-                    Main.IterTormenti.LogError($"ComboPenitence::{Id}::GiveRewards: Invalid reward object found!");
+                    ModLog.Error($"ComboPenitence::{Id}::GiveRewards: Invalid reward object found!");
                     continue;
                 }
 
@@ -114,8 +116,6 @@ namespace IterTormenti
                     continue;
                 }
 
-                yield return new WaitForEndOfFrame();
-
                 // Display item popup
                 UIController.instance.ShowObjectPopUp( UIController.PopupItemAction.GetObejct,
                                                        reward.caption,
@@ -124,13 +124,23 @@ namespace IterTormenti
                                                        3f,
                                                        true );
 
-                while (UIController.instance.IsShowingPopUp())
+                yield return new WaitForSecondsRealtime(0.05f);
+				yield return new WaitUntil(() => !UIController.instance.IsShowingPopUp());
+                yield return new WaitForSecondsRealtime(1.0f);
+            }
+
+            foreach(string skin in Skins)
+            {
+                if(!Core.ColorPaletteManager.GetAllColorPalettesId().Contains(skin))
                 {
-                    yield return new WaitForEndOfFrame();
+                    ModLog.Error($"ComboPenitence::{Id}::GiveRewards: Invalid skin object found!");
+                    continue;
                 }
 
-                // TODO: Next item briefly visible before current PopUp vanishes
-                //       Maybe a longer delay is needed between popups?
+                Core.ColorPaletteManager.UnlockColorPalette(skin);
+
+                yield return new WaitForSecondsRealtime(0.05f);
+				yield return new WaitUntil(() => !UIController.instance.IsUnlockActive());
             }
         }
 
@@ -165,7 +175,7 @@ namespace IterTormenti
                 imageCollection.Abandoned        =
                 imageCollection.Gameplay         = null;
 
-                Main.IterTormenti.LogError($"ComboPenitence::{Id}::LoadImages: ERROR: Failed to load sprites!");
+                ModLog.Error($"ComboPenitence::{Id}::LoadImages: ERROR: Failed to load sprites!");
             }
 
             return imageCollection;
@@ -192,6 +202,11 @@ namespace IterTormenti
                 new RewardItem( "RB101", InventoryManager.ItemType.Bead ), // PE01 Reward
                 new RewardItem( "RB102", InventoryManager.ItemType.Bead )  // PE02 Reward
             };
+
+            Skins = new(){
+                "PENITENT_PE01",
+                "PENITENT_PE02"
+            };
         }
 
         protected override string Id => "PE_IT_AB";
@@ -202,7 +217,7 @@ namespace IterTormenti
     /// <summary>
     /// Penitence combining the effects and rewards of:    
     ///     PE02: Penitence of the Unwavering Faith => RB102: Reliquary of the Fervent Heart
-    ///     PE03: Penitence of the True Guilt       => RB103:  Reliquary of the Sorrowful Heart
+    ///     PE03: Penitence of the True Guilt       => RB103: Reliquary of the Sorrowful Heart
     /// </summary>
     public class PenitenceBC : ComboPenitence
     {
@@ -217,6 +232,11 @@ namespace IterTormenti
                 new RewardItem( "RB102", InventoryManager.ItemType.Bead ), // PE02 Reward
                 new RewardItem( "RB103", InventoryManager.ItemType.Bead )  // PE03 Reward
             };
+
+            Skins = new(){
+                "PENITENT_PE02",
+                "PENITENT_PE03"
+            };
         }
 
         protected override string Id => "PE_IT_BC";
@@ -226,7 +246,7 @@ namespace IterTormenti
 
     /// <summary>
     /// Penitence combining the effects and rewards of:
-    ///     PE03: Penitence of the True Guilt       => RB103:  Reliquary of the Sorrowful Heart
+    ///     PE03: Penitence of the True Guilt       => RB103: Reliquary of the Sorrowful Heart
     ///     PE01: Penitence of a Bleeding Heart     => RB101: Reliquary of the Suffering Heart    
     /// </summary>
     public class PenitenceCA : ComboPenitence
@@ -242,6 +262,11 @@ namespace IterTormenti
                 new RewardItem( "RB103", InventoryManager.ItemType.Bead ), // PE03 Reward
                 new RewardItem( "RB101", InventoryManager.ItemType.Bead )  // PE01 Reward
             };
+
+            Skins = new(){
+                "PENITENT_PE03",
+                "PENITENT_PE01"
+            };
         }
 
         protected override string Id => "PE_IT_CA";
@@ -253,7 +278,7 @@ namespace IterTormenti
     /// Penitence combining the effects and rewards of all the basic penitences:
     ///     PE01: Penitence of a Bleeding Heart     => RB101: Reliquary of the Suffering Heart
     ///     PE02: Penitence of the Unwavering Faith => RB102: Reliquary of the Fervent Heart
-    ///     PE03: Penitence of the True Guilt       => RB103:  Reliquary of the Sorrowful Heart
+    ///     PE03: Penitence of the True Guilt       => RB103: Reliquary of the Sorrowful Heart
     /// </summary>
     public class PenitenceABC : ComboPenitence
     {
@@ -267,6 +292,12 @@ namespace IterTormenti
                 new RewardItem( "RB101", InventoryManager.ItemType.Bead ), // PE01 Reward
                 new RewardItem( "RB102", InventoryManager.ItemType.Bead ), // PE02 Reward
                 new RewardItem( "RB103", InventoryManager.ItemType.Bead )  // PE03 Reward
+            };
+
+            Skins = new(){
+                "PENITENT_PE01",
+                "PENITENT_PE02",
+                "PENITENT_PE03"
             };
         }
 

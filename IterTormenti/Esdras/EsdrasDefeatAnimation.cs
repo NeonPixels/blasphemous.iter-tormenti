@@ -1,9 +1,10 @@
-using UnityEngine;
-using System;
+using Blasphemous.ModdingAPI;
 using Blasphemous.ModdingAPI.Files;
 using IterTormenti.Utils.Sprites;
 using IterTormenti.Utils.Sprites.Animations;
 using IterTormenti.Utils.Audio;
+using UnityEngine;
+using System;
 
 namespace IterTormenti.Esdras
 {
@@ -21,28 +22,28 @@ namespace IterTormenti.Esdras
             GameObject esdrasBoss = GameObject.Find("Esdras");
             if(null == esdrasBoss)
             {
-                Main.IterTormenti.LogError("Failed to create Defeat Animation: 'Esdras' object not found!");
+                ModLog.Error("Failed to create Defeat Animation: 'Esdras' object not found!");
                 return false;
             }
             
             GameObject esdrasNPC = GameObject.Find("EsdrasNPC");
             if(null == esdrasNPC)
             {
-                Main.IterTormenti.LogError("Failed to patch Defeat Animation: 'EsdrasNPC' object not found!");
+                ModLog.Error("Failed to patch Defeat Animation: 'EsdrasNPC' object not found!");
                 return false;
             }
 
             GameObject bossFightStuff = GameObject.Find("BOSS_FIGHT_STUFF");
             if(null == bossFightStuff)
             {
-                Main.IterTormenti.LogError("Failed to create Defeat Animation: 'BOSS_FIGHT_STUFF' object not found!");
+                ModLog.Error("Failed to create Defeat Animation: 'BOSS_FIGHT_STUFF' object not found!");
                 return false;
             }
 
             GameObject esdrasTarget = GameObject.Find("Esdras destination Point");
             if(null == esdrasTarget)
             {
-                Main.IterTormenti.LogError("Failed to create Defeat Animation: 'Esdras destination Point' object not found!");
+                ModLog.Error("Failed to create Defeat Animation: 'Esdras destination Point' object not found!");
                 return false;
             }
 
@@ -58,7 +59,7 @@ namespace IterTormenti.Esdras
             }
             if(null == perpetvaAppears)
             {
-                Main.IterTormenti.LogError("Failed to create Defeat Animation: 'PerpetvaAppears_SimpleVFX' object not found!");
+                ModLog.Error("Failed to create Defeat Animation: 'PerpetvaAppears_SimpleVFX' object not found!");
                 return false;
             }
 
@@ -107,25 +108,25 @@ namespace IterTormenti.Esdras
                         
                         if(spritesA.Length < 26)
                         {
-                            Main.IterTormenti.LogError($"Failed loading 'EsdrasNonLethalDefeat.png', received {spritesA.Length} frames!");
+                            ModLog.Error($"Failed loading 'EsdrasNonLethalDefeat.png', received {spritesA.Length} frames!");
                             return false;
                         }
                         
                         if(spritesB.Length < 3)
                         {
-                            Main.IterTormenti.LogError($"Failed loading 'EsdrasDefeated.png', received {spritesB.Length} frames!");
+                            ModLog.Error($"Failed loading 'EsdrasDefeated.png', received {spritesB.Length} frames!");
                             return false;
                         }
 
                         if(spritesC.Length < 15)
                         {
-                            Main.IterTormenti.LogError($"Failed loading 'EsdrasPickupWeapon.png', received {spritesC.Length} frames!");
+                            ModLog.Error($"Failed loading 'EsdrasPickupWeapon.png', received {spritesC.Length} frames!");
                             return false;
                         }
 
                         if(spritesC.Length < 14)
                         {
-                            Main.IterTormenti.LogError($"Failed loading 'EsdrasRun.png', received {spritesD.Length} frames!");
+                            ModLog.Error($"Failed loading 'EsdrasRun.png', received {spritesD.Length} frames!");
                             return false;
                         }
 

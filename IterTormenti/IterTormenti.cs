@@ -20,13 +20,11 @@ namespace IterTormenti
         protected override void OnInitialize()
         {
             LocalizationHandler.RegisterDefaultLanguage("es");
-            Log($"{ModInfo.MOD_NAME} has been initialized");
+            ModLog.Info($"{ModInfo.MOD_NAME} has been initialized");
         }
 
         public SaveData SaveGame()
         {
-            Log("SaveGame");
-
             return new IterTormentiSaveData
             {
                 config = GameSettings
@@ -35,8 +33,6 @@ namespace IterTormenti
 
         public void LoadGame(SaveData  data)
         {
-            Log("LoadGame");
-
             IterTormentiSaveData saveGameData = data as IterTormentiSaveData;
 
             GameSettings = saveGameData.config;                       
@@ -44,8 +40,6 @@ namespace IterTormenti
 
         public void ResetGame()
         {
-            Log("ResetGame");
-
             GameSettings = new Config();
         }
 

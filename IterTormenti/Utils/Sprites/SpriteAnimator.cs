@@ -1,3 +1,4 @@
+using Blasphemous.ModdingAPI;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -242,7 +243,7 @@ namespace IterTormenti.Utils.Sprites
         {
             if(!Animations.ContainsKey(name))
             {
-                Main.IterTormenti.LogError($"SpriteAnimator::GoToAnimation: ERROR: '{name}' does not match an existing animation!");
+                ModLog.Error($"SpriteAnimator::GoToAnimation: ERROR: '{name}' does not match an existing animation!");
                 return;
             }
 

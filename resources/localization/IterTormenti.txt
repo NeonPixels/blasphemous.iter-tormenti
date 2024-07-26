@@ -1,0 +1,45 @@
+lang: es
+UI_Slot/LABEL_NEW_GAME_DESCRIPTION: Comienza tu viaje en el modo Verdadero Calvario.\n\nEn este modo, la peregrinación de el Penitente es considerablemente más peligrosa, y se desbloquea el acceso al Altar de Penitencias.\n\nCvstodia oculta secretos que solo se revelan a quienes andan esta senda.
+
+PE_IT_AB.name: Penitencia de la Fe Sangrante
+PE_IT_AB.desc: -Tus brazos se debilitan, los ataques de Mea Culpa son la mitad de efectivos.\n-Tu mente es más fuerte, tu determinación un suministro interminable de fervor. El fervor se regenera con el tiempo.\n-El dolor hace que pierdas concentración. El daño sufrido reduce tus reservas de fervor.\n-Tu piel se desgarra, pero tu voluntad te permite resistir cualquier golpe. Cada ataque recibido te hace perder un Orbe de Vida.\n-Tu equipo consagrado es afectado por el Milagro. Los Matraces Biliares regeneran varios Orbes con el tiempo, pero sufrir daño detiene el proceso. \n-Tus enemigos son implacables. Renacerán cada vez que vuelvas a visitar una zona.
+
+PE_IT_BC.name: Penitencia del Corazón Culpable
+PE_IT_BC.desc: -Tu piel se desgarra, pero tu voluntad te permite resistir cualquier golpe. Cada ataque recibido te hace perder un Orbe de Vida.\n-Tu equipo consagrado es afectado por el Milagro. Los Matraces Biliares regeneran varios Orbes con el tiempo, pero sufrir daño detiene el proceso. \n-Tus enemigos son implacables. Renacerán cada vez que vuelvas a visitar una zona.\n-El error es imperdonable. Al morir, todas tus Lágrimas de Enmienda caerán junto al fragmento de Culpa.\n-El arrepentimiento te supera. Tu nivel de Culpa llega al máximo cada vez que caes en batalla.\n-Nada puede aliviar tu dolor. Las Matraces Biliares no te curarán, no obstante rellenarán tu fervor.
+
+PE_IT_CA.name: Penitencia de la Culpa Inquebrantable
+PE_IT_CA.desc: -El error es imperdonable. Al morir, todas tus Lágrimas de Enmienda caerán junto al fragmento de Culpa.\n-El arrepentimiento te supera. Tu nivel de Culpa llega al máximo cada vez que caes en batalla.\n-Nada puede aliviar tu dolor. Las Matraces Biliares no te curarán, no obstante rellenarán tu fervor.\n-Tus brazos se debilitan, los ataques de Mea Culpa son la mitad de efectivos.\n-Tu mente es más fuerte, tu determinación un suministro interminable de fervor. El fervor se regenera con el tiempo.\n-El dolor hace que pierdas concentración. El daño sufrido reduce tus reservas de fervor.
+
+PE_IT_ABC.name: Penitencia de la Senda del Tormento
+PE_IT_ABC.desc: -Tus brazos se debilitan, los ataques de Mea Culpa son la mitad de efectivos.\n-Tu mente es más fuerte, tu determinación un suministro interminable de fervor. El fervor se regenera con el tiempo.\n-El dolor hace que pierdas concentración. El daño sufrido reduce tus reservas de fervor.\n-Tu piel se desgarra, pero tu voluntad te permite resistir cualquier golpe. Cada ataque recibido te hace perder un Orbe de Vida.\n-Tu equipo consagrado es afectado por el Milagro. Los Matraces Biliares regeneran varios Orbes con el tiempo, pero sufrir daño detiene el proceso. \n-Tus enemigos son implacables. Renacerán cada vez que vuelvas a visitar una zona.\n-El error es imperdonable. Al morir, todas tus Lágrimas de Enmienda caerán junto al fragmento de Culpa.\n-El arrepentimiento te supera. Tu nivel de Culpa llega al máximo cada vez que caes en batalla.\n-Nada puede aliviar tu dolor. Las Matraces Biliares no te curarán, no obstante rellenarán tu fervor.
+
+lang: en
+UI_Slot/LABEL_NEW_GAME_DESCRIPTION: Begin your journey in True Torment mode.\n\nIn this mode, the Penitent One's pilgrimage is considerably more dangerous, and access to the Altar of Penitence is unlocked.\n\nCvstodia hides secrets that will only be revealed to those who walk this path.
+
+PE_IT_AB.name: Penitence of the Bleeding Faith
+PE_IT_AB.desc: -Your sword arm weakens, Mea Culpa attacks are half as effective.\n-Your mind is stronger, your determination an endless supply of fervour. Fervour regenerates over time.\n-Pain makes you lose concentration. The damage suffered reduces your fervour stocks.\n-Your skin is torn, only your will keeps you going. Every attack you receive makes you lose one Life Orb.\n-Your sacred equipment is affected by the Miracle. Bile flasks regenerate several Orbs over time, but suffering damage stops this process.\n-Your enemies are relentless. They will respawn every time you come back to an area.
+
+PE_IT_BC.name: Penitence of the Guilty Heart
+PE_IT_BC.desc: -Your skin is torn, only your will keeps you going. Every attack you receive makes you lose one Life Orb.\n-Your sacred equipment is affected by the Miracle. Bile flasks regenerate several Orbs over time, but suffering damage stops this process.\n-Your enemies are relentless. They will respawn every time you come back to an area.\n-Failure is unacceptable. Upon death, all your Tears of Atonement are placed on the Guilt Fragment. \n-Regret overcomes you. Your Guilt Level reaches the maximum once you fall in battle.\n-Nothing can ease your pain. Bile Flasks will not heal you, refilling your Fervour instead.
+
+PE_IT_CA.name: Penitence of the Unwavering Guilt
+PE_IT_CA.desc: -Failure is unacceptable. Upon death, all your Tears of Atonement are placed on the Guilt Fragment. \n-Regret overcomes you. Your Guilt Level reaches the maximum once you fall in battle.\n-Nothing can ease your pain. Bile Flasks will not heal you, refilling your Fervour instead.\n-Your sword arm weakens, Mea Culpa attacks are half as effective.\n-Your mind is stronger, your determination an endless supply of fervour. Fervour regenerates over time.\n-Pain makes you lose concentration. The damage suffered reduces your fervour stocks.
+
+PE_IT_ABC.name: Penitence of the Path of Torment
+PE_IT_ABC.desc: -Your sword arm weakens, Mea Culpa attacks are half as effective.\n-Your mind is stronger, your determination an endless supply of fervour. Fervour regenerates over time.\n-Pain makes you lose concentration. The damage suffered reduces your fervour stocks.\n-Your skin is torn, only your will keeps you going. Every attack you receive makes you lose one Life Orb.\n-Your sacred equipment is affected by the Miracle. Bile flasks regenerate several Orbs over time, but suffering damage stops this process.\n-Your enemies are relentless. They will respawn every time you come back to an area.\n-Failure is unacceptable. Upon death, all your Tears of Atonement are placed on the Guilt Fragment. \n-Regret overcomes you. Your Guilt Level reaches the maximum once you fall in battle.\n-Nothing can ease your pain. Bile Flasks will not heal you, refilling your Fervour instead.
+
+lang: fr
+UI_Slot/LABEL_NEW_GAME_DESCRIPTION: Commencez votre périple en mode Vrai Tourment.\n\nDans ce mode, le pèlerinage du Pénitent est bien plus périlleux et débloque l'accès aux Pénitences.\n\nCvstodia cache des secrets qui ne seront révélés qu'à quiconque s'engage sur cette voie.
+
+lang: de
+UI_Slot/LABEL_NEW_GAME_DESCRIPTION: Beginne Eure Reise im Modus Wahre Qual.\n\nIn diesem Modus ist die Pilgerreise des Büßers deutlich gefährlicher, gewährt ihm aber Zugriff auf den Altar der Buße.\n\nZudem birgt Cvstodia Geheimnisse, die sich nur jenen enthüllen, die auf diesem Pfad wandeln.
+
+lang: it
+UI_Slot/LABEL_NEW_GAME_DESCRIPTION: Inizia il tuo viaggio in modalità Vero Calvario.\n\nIn questa modalità, il pellegrinaggio del Penitente è molto più pericoloso e l'accesso all'Altare della Penitenza è sbloccato.\n\nCvstodia nasconde segreti che saranno rivelati solo a chi percorrerà questo cammino.
+
+lang: pt-BR
+UI_Slot/LABEL_NEW_GAME_DESCRIPTION: Comece sua jornada no modo Puro Suplício.\n\nNesse modo, a peregrinação do Penitente é muito mais perigosa e o acesso ao Altar da Mea Culpa está liberado.\n\nCvstodia esconde segredos que só serão revelados àqueles que trilharem esse caminho.
+
+lang: an
+UI_Slot/LABEL_NEW_GAME_DESCRIPTION: Comiença tu biahe en er modo Berdadero Carbario.\n\nEn êtte modo la peregrinaçión de er Penitente êh conçiderablemente mâh peligroça, y çe dêbbloquea el âççeço al Artâh de Penitençiâ.\n\nCûttodia ocurta çecretô que çolo çe rebelan a quienê andan êtta çenda.
+
