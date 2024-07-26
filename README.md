@@ -64,7 +64,7 @@ Iter Tormenti (Path of Torment) is a modification (mod) for [Blasphemous](https:
 ### Important notes
 
 - Only works on the most current game version: `4.0.67`
-- When combining the effects of the `Bleeding Heart` and `True Guilt` penitences, using Bile Flasks will refill Fervour, and will also gradually refill Health. This is intended as the same effect happens in the base game when equipping the rosary beads awarded by completing those penitences: `Reliquary of the Suffering Heart` and `Reliquary of the Sorrowful Heart`
+- When combining the effects of the `Bleeding Heart` and `True Guilt` penitences, using Bile Flasks will refill Fervour, and will also gradually refill Health. This is intended, as the same effect happens in the base game when equipping the rosary beads awarded by completing those penitences: `Reliquary of the Suffering Heart` and `Reliquary of the Sorrowful Heart`
 - This mod will offer the chance to complete everything in a single run, but will not guarantee it. Quests can still be failed if not done properly. For example, facing Esdras without the Incomplete Scapular will result in his demise, making it impossible to obtain the C ending in that playthrough.
 
 ---
