@@ -8,6 +8,7 @@ using Framework.Inventory;
 using Framework.Util;
 
 using IterTormenti.Utils.Sprites;
+using Blasphemous.ModdingAPI.Helpers;
 
 namespace IterTormenti
 {
@@ -57,7 +58,7 @@ namespace IterTormenti
 
             InteractableInvAdd addComp = obj.GetComponent<InteractableInvAdd>();
             addComp.item = data.id;
-            addComp.itemType = ItemModder.GetItemTypeFromId(data.id);
+            addComp.itemType = ItemHelper.GetItemTypeFromId(data.id);
 
             if(data.properties.Length < 4)
             {
