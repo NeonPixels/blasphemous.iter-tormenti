@@ -3,9 +3,9 @@
 namespace IterTormenti
 {
     [BepInPlugin(ModInfo.MOD_ID, ModInfo.MOD_NAME, ModInfo.MOD_VERSION)]
-    [BepInDependency("Blasphemous.ModdingAPI", "2.3.1")]
-    [BepInDependency("Blasphemous.Framework.Penitence", "0.2.0")]
-    [BepInDependency("Blasphemous.Framework.Levels", "0.1.3")]
+    [BepInDependency("Blasphemous.ModdingAPI", "2.4.1")]
+    [BepInDependency("Blasphemous.Framework.Penitence", "0.2.1")]
+    [BepInDependency("Blasphemous.Framework.Levels", "0.1.4")]
     public class Main : BaseUnityPlugin
     {
         public static Main Instance { get; private set; }
