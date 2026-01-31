@@ -40,7 +40,7 @@
 
     <!-- Copy plugin & resources to development folder -->
     <PropertyGroup>
-      <DevFolder>C:\DEV\MOD\Blasphemous\Workspace\Blasphemous_Modded\Modding\</DevFolder>
+      <DevFolder>DEPLOY_PATH</DevFolder>
     </PropertyGroup>
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DevFolder)plugins" />
     <Copy SourceFiles="@(DataDlls)" DestinationFolder="$(DevFolder)data" />
