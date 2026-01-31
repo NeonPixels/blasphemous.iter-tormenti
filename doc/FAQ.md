@@ -1,5 +1,5 @@
 <div align="center">  
-  <img src="doc/img/IterTormenti_Logo.png" alt="Iter Tormenti">
+  <img src="img/IterTormenti_Logo.png" alt="Iter Tormenti">
   <h2 align="center">-FAQ-</h2>
     
 [![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/doc/FAQ.md)
