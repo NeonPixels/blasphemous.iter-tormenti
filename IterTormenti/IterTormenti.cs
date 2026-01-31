@@ -1,5 +1,4 @@
 ﻿using Blasphemous.ModdingAPI;
-using Blasphemous.ModdingAPI.Persistence;
 using Blasphemous.Framework.Penitence;
 using System.Collections.Generic;
 using Blasphemous.Framework.Levels;
@@ -10,13 +9,8 @@ using Framework.Managers;
 
 namespace IterTormenti
 {
-    public class IterTormenti : BlasMod, IPersistentMod
+    public class IterTormenti : BlasMod
     {
-        public string PersistentID => "ID_ITER_TORMENTI";
-
-        // Save file info
-        public Config GameSettings { get; private set; }
-
         public IterTormenti() : base(ModInfo.MOD_ID, ModInfo.MOD_NAME, ModInfo.MOD_AUTHOR, ModInfo.MOD_VERSION)
         { }
 
@@ -26,25 +20,8 @@ namespace IterTormenti
             ModLog.Info($"{ModInfo.MOD_NAME} has been initialized");
         }
 
-        public SaveData SaveGame()
-        {
-            return new IterTormentiSaveData
-            {
-                config = GameSettings
-            };
-        }
-
-        public void LoadGame(SaveData  data)
-        {
-            IterTormentiSaveData saveGameData = data as IterTormentiSaveData;
-
-            GameSettings = saveGameData.config;                       
-        }
-
         public void ResetGame()
-        {
-            GameSettings = new Config();
-        }
+        { }
 
         public List<ComboPenitence> ComboPenitenceList { get; } = new(){
             new PenitenceAB(),

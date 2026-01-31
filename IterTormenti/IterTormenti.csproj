@@ -9,7 +9,7 @@
     <Authors>NeonPixels</Authors>
     <Company>NeonPixels</Company>
     <Description>Do everything in a single playthrough</Description>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
 
     <TargetName>IterTormenti</TargetName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -19,8 +19,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blasphemous.ModdingAPI" Version="2.4.1" />
-    <PackageReference Include="Blasphemous.Framework.Penitence" Version="0.2.1" />
+    <PackageReference Include="Blasphemous.ModdingAPI" Version="3.0.0" />
+    <PackageReference Include="Blasphemous.Framework.Penitence" Version="0.2.2" />
     <PackageReference Include="Blasphemous.Framework.Levels" Version="0.1.4" />
     <PackageReference Include="Blasphemous.GameLibs" Version="4.0.67" />
   </ItemGroup>
@@ -40,7 +40,7 @@
 
     <!-- Copy plugin & resources to development folder -->
     <PropertyGroup>
-      <DevFolder>YOUR_MODDED_BLASPHEMOUS_PATH\Modding\</DevFolder>
+      <DevFolder>C:\DEV\MOD\Blasphemous\Workspace\Blasphemous_Modded\Modding\</DevFolder>
     </PropertyGroup>
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DevFolder)plugins" />
     <Copy SourceFiles="@(DataDlls)" DestinationFolder="$(DevFolder)data" />
