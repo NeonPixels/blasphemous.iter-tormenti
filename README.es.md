@@ -21,7 +21,8 @@
 
 - [Créditos](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#creditos)
 - [Información del mod](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#informacion-del-mod)
-  - [Características](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#caracteristicas)  
+  - [Características](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#caracteristicas)
+  - [Preguntas Frecuentes](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#preguntas-frecuentes)
   - [Notas importantes](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#notas-importantes)
 - [Instalación](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#instalacion)
 - [Enlaces](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#enlaces)
@@ -61,6 +62,10 @@ Iter Tormenti (Senda del Tormento) es una modificación (mod) de [Blasphemous](h
 <div align="center">
   <img src="doc/img/IterTormenti_DemoScreenshot.png" alt="Captura de pantalla de demostración">
 </div>
+
+### Preguntas Frecuentes
+
+[![es](https://img.shields.io/badge/lang-es-yellow.svg)](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/doc/FAQ.es.md)
 
 ### Notas importantes
 
