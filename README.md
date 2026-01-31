@@ -22,7 +22,7 @@
 - [Credits](https://github.com/NeonPixels/blasphemous.iter-tormenti#credits)
 - [Mod info](https://github.com/NeonPixels/blasphemous.iter-tormenti#mod-info)
   - [Features](https://github.com/NeonPixels/blasphemous.iter-tormenti#features)
-  - [FAQ]((https://github.com/NeonPixels/blasphemous.iter-tormenti#faq))
+  - [FAQ](https://github.com/NeonPixels/blasphemous.iter-tormenti#faq)
   - [Important notes](https://github.com/NeonPixels/blasphemous.iter-tormenti#important-notes)
 - [Installation](https://github.com/NeonPixels/blasphemous.iter-tormenti#installation)
 - [Links](https://github.com/NeonPixels/blasphemous.iter-tormenti#links)
