@@ -19,13 +19,13 @@
 
 ## Table of Contents
 
-- [Credits](https://github.com/NeonPixels/blasphemous.iter-tormenti#credits)
-- [Mod info](https://github.com/NeonPixels/blasphemous.iter-tormenti#mod-info)
-  - [Features](https://github.com/NeonPixels/blasphemous.iter-tormenti#features)
-  - [FAQ](https://github.com/NeonPixels/blasphemous.iter-tormenti#faq)
-  - [Important notes](https://github.com/NeonPixels/blasphemous.iter-tormenti#important-notes)
-- [Installation](https://github.com/NeonPixels/blasphemous.iter-tormenti#installation)
-- [Links](https://github.com/NeonPixels/blasphemous.iter-tormenti#links)
+- [Credits](#credits)
+- [Mod info](#mod-info)
+  - [Features](#features)
+  - [FAQ](#faq)
+  - [Important notes](#important-notes)
+- [Installation](#installation)
+- [Links](#links)
 
 ---
 
@@ -62,7 +62,7 @@ Iter Tormenti (Path of Torment) is a modification (mod) for [Blasphemous](https:
   <img src="doc/img/IterTormenti_DemoScreenshot.png" alt="Demo screenshot">
 </div>
 
-## FAQ
+### FAQ
 
 [![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/doc/FAQ.md)
 
