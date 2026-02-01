@@ -19,13 +19,13 @@
 
 ## Tabla de Contenidos
 
-- [Créditos](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#creditos)
-- [Información del mod](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#informacion-del-mod)
-  - [Características](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#caracteristicas)
-  - [Preguntas Frecuentes](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#preguntas-frecuentes)
-  - [Notas importantes](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#notas-importantes)
-- [Instalación](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#instalacion)
-- [Enlaces](https://github.com/NeonPixels/blasphemous.iter-tormenti/blob/main/README.es.md#enlaces)
+- [Créditos](#creditos)
+- [Información del mod](#informacion-del-mod)
+  - [Características](#caracteristicas)
+  - [Preguntas Frecuentes](#preguntas-frecuentes)
+  - [Notas importantes](#notas-importantes)
+- [Instalación](#instalacion)
+- [Enlaces](#enlaces)
 
 
 ---
